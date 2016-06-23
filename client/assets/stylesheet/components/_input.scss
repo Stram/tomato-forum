@@ -1,0 +1,17 @@
+.input {
+  margin: 8px;
+  font-size: 16px;
+  line-height: 20px;
+  display: block;
+  outline: 0;
+  border: {
+    top: 0;
+    right: 0;
+    bottom: 1px solid $color-border-gray;
+    left: 0;
+  }
+
+  &:focus {
+    border-bottom: 1px solid $color-border-primary;
+  }
+}

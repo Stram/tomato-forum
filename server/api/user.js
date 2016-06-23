@@ -24,7 +24,8 @@ router.get('/:id', (req, res) => {
 router.post('/', (req, res) => {
   user.create({
     username: req.param('username'),
-    email: req.param('email')
+    email: req.param('email'),
+    password: req.param('password')
   }, (error, user) => {
     if (error) {
       res.json({error});

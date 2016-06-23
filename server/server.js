@@ -11,7 +11,7 @@ const DB_PASSWORD = 'Brackets';
 
 mongoose.connect(`mongodb://${DB_USERNAME}:${DB_PASSWORD}@ds019654.mlab.com:19654/express-forum`);
 
-app.get('/', function (req, res) {
+app.get(/^(?!\/public|\/api).*$/, function (req, res) {
   res.sendFile(path.resolve('client/index.html'));
 });
 

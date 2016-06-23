@@ -12,6 +12,7 @@ export default Backbone.Router.extend({
 
   register() {
     const registerPage = new RegisterPageView();
+    registerPage.render();
     $('.page-content').html(registerPage.el);
   },
 

@@ -5280,7 +5280,7 @@
 
 
 	// module
-	exports.push([module.id, "html {\n  height: 100%; }\n\n.body {\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  margin: 0; }\n\n.page-content {\n  flex: 1; }\n\n.header,\n.footer {\n  height: 50px;\n  background-color: yellow; }\n", ""]);
+	exports.push([module.id, "html {\n  height: 100%; }\n\n.body {\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  margin: 0; }\n\n.page-content {\n  flex: 1; }\n\n.header,\n.footer {\n  height: 50px;\n  background-color: yellow; }\n\n.register-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.card {\n  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);\n  padding: 24px; }\n\n.input {\n  margin: 8px;\n  font-size: 16px;\n  line-height: 20px;\n  display: block;\n  outline: 0;\n  border-top: 0;\n  border-right: 0;\n  border-bottom: 1px solid #424242;\n  border-left: 0; }\n  .input:focus {\n    border-bottom: 1px solid red; }\n\n.button {\n  display: block;\n  text-align: center;\n  padding: 8px;\n  cursor: pointer; }\n  .button.button--raised {\n    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5); }\n", ""]);
 
 	// exports
 
@@ -5627,6 +5627,7 @@
 
 	  register: function register() {
 	    var registerPage = new _register2.default();
+	    registerPage.render();
 	    (0, _jquery2.default)('.page-content').html(registerPage.el);
 	  },
 	  login: function login() {}
@@ -5646,6 +5647,22 @@
 
 	var _backbone2 = _interopRequireDefault(_backbone);
 
+	var _underscore = __webpack_require__(2);
+
+	var _underscore2 = _interopRequireDefault(_underscore);
+
+	var _jquery = __webpack_require__(3);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _config = __webpack_require__(11);
+
+	var _config2 = _interopRequireDefault(_config);
+
+	var _register = __webpack_require__(12);
+
+	var _register2 = _interopRequireDefault(_register);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.default = _backbone2.default.View.extend({
@@ -5654,18 +5671,62 @@
 	  className: 'page register-page',
 
 	  events: {
-	    'click .icon': 'open',
-	    'click .button.edit': 'openEditDialog',
-	    'click .button.delete': 'destroy'
+	    'click .js-submit': 'submit'
 	  },
 
-	  initialize: function initialize() {
-	    this.listenTo(this.model, 'change', this.render);
+	  submit: function submit() {
+	    var $form = this.$('.js-form');
+	    var email = $form.find('.js-email').val();
+	    var password = $form.find('.js-password').val();
+
+	    _jquery2.default.ajax({
+	      url: _config2.default.apiEndpoint + '/user',
+	      method: 'POST',
+	      data: {
+	        email: email,
+	        password: password
+	      }
+	    });
 	  },
 
-	  render: function render() {}
 
+	  // // TODO:
+	  // initialize() {
+	  //   this.listenTo(this.model, 'change', this.render);
+	  // },
+
+	  template: _underscore2.default.template(_register2.default),
+
+	  render: function render() {
+	    this.$el.html(this.template());
+
+	    return this;
+	  }
 	});
+
+/***/ },
+/* 11 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = {
+	  apiEndpoint: '/api'
+	};
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = "<div class=\"card\">\n  <form class=\"js-form\">\n    <input type=\"text\" class=\"input js-email\"/>\n    <input type=\"password\" class=\"input js-password\"/>\n    <div class=\"button js-submit\">\n      REGISTER\n    </div>\n  </form>\n</div>";
 
 /***/ }
 /******/ ]);

@@ -1,0 +1,10 @@
+.button {
+  display: block;
+  text-align: center;
+  padding: 8px;
+  cursor: pointer;
+
+  &.button--raised {
+    box-shadow: 0px 2px 4px 0px $color-shadow;
+  }
+}
