@@ -1,3 +1,5 @@
-import backbone from './vendor/backbone';
+import $ from 'jquery';
+import _ from 'underscore';
+import backbone from 'backbone';
 
-console.log('LALALA');
+console.log('LALAL');

@@ -15,7 +15,7 @@ app.get('/', function (req, res) {
   res.sendFile(path.resolve('client/index.html'));
 });
 
-app.use('/public', express.static(path.resolve('client')));
+app.use('/public', express.static(path.resolve('public')));
 
 app.use('/api', api);
 
