@@ -29,6 +29,9 @@ module.exports = {
       query: {
         presets: ['es2015', 'stage-2']
       }
+    },{
+      test: /\.scss$/,
+      loaders: ['style', 'css', 'sass']
     }]
   }
 };
