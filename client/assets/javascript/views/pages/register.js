@@ -25,13 +25,11 @@ export default Backbone.View.extend({
         email,
         password
       }
+    }).done((user, status) => {
+      console.log(user);
+      console.log(status);
     });
   },
-
-  // // TODO:
-  // initialize() {
-  //   this.listenTo(this.model, 'change', this.render);
-  // },
 
   template: _.template(template),
 

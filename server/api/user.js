@@ -1,4 +1,5 @@
 import express from 'express';
+import bcrypt from 'bcrypt-nodejs';
 import {user} from '../models/models';
 
 const router = express.Router();
@@ -21,18 +22,40 @@ router.get('/:id', (req, res) => {
   });
 });
 
-router.post('/', (req, res) => {
-  user.create({
-    username: req.param('username'),
-    email: req.param('email'),
-    password: req.param('password')
+router.post('/', (req, res, next) => {
+  let userOptions = req.body;
+  userOptions.password = bcrypt.hashSync(req.body.password);
+
+  user.findOne({
+    email: userOptions.email
   }, (error, user) => {
     if (error) {
+      res.status(422);
       res.json({error});
+      next();
     }
-
-    res.json(user);
+    if (user) {
+      res.status(422);
+      res.json({
+        error: 'Email is already taken'
+      })
+      next();
+    }
   });
+
+  user.create(userOptions, (error, user) => {
+    if (error) {
+      res.status(422);
+      res.json({error});
+      next();
+    }
+    res.json(user);
+    next();
+  });
+});
+
+router.post('/login/:id', (req, res, next) => {
+
 });
 
 module.exports = router;

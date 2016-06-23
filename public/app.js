@@ -5686,14 +5686,12 @@
 	        email: email,
 	        password: password
 	      }
+	    }).done(function (user, status) {
+	      console.log(user);
+	      console.log(status);
 	    });
 	  },
 
-
-	  // // TODO:
-	  // initialize() {
-	  //   this.listenTo(this.model, 'change', this.render);
-	  // },
 
 	  template: _underscore2.default.template(_register2.default),
 
