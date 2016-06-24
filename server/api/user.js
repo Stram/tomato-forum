@@ -23,11 +23,17 @@ router.get('/:id', (req, res) => {
 });
 
 router.post('/', passport.authenticate('local-signup'), (req, res) => {
-  res.json({done: 'TAADAA'});
+  const user = req.user;
+  res.json({user});
 });
 
 router.post('/login', passport.authenticate('local-login'), (req, res) => {
-  res.json({done: 'Welcome'});
+  const user = req.user;
+  res.json({user});
+});
+
+router.post('/logout', passport.authenticate('local-login'), (req, res) => {
+  req.logout();
 });
 
 router.patch('/', (req, res, next) => {
