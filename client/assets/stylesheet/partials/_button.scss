@@ -1,0 +1,21 @@
+.button {
+  display: inline-block;
+  text-align: center;
+  text-transform: uppercase;
+  cursor: pointer;
+
+  font-size: 14px;
+  border-radius: 2px;
+  line-height: 14px;
+  padding: 10px 16px;
+
+  &.button--dialog {
+    min-width: 64px;
+    padding: 10px 8px;
+    margin: 0 8px;
+  }
+
+  &.button--raised {
+    box-shadow: 0px 2px 4px 0px $color-shadow;
+  }
+}

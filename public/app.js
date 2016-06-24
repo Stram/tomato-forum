@@ -5277,10 +5277,10 @@
 
 	exports = module.exports = __webpack_require__(7)();
 	// imports
-
+	exports.push([module.id, "@import url(https://fonts.googleapis.com/css?family=Roboto&subset=latin,latin-ext);", ""]);
 
 	// module
-	exports.push([module.id, "html {\n  height: 100%; }\n\n.body {\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  margin: 0; }\n\n.page-content {\n  flex: 1; }\n\n.header,\n.footer {\n  height: 50px;\n  background-color: yellow; }\n\n.register-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.card {\n  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5);\n  padding: 24px; }\n\n.input {\n  margin: 8px;\n  font-size: 16px;\n  line-height: 20px;\n  display: block;\n  outline: 0;\n  border-top: 0;\n  border-right: 0;\n  border-bottom: 1px solid #424242;\n  border-left: 0; }\n  .input:focus {\n    border-bottom: 1px solid red; }\n\n.button {\n  display: block;\n  text-align: center;\n  padding: 8px;\n  cursor: pointer; }\n  .button.button--raised {\n    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.5); }\n", ""]);
+	exports.push([module.id, ".align-right {\n  text-align: right; }\n\nhtml {\n  height: 100%; }\n\n.body {\n  font-family: 'Roboto', sans-serif;\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  margin: 0;\n  background-color: #FAFAFA;\n  color: #212121; }\n\n.page-content {\n  flex: 1; }\n\n.header,\n.footer {\n  height: 50px;\n  background-color: #F5F5F5; }\n\n.card {\n  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3);\n  background-color: #FFFFFF;\n  border-radius: 2px; }\n  .card .card__content {\n    padding: 24px 24px 16px; }\n  .card .card__actions {\n    padding: 8px; }\n\n.input-box {\n  padding: 16px 0 8px; }\n  .input-box .label {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n  .input-box .input {\n    font-size: 16px;\n    line-height: 16px;\n    min-width: 250px;\n    display: block;\n    padding: 0 0 7px;\n    border-top: 0;\n    border-right: 0;\n    border-bottom: 1px solid #424242;\n    border-left: 0;\n    margin: 8px 0;\n    outline: 0; }\n    .input-box .input:focus {\n      border-bottom: 1px solid red; }\n\n.button {\n  display: inline-block;\n  text-align: center;\n  text-transform: uppercase;\n  cursor: pointer;\n  font-size: 14px;\n  border-radius: 2px;\n  line-height: 14px;\n  padding: 10px 16px; }\n  .button.button--dialog {\n    min-width: 64px;\n    padding: 10px 8px;\n    margin: 0 8px; }\n  .button.button--raised {\n    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n\n.header {\n  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n\n.register-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n", ""]);
 
 	// exports
 
@@ -5692,7 +5692,7 @@
 	  },
 
 
-	  template: _underscore2.default.template(_register2.default),
+	  template: _underscore2.default.template((0, _register2.default)()),
 
 	  render: function render() {
 	    this.$el.html(this.template());
@@ -5718,12 +5718,16 @@
 /* 12 */
 /***/ function(module, exports) {
 
-	"use strict";
+	module.exports = function(obj) {
+	obj || (obj = {});
+	var __t, __p = '';
+	with (obj) {
+	__p += '<div class="card">\n  <form class="js-form">\n    <div class="card__content">\n      <div class="input-box">\n        <label for="register-input-email" class="label">Email</label>\n        <input type="text" class="input js-email" id="register-input-email"/>\n      </div>\n      <div class="input-box">\n        <label for="register-input-password" class="label">Password</label>\n        <input type="password" class="input js-password" id="register-input-password"/>\n      </div>\n    </div>\n    <div class="card__actions align-right">\n      <div class="button button--dialog js-submit">\n        REGISTER\n      </div>\n    </div>\n  </form>\n</div>\n';
 
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.default = "<div class=\"card\">\n  <form class=\"js-form\">\n    <input type=\"text\" class=\"input js-email\"/>\n    <input type=\"password\" class=\"input js-password\"/>\n    <div class=\"button js-submit\">\n      REGISTER\n    </div>\n  </form>\n</div>";
+	}
+	return __p
+	};
+
 
 /***/ }
 /******/ ]);

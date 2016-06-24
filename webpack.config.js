@@ -22,16 +22,19 @@ module.exports = {
     loaders: [{
       test: /\.css$/,
       loader: 'style!css'
-    },{
+    }, {
       test: /\.js$/,
       exclude: /(node_modules)/,
       loader: 'babel',
       query: {
         presets: ['es2015', 'stage-2']
       }
-    },{
+    }, {
       test: /\.scss$/,
       loaders: ['style', 'css', 'sass']
+    }, {
+      test: /\.html$/,
+      loader: 'underscore-template-loader'
     }]
   }
 };

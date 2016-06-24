@@ -1,9 +1,14 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto&subset=latin,latin-ext');
+
 @import 'colors';
 @import 'mixins';
+@import 'utils';
 @import 'common';
 
-@import 'pages/register';
+@import 'partials/card';
+@import 'partials/input';
+@import 'partials/button';
 
-@import 'components/card';
-@import 'components/input';
-@import 'components/button';
+@import 'components/header';
+
+@import 'pages/register';

@@ -3,12 +3,16 @@ html {
 }
 
 .body {
+  font-family: 'Roboto', sans-serif;
+
   height: 100%;
 
   display: flex;
   flex-direction: column;
 
   margin: 0;
+  background-color: $color-bg-grey-50;
+  color: $color-text-grey-900;
 }
 
 .page-content {
@@ -18,5 +22,5 @@ html {
 .header,
 .footer {
   height: 50px;
-  background-color: yellow;
+  background-color: $color-bg-grey-100;
 }

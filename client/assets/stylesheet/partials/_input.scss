@@ -1,0 +1,38 @@
+.input-box {
+  padding: 16px 0 8px;
+
+  .label {
+    font-size: 12px;
+    line-height: 16px;
+    color: $color-text-grey-600;
+  }
+
+  .input {
+    font-size: 16px;
+    line-height: 16px;
+    min-width: 250px;
+
+    display: block;
+
+    padding: 0 0 7px;
+    border: {
+      top: 0;
+      right: 0;
+      bottom: 1px solid $color-border-gray;
+      left: 0;
+    }
+    margin: 8px 0;
+    outline: 0;
+
+    &:focus {
+      border-bottom: 1px solid $color-border-primary;
+    }
+  }
+
+  .message {
+
+    &.message--error {
+
+    }
+  }
+}

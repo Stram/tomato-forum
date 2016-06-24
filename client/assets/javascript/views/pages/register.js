@@ -2,7 +2,7 @@ import Backbone from 'backbone';
 import _ from 'underscore';
 import $ from 'jquery';
 import config from 'config';
-import template from 'views/pages/templates/register';
+import template from 'views/pages/templates/register.html';
 
 export default Backbone.View.extend({
   tagName: 'div',
@@ -30,7 +30,7 @@ export default Backbone.View.extend({
     });
   },
 
-  template: _.template(template),
+  template: _.template(template()),
 
   render() {
     this.$el.html(

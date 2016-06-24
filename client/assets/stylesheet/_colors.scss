@@ -1,7 +1,24 @@
-$base-gray-opaque: rgba(0,0,0,0.50);
-$base-gray: #424242;
+$base-white: #FFFFFF;
 
+$base-grey-50: #FAFAFA;
+$base-grey-100: #F5F5F5;
+$base-grey-300: #E0E0E0;
+$base-grey-600: #757575;
+$base-grey-800: #424242;
+$base-grey-900: #212121;
+
+$base-gray-opaque: rgba(0,0,0,0.30);
 $color-shadow: $base-gray-opaque;
 
-$color-border-gray: $base-gray;
+$color-bg-white: $base-white;
+$color-bg-grey-50: $base-grey-50;
+$color-bg-grey-100: $base-grey-100;
+$color-bg-grey-300: $base-grey-300;
+
+$color-text-grey-600: $base-grey-600;
+$color-text-grey-900: $base-grey-900;
+
+
+
+$color-border-gray: $base-grey-800;
 $color-border-primary: red;
