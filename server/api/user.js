@@ -1,6 +1,6 @@
 import express from 'express';
-import bcrypt from 'bcrypt-nodejs';
-import {user} from '../models/models';
+import passport from 'passport';
+import User from '../models/user';
 
 const router = express.Router();
 
@@ -14,7 +14,7 @@ router.get('/:id', (req, res) => {
     res.json({error: 'No id'});
   }
 
-  user.findOne({id}, (error, user) => {
+  User.findOne({id}, (error, user) => {
     if (error) {
       res.json({error});
     }
@@ -22,39 +22,15 @@ router.get('/:id', (req, res) => {
   });
 });
 
-router.post('/', (req, res, next) => {
-  let userOptions = req.body;
-  userOptions.password = bcrypt.hashSync(req.body.password);
-
-  user.findOne({
-    email: userOptions.email
-  }, (error, user) => {
-    if (error) {
-      res.status(422);
-      res.json({error});
-      next();
-    }
-    if (user) {
-      res.status(422);
-      res.json({
-        error: 'Email is already taken'
-      })
-      next();
-    }
-  });
-
-  user.create(userOptions, (error, user) => {
-    if (error) {
-      res.status(422);
-      res.json({error});
-      next();
-    }
-    res.json(user);
-    next();
-  });
+router.post('/', passport.authenticate('local-signup'), (req, res) => {
+  res.json({done: 'TAADAA'});
 });
 
-router.post('/login/:id', (req, res, next) => {
+router.post('/login', passport.authenticate('local-login'), (req, res) => {
+  res.json({done: 'Welcome'});
+});
+
+router.patch('/', (req, res, next) => {
 
 });
 

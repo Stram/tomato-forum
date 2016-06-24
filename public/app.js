@@ -5688,7 +5688,6 @@
 	      }
 	    }).done(function (user, status) {
 	      console.log(user);
-	      console.log(status);
 	    });
 	  },
 

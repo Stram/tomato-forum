@@ -2,18 +2,31 @@ import express from 'express';
 import path from 'path';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
+import morgan from 'morgan';
+import session from 'express-session';
+import passport from 'passport';
+import flash from 'connect-flash';
+
+import databaseConfig from './config/database'
+import passportConfig from './config/passport'
 
 import api from './api/api';
 
 const app = express();
 
-const DB_USERNAME = 'Brackets';
-const DB_PASSWORD = 'Brackets';
-
-mongoose.connect(`mongodb://${DB_USERNAME}:${DB_PASSWORD}@ds019654.mlab.com:19654/express-forum`);
+mongoose.connect(databaseConfig.url);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(morgan('dev'));
+
+app.use(session({secret: 'asdfagalvneiv3u4kj34j'}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(flash());
+
+passportConfig(passport);
 
 app.use('/public', express.static(path.resolve('public')));
 

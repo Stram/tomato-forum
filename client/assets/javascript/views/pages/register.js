@@ -27,7 +27,6 @@ export default Backbone.View.extend({
       }
     }).done((user, status) => {
       console.log(user);
-      console.log(status);
     });
   },
 
