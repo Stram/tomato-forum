@@ -48,12 +48,16 @@ module.exports = function(passport) {
   }));
 
   passport.use('local-login', new LocalStrategy({
-    usernameField: 'username',
+    usernameField: 'identification',
     passwordField: 'password',
     passReqToCallback: true
   },
-  function(req, email, password, done) {
-    User.findOne({'local.email': email}, function(err, user) {
+  function(req, identification, password, done) {
+    let userQuery = {username: identification};
+    if (identification.contains('@')) {
+      userQuery = {'local.email': identification};
+    }
+    User.findOne(userQuery, function(err, user) {
       if (err) {
         return done(err);
       }

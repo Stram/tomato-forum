@@ -2,13 +2,12 @@ import Backbone from 'backbone';
 import _ from 'underscore';
 import $ from 'jquery';
 import config from 'config';
-import template from 'views/pages/templates/register.html';
-import router from 'router';
+import template from 'views/pages/templates/login.html';
 
 export default Backbone.View.extend({
   tagName: 'div',
 
-  className: 'page register-page',
+  className: 'page login-page',
 
   events: {
     'click .js-submit': 'submit'
@@ -30,19 +29,18 @@ export default Backbone.View.extend({
 
   submit() {
     const $form = this.$('.js-form');
-    const email = $form.find('.js-email').val();
+    const identification = $form.find('.js-identification').val();
     const password = $form.find('.js-password').val();
 
     $.ajax({
       url: `${config.apiEndpoint}/user`,
       method: 'POST',
       data: {
-        email,
+        identification,
         password
       }
     }).done((user) => {
       console.log(user);
-      router.navigate('login', true);
     });
   }
 });

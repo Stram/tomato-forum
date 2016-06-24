@@ -54,21 +54,16 @@
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
-	__webpack_require__(5);
-
 	var _router = __webpack_require__(9);
 
 	var _router2 = _interopRequireDefault(_router);
 
+	__webpack_require__(5);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	// import $ from 'jquery';
-	// import _ from 'underscore';
-
-
 	(0, _jquery2.default)(function () {
-	  new _router2.default();
-	  _backbone2.default.history.start();
+	  _backbone2.default.history.start({ pushState: true });
 	});
 
 /***/ },
@@ -5280,7 +5275,7 @@
 	exports.push([module.id, "@import url(https://fonts.googleapis.com/css?family=Roboto&subset=latin,latin-ext);", ""]);
 
 	// module
-	exports.push([module.id, ".align-right {\n  text-align: right; }\n\nhtml {\n  height: 100%; }\n\n.body {\n  font-family: 'Roboto', sans-serif;\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  margin: 0;\n  background-color: #FAFAFA;\n  color: #212121; }\n\n.page-content {\n  flex: 1; }\n\n.header,\n.footer {\n  height: 50px;\n  background-color: #F5F5F5; }\n\n.card {\n  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3);\n  background-color: #FFFFFF;\n  border-radius: 2px; }\n  .card .card__content {\n    padding: 24px 24px 16px; }\n  .card .card__actions {\n    padding: 8px; }\n\n.input-box {\n  padding: 16px 0 8px; }\n  .input-box .label {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n  .input-box .input {\n    font-size: 16px;\n    line-height: 16px;\n    min-width: 250px;\n    display: block;\n    padding: 0 0 7px;\n    border-top: 0;\n    border-right: 0;\n    border-bottom: 1px solid #424242;\n    border-left: 0;\n    margin: 8px 0;\n    outline: 0; }\n    .input-box .input:focus {\n      border-bottom: 1px solid red; }\n\n.button {\n  display: inline-block;\n  text-align: center;\n  text-transform: uppercase;\n  cursor: pointer;\n  font-size: 14px;\n  border-radius: 2px;\n  line-height: 14px;\n  padding: 10px 16px; }\n  .button.button--dialog {\n    min-width: 64px;\n    padding: 10px 8px;\n    margin: 0 8px; }\n  .button.button--raised {\n    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n\n.header {\n  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n\n.register-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n", ""]);
+	exports.push([module.id, ".align-right {\n  text-align: right; }\n\nhtml {\n  height: 100%; }\n\n.body {\n  font-family: 'Roboto', sans-serif;\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  margin: 0;\n  background-color: #FAFAFA;\n  color: #212121; }\n\n.page-content {\n  flex: 1; }\n\n.header,\n.footer {\n  height: 50px;\n  background-color: #F5F5F5; }\n\n.card {\n  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3);\n  background-color: #FFFFFF;\n  border-radius: 2px; }\n  .card .card__content {\n    padding: 24px 24px 16px; }\n  .card .card__actions {\n    padding: 8px; }\n\n.input-box {\n  padding: 16px 0 8px; }\n  .input-box .label {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n  .input-box .input {\n    font-size: 16px;\n    line-height: 16px;\n    min-width: 250px;\n    display: block;\n    padding: 0 0 7px;\n    border-top: 0;\n    border-right: 0;\n    border-bottom: 1px solid #424242;\n    border-left: 0;\n    margin: 8px 0;\n    outline: 0; }\n    .input-box .input:focus {\n      border-bottom: 1px solid red; }\n\n.button {\n  display: inline-block;\n  text-align: center;\n  text-transform: uppercase;\n  cursor: pointer;\n  font-size: 14px;\n  border-radius: 2px;\n  line-height: 14px;\n  padding: 10px 16px; }\n  .button.button--dialog {\n    min-width: 64px;\n    padding: 10px 8px;\n    margin: 0 8px; }\n  .button.button--raised {\n    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n\n.header {\n  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n\n.register-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.login-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n", ""]);
 
 	// exports
 
@@ -5615,23 +5610,52 @@
 
 	var _register2 = _interopRequireDefault(_register);
 
+	var _login = __webpack_require__(13);
+
+	var _login2 = _interopRequireDefault(_login);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	exports.default = _backbone2.default.Router.extend({
-
+	var Router = _backbone2.default.Router.extend({
 	  routes: {
-	    '': 'register',
-	    'register': 'register',
-	    'login': 'login'
+	    '': 'landing',
+	    register: 'register',
+	    login: 'login'
 	  },
 
+	  currentView: null,
+	  $pageElement: (0, _jquery2.default)('.page-content'),
+
+	  changeView: function changeView(view) {
+	    if (this.currentView) {
+	      this.currentView.close();
+	    }
+
+	    if (!this.$pageElement.length) {
+	      this.$pageElement = (0, _jquery2.default)('.page-content');
+	    }
+
+	    this.currentView = view;
+	    view.render();
+	    this.$pageElement.html(view.el);
+
+	    console.log('changing view to ' + view.className);
+	  },
+	  landing: function landing() {
+	    var registerPage = new _register2.default();
+	    this.changeView(registerPage);
+	  },
 	  register: function register() {
 	    var registerPage = new _register2.default();
-	    registerPage.render();
-	    (0, _jquery2.default)('.page-content').html(registerPage.el);
+	    this.changeView(registerPage);
 	  },
-	  login: function login() {}
+	  login: function login() {
+	    var loginPage = new _login2.default();
+	    this.changeView(loginPage);
+	  }
 	});
+
+	exports.default = new Router();
 
 /***/ },
 /* 10 */
@@ -5663,6 +5687,10 @@
 
 	var _register2 = _interopRequireDefault(_register);
 
+	var _router = __webpack_require__(9);
+
+	var _router2 = _interopRequireDefault(_router);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.default = _backbone2.default.View.extend({
@@ -5674,6 +5702,16 @@
 	    'click .js-submit': 'submit'
 	  },
 
+	  template: _underscore2.default.template((0, _register2.default)()),
+
+	  render: function render() {
+	    this.$el.html(this.template());
+
+	    return this;
+	  },
+	  close: function close() {
+	    this.remove();
+	  },
 	  submit: function submit() {
 	    var $form = this.$('.js-form');
 	    var email = $form.find('.js-email').val();
@@ -5688,16 +5726,8 @@
 	      }
 	    }).done(function (user) {
 	      console.log(user);
+	      _router2.default.navigate('login', true);
 	    });
-	  },
-
-
-	  template: _underscore2.default.template((0, _register2.default)()),
-
-	  render: function render() {
-	    this.$el.html(this.template());
-
-	    return this;
 	  }
 	});
 
@@ -5722,7 +5752,91 @@
 	obj || (obj = {});
 	var __t, __p = '';
 	with (obj) {
-	__p += '<div class="card">\n  <form class="js-form">\n    <div class="card__content">\n      <div class="input-box">\n        <label for="register-input-email" class="label">Email</label>\n        <input type="text" class="input js-email" id="register-input-email"/>\n      </div>\n      <div class="input-box">\n        <label for="register-input-password" class="label">Password</label>\n        <input type="password" class="input js-password" id="register-input-password"/>\n      </div>\n    </div>\n    <div class="card__actions align-right">\n      <div class="button button--dialog js-submit">\n        REGISTER\n      </div>\n    </div>\n  </form>\n</div>\n';
+	__p += '<div class="card">\n  <form class="js-form">\n    <div class="card__content">\n      <div class="input-box">\n        <label for="register-input-email" class="label">Email</label>\n        <input type="email" class="input js-email" id="register-input-email"/>\n      </div>\n      <div class="input-box">\n        <label for="register-input-password" class="label">Password</label>\n        <input type="password" class="input js-password" id="register-input-password"/>\n      </div>\n    </div>\n    <div class="card__actions align-right">\n      <div class="button button--dialog js-submit">\n        REGISTER\n      </div>\n    </div>\n  </form>\n</div>\n';
+
+	}
+	return __p
+	};
+
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(1);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _underscore = __webpack_require__(2);
+
+	var _underscore2 = _interopRequireDefault(_underscore);
+
+	var _jquery = __webpack_require__(3);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _config = __webpack_require__(11);
+
+	var _config2 = _interopRequireDefault(_config);
+
+	var _login = __webpack_require__(14);
+
+	var _login2 = _interopRequireDefault(_login);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+	  tagName: 'div',
+
+	  className: 'page login-page',
+
+	  events: {
+	    'click .js-submit': 'submit'
+	  },
+
+	  template: _underscore2.default.template((0, _login2.default)()),
+
+	  render: function render() {
+	    this.$el.html(this.template());
+
+	    return this;
+	  },
+	  close: function close() {
+	    this.remove();
+	  },
+	  submit: function submit() {
+	    var $form = this.$('.js-form');
+	    var identification = $form.find('.js-identification').val();
+	    var password = $form.find('.js-password').val();
+
+	    _jquery2.default.ajax({
+	      url: _config2.default.apiEndpoint + '/user',
+	      method: 'POST',
+	      data: {
+	        identification: identification,
+	        password: password
+	      }
+	    }).done(function (user) {
+	      console.log(user);
+	    });
+	  }
+	});
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
+	module.exports = function(obj) {
+	obj || (obj = {});
+	var __t, __p = '';
+	with (obj) {
+	__p += '<div class="card">\n  <form class="js-form">\n    <div class="card__content">\n      <div class="input-box">\n        <label for="login-input-identification" class="label">Email or username</label>\n        <input type="text" class="input js-identification" id="login-input-identification"/>\n      </div>\n      <div class="input-box">\n        <label for="login-input-password" class="label">Password</label>\n        <input type="password" class="input js-password" id="login-input-password"/>\n      </div>\n    </div>\n    <div class="card__actions align-right">\n      <div class="button button--dialog js-submit">\n        LOGIN\n      </div>\n    </div>\n  </form>\n</div>\n';
 
 	}
 	return __p
