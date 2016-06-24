@@ -9,12 +9,12 @@ router.use((req, res, next) => {
 });
 
 router.get('/:id', (req, res) => {
-  userId = req.params.id;
+  const userId = req.params.id;
   if (!userId) {
     res.json({error: 'No id'});
   }
 
-  User.findOne({id}, (error, user) => {
+  User.findOne({id: userId}, (error, user) => {
     if (error) {
       res.json({error});
     }
@@ -32,12 +32,8 @@ router.post('/login', passport.authenticate('local-login'), (req, res) => {
   res.json({user});
 });
 
-router.post('/logout', passport.authenticate('local-login'), (req, res) => {
+router.post('/logout', passport.authenticate('local-login'), (req) => {
   req.logout();
-});
-
-router.patch('/', (req, res, next) => {
-
 });
 
 module.exports = router;

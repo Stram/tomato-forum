@@ -14,7 +14,7 @@ export default Backbone.View.extend({
   },
 
   submit() {
-    const $form  = this.$('.js-form');
+    const $form = this.$('.js-form');
     const email = $form.find('.js-email').val();
     const password = $form.find('.js-password').val();
 
@@ -25,7 +25,7 @@ export default Backbone.View.extend({
         email,
         password
       }
-    }).done((user, status) => {
+    }).done((user) => {
       console.log(user);
     });
   },

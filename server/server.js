@@ -7,8 +7,8 @@ import session from 'express-session';
 import passport from 'passport';
 import flash from 'connect-flash';
 
-import databaseConfig from './config/database'
-import passportConfig from './config/passport'
+import databaseConfig from './config/database';
+import passportConfig from './config/passport';
 
 import api from './api/api';
 
@@ -32,10 +32,10 @@ app.use('/public', express.static(path.resolve('public')));
 
 app.use('/api', api);
 
-app.get(/^(?!\/public|\/api).*$/, function (req, res) {
+app.get(/^(?!\/public|\/api).*$/, function(req, res) {
   res.sendFile(path.resolve('client/index.html'));
 });
 
-app.listen(3000, function () {
+app.listen(3000, function() {
   console.log('Example app listening on port 3000!');
 });

@@ -5686,7 +5686,7 @@
 	        email: email,
 	        password: password
 	      }
-	    }).done(function (user, status) {
+	    }).done(function (user) {
 	      console.log(user);
 	    });
 	  },

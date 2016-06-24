@@ -6,4 +6,4 @@ export default `<div class="card">
       REGISTER
     </div>
   </form>
-</div>`
+</div>`;
