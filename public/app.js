@@ -54,11 +54,11 @@
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
-	var _router = __webpack_require__(9);
+	var _router = __webpack_require__(5);
 
 	var _router2 = _interopRequireDefault(_router);
 
-	__webpack_require__(5);
+	__webpack_require__(14);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5244,13 +5244,419 @@
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(1);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _jquery = __webpack_require__(3);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _register = __webpack_require__(6);
+
+	var _register2 = _interopRequireDefault(_register);
+
+	var _login = __webpack_require__(9);
+
+	var _login2 = _interopRequireDefault(_login);
+
+	var _selectUsername = __webpack_require__(11);
+
+	var _selectUsername2 = _interopRequireDefault(_selectUsername);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Router = _backbone2.default.Router.extend({
+	  routes: {
+	    '': 'landing',
+	    register: 'register',
+	    login: 'login',
+	    'username/:userId': 'selectUsername'
+	  },
+
+	  currentView: null,
+	  $pageElement: (0, _jquery2.default)('.page-content'),
+
+	  changeView: function changeView(view) {
+	    if (this.currentView) {
+	      this.currentView.close();
+	    }
+
+	    if (!this.$pageElement.length) {
+	      this.$pageElement = (0, _jquery2.default)('.page-content');
+	    }
+
+	    this.currentView = view;
+	    view.render();
+	    this.$pageElement.html(view.el);
+
+	    console.log('changing view to ' + view.className);
+	  },
+	  landing: function landing() {
+	    var registerPage = new _register2.default();
+	    this.changeView(registerPage);
+	  },
+	  register: function register() {
+	    var registerPage = new _register2.default();
+	    this.changeView(registerPage);
+	  },
+	  login: function login() {
+	    var loginPage = new _login2.default();
+	    this.changeView(loginPage);
+	  },
+	  selectUsername: function selectUsername(userId) {
+	    var selectUsernamePage = new _selectUsername2.default({
+	      userId: userId
+	    });
+	    this.changeView(selectUsernamePage);
+	  }
+	});
+
+	exports.default = new Router();
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(1);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _underscore = __webpack_require__(2);
+
+	var _underscore2 = _interopRequireDefault(_underscore);
+
+	var _jquery = __webpack_require__(3);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _config = __webpack_require__(7);
+
+	var _config2 = _interopRequireDefault(_config);
+
+	var _register = __webpack_require__(8);
+
+	var _register2 = _interopRequireDefault(_register);
+
+	var _router = __webpack_require__(5);
+
+	var _router2 = _interopRequireDefault(_router);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+	  tagName: 'div',
+
+	  className: 'page register-page',
+
+	  events: {
+	    'submit .js-form': 'submit'
+	  },
+
+	  template: _underscore2.default.template((0, _register2.default)()),
+
+	  render: function render() {
+	    this.$el.html(this.template());
+
+	    return this;
+	  },
+	  close: function close() {
+	    this.remove();
+	  },
+	  submit: function submit(event) {
+	    event.preventDefault();
+	    var $form = this.$('.js-form');
+	    var email = $form.find('.js-email').val();
+	    var password = $form.find('.js-password').val();
+
+	    _jquery2.default.ajax({
+	      url: _config2.default.apiEndpoint + '/user',
+	      method: 'POST',
+	      data: {
+	        email: email,
+	        password: password
+	      }
+	    }).done(function (response) {
+	      console.log('LALAL');
+	      console.log(response);
+	      var user = response.user;
+	      console.log(user);
+	      _router2.default.navigate('username/' + user.id, true);
+	    }).fail(function (jqXHR) {
+	      if (jqXHR.status >= 400) {
+	        var errors = jqXHR.responseJSON.errors;
+	        _underscore2.default.each(errors, function (error) {
+	          $form.find('.js-error-' + error.field).text(error.message);
+	        });
+	      }
+	    });
+	  }
+	});
+
+/***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = {
+	  apiEndpoint: '/api'
+	};
+
+/***/ },
+/* 8 */
+/***/ function(module, exports) {
+
+	module.exports = function(obj) {
+	obj || (obj = {});
+	var __t, __p = '';
+	with (obj) {
+	__p += '<div class="card">\n  <form class="js-form">\n    <div class="card__content">\n      <div class="input-box">\n        <label for="register-input-email" class="input-box__label">Email</label>\n        <input type="email" class="input-box__input js-email" id="register-input-email" required/>\n        <span class="input-box__message is-error js-error-email"></span>\n      </div>\n      <div class="input-box">\n        <label for="register-input-password" class="input-box__label">Password</label>\n        <input type="password" class="input-box__input js-password" id="register-input-password" required/>\n        <span class="input-box__message is-error js-error-password"></span>\n      </div>\n    </div>\n    <div class="card__actions align-right">\n      <button class="button button--dialog" type="submit">\n        REGISTER\n      </button>\n    </div>\n  </form>\n</div>\n';
+
+	}
+	return __p
+	};
+
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(1);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _underscore = __webpack_require__(2);
+
+	var _underscore2 = _interopRequireDefault(_underscore);
+
+	var _jquery = __webpack_require__(3);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _config = __webpack_require__(7);
+
+	var _config2 = _interopRequireDefault(_config);
+
+	var _login = __webpack_require__(10);
+
+	var _login2 = _interopRequireDefault(_login);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+	  tagName: 'div',
+
+	  className: 'page login-page',
+
+	  events: {
+	    'click .js-submit': 'submit'
+	  },
+
+	  template: _underscore2.default.template((0, _login2.default)()),
+
+	  render: function render() {
+	    this.$el.html(this.template());
+
+	    return this;
+	  },
+	  close: function close() {
+	    this.remove();
+	  },
+	  submit: function submit() {
+	    var $form = this.$('.js-form');
+	    var identification = $form.find('.js-identification').val();
+	    var password = $form.find('.js-password').val();
+
+	    _jquery2.default.ajax({
+	      url: _config2.default.apiEndpoint + '/user',
+	      method: 'POST',
+	      data: {
+	        identification: identification,
+	        password: password
+	      }
+	    }).done(function (user) {
+	      console.log(user);
+	    });
+	  }
+	});
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	module.exports = function(obj) {
+	obj || (obj = {});
+	var __t, __p = '';
+	with (obj) {
+	__p += '<div class="card">\n  <form class="js-form">\n    <div class="card__content">\n      <div class="input-box">\n        <label for="login-input-identification" class="label">Email or username</label>\n        <input type="text" class="input js-identification" id="login-input-identification"/>\n      </div>\n      <div class="input-box">\n        <label for="login-input-password" class="label">Password</label>\n        <input type="password" class="input js-password" id="login-input-password"/>\n      </div>\n    </div>\n    <div class="card__actions align-right">\n      <div class="button button--dialog js-submit">\n        LOGIN\n      </div>\n    </div>\n  </form>\n</div>\n';
+
+	}
+	return __p
+	};
+
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(1);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _underscore = __webpack_require__(2);
+
+	var _underscore2 = _interopRequireDefault(_underscore);
+
+	var _jquery = __webpack_require__(3);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _config = __webpack_require__(7);
+
+	var _config2 = _interopRequireDefault(_config);
+
+	var _selectUsername = __webpack_require__(12);
+
+	var _selectUsername2 = _interopRequireDefault(_selectUsername);
+
+	var _router = __webpack_require__(5);
+
+	var _router2 = _interopRequireDefault(_router);
+
+	var _utils = __webpack_require__(13);
+
+	var _utils2 = _interopRequireDefault(_utils);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+	  tagName: 'div',
+
+	  className: 'page select-username-page',
+
+	  events: {
+	    'submit .js-form': 'submit'
+	  },
+
+	  template: _underscore2.default.template((0, _selectUsername2.default)()),
+
+	  initialize: function initialize(args) {
+	    this.userId = args.userId;
+	  },
+	  render: function render() {
+	    this.$el.html(this.template());
+
+	    return this;
+	  },
+	  close: function close() {
+	    this.remove();
+	  },
+	  submit: function submit(event) {
+	    event.preventDefault();
+	    var $form = this.$('.js-form');
+	    var username = $form.find('.js-username').val();
+	    var userId = this.userId;
+
+	    _jquery2.default.ajax({
+	      url: _config2.default.apiEndpoint + '/user/' + userId,
+	      method: 'PATCH',
+	      data: {
+	        username: username
+	      }
+	    }).done(function () {
+	      _router2.default.navigate('login', true);
+	    }).fail(function (jqXHR) {
+	      if (jqXHR.status >= 400) {
+	        var errors = jqXHR.responseJSON.errors;
+	        _underscore2.default.each(errors, function (error) {
+	          $form.find('.js-error-' + error.field).text(error.message);
+	        });
+	      }
+	    });
+	  }
+	});
+
+/***/ },
+/* 12 */
+/***/ function(module, exports) {
+
+	module.exports = function(obj) {
+	obj || (obj = {});
+	var __t, __p = '';
+	with (obj) {
+	__p += '<div class="card">\n  <form class="js-form">\n    <div class="card__content">\n      <div class="input-box">\n        <label for="select-username-input-username" class="input-box__label">Username</label>\n        <input type="text" class="input-box__input js-username" id="select-username-input-username" required/>\n        <span class="input-box__message is-error js-error-username"></span>\n      </div>\n    </div>\n    <div class="card__actions align-right">\n      <button class="button button--dialog js-submit" type="submit">\n        DONE\n      </button>\n    </div>\n  </form>\n</div>\n';
+
+	}
+	return __p
+	};
+
+
+/***/ },
+/* 13 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = {
+	  getQueryParam: function getQueryParam(name) {
+	    var url = arguments.length <= 1 || arguments[1] === undefined ? window.location.href : arguments[1];
+
+	    var queryName = name.replace(/[\[\]]/g, '\\$&');
+	    var regex = new RegExp('[?&]' + queryName + '(=([^&#]*)|&|#|$)');
+	    var results = regex.exec(url);
+
+	    if (!results) {
+	      return null;
+	    }
+	    if (!results[2]) {
+	      return '';
+	    }
+	    return decodeURIComponent(results[2].replace(/\+/g, ' '));
+	  }
+	};
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(6);
+	var content = __webpack_require__(15);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(8)(content, {});
+	var update = __webpack_require__(17)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -5267,10 +5673,10 @@
 	}
 
 /***/ },
-/* 6 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(7)();
+	exports = module.exports = __webpack_require__(16)();
 	// imports
 	exports.push([module.id, "@import url(https://fonts.googleapis.com/css?family=Roboto&subset=latin,latin-ext);", ""]);
 
@@ -5281,7 +5687,7 @@
 
 
 /***/ },
-/* 7 */
+/* 16 */
 /***/ function(module, exports) {
 
 	/*
@@ -5337,7 +5743,7 @@
 
 
 /***/ },
-/* 8 */
+/* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -5586,376 +5992,6 @@
 		if(oldSrc)
 			URL.revokeObjectURL(oldSrc);
 	}
-
-
-/***/ },
-/* 9 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _backbone = __webpack_require__(1);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _jquery = __webpack_require__(3);
-
-	var _jquery2 = _interopRequireDefault(_jquery);
-
-	var _register = __webpack_require__(10);
-
-	var _register2 = _interopRequireDefault(_register);
-
-	var _login = __webpack_require__(13);
-
-	var _login2 = _interopRequireDefault(_login);
-
-	var _selectUsername = __webpack_require__(18);
-
-	var _selectUsername2 = _interopRequireDefault(_selectUsername);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var Router = _backbone2.default.Router.extend({
-	  routes: {
-	    '': 'landing',
-	    register: 'register',
-	    login: 'login',
-	    username: 'selectUsername'
-	  },
-
-	  currentView: null,
-	  $pageElement: (0, _jquery2.default)('.page-content'),
-
-	  changeView: function changeView(view) {
-	    if (this.currentView) {
-	      this.currentView.close();
-	    }
-
-	    if (!this.$pageElement.length) {
-	      this.$pageElement = (0, _jquery2.default)('.page-content');
-	    }
-
-	    this.currentView = view;
-	    view.render();
-	    this.$pageElement.html(view.el);
-
-	    console.log('changing view to ' + view.className);
-	  },
-	  landing: function landing() {
-	    var registerPage = new _register2.default();
-	    this.changeView(registerPage);
-	  },
-	  register: function register() {
-	    var registerPage = new _register2.default();
-	    this.changeView(registerPage);
-	  },
-	  login: function login() {
-	    var loginPage = new _login2.default();
-	    this.changeView(loginPage);
-	  },
-	  selectUsername: function selectUsername() {
-	    var selectUsernamePage = new _selectUsername2.default();
-	    this.changeView(selectUsernamePage);
-	  }
-	});
-
-	exports.default = new Router();
-
-/***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _backbone = __webpack_require__(1);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _underscore = __webpack_require__(2);
-
-	var _underscore2 = _interopRequireDefault(_underscore);
-
-	var _jquery = __webpack_require__(3);
-
-	var _jquery2 = _interopRequireDefault(_jquery);
-
-	var _config = __webpack_require__(11);
-
-	var _config2 = _interopRequireDefault(_config);
-
-	var _register = __webpack_require__(12);
-
-	var _register2 = _interopRequireDefault(_register);
-
-	var _router = __webpack_require__(9);
-
-	var _router2 = _interopRequireDefault(_router);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _backbone2.default.View.extend({
-	  tagName: 'div',
-
-	  className: 'page register-page',
-
-	  events: {
-	    'submit .js-form': 'submit'
-	  },
-
-	  template: _underscore2.default.template((0, _register2.default)()),
-
-	  render: function render() {
-	    this.$el.html(this.template());
-
-	    return this;
-	  },
-	  close: function close() {
-	    this.remove();
-	  },
-	  submit: function submit(event) {
-	    event.preventDefault();
-	    var $form = this.$('.js-form');
-	    var email = $form.find('.js-email').val();
-	    var password = $form.find('.js-password').val();
-
-	    _jquery2.default.ajax({
-	      url: _config2.default.apiEndpoint + '/user',
-	      method: 'POST',
-	      data: {
-	        email: email,
-	        password: password
-	      }
-	    }).done(function (user) {
-	      console.log(user);
-	      _router2.default.navigate('username', true);
-	    }).fail(function (jqXHR) {
-	      if (jqXHR.status >= 400) {
-	        var errors = jqXHR.responseJSON.errors;
-	        _underscore2.default.each(errors, function (error) {
-	          $form.find('.js-error-' + error.field).text(error.message);
-	        });
-	      }
-	    });
-	  }
-	});
-
-/***/ },
-/* 11 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.default = {
-	  apiEndpoint: '/api'
-	};
-
-/***/ },
-/* 12 */
-/***/ function(module, exports) {
-
-	module.exports = function(obj) {
-	obj || (obj = {});
-	var __t, __p = '';
-	with (obj) {
-	__p += '<div class="card">\n  <form class="js-form">\n    <div class="card__content">\n      <div class="input-box">\n        <label for="register-input-email" class="input-box__label">Email</label>\n        <input type="email" class="input-box__input js-email" id="register-input-email" required/>\n        <span class="input-box__message is-error js-error-email"></span>\n      </div>\n      <div class="input-box">\n        <label for="register-input-password" class="input-box__label">Password</label>\n        <input type="password" class="input-box__input js-password" id="register-input-password" required/>\n        <span class="input-box__message is-error js-error-password"></span>\n      </div>\n    </div>\n    <div class="card__actions align-right">\n      <button class="button button--dialog" type="submit">\n        REGISTER\n      </button>\n    </div>\n  </form>\n</div>\n';
-
-	}
-	return __p
-	};
-
-
-/***/ },
-/* 13 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _backbone = __webpack_require__(1);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _underscore = __webpack_require__(2);
-
-	var _underscore2 = _interopRequireDefault(_underscore);
-
-	var _jquery = __webpack_require__(3);
-
-	var _jquery2 = _interopRequireDefault(_jquery);
-
-	var _config = __webpack_require__(11);
-
-	var _config2 = _interopRequireDefault(_config);
-
-	var _login = __webpack_require__(14);
-
-	var _login2 = _interopRequireDefault(_login);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _backbone2.default.View.extend({
-	  tagName: 'div',
-
-	  className: 'page login-page',
-
-	  events: {
-	    'click .js-submit': 'submit'
-	  },
-
-	  template: _underscore2.default.template((0, _login2.default)()),
-
-	  render: function render() {
-	    this.$el.html(this.template());
-
-	    return this;
-	  },
-	  close: function close() {
-	    this.remove();
-	  },
-	  submit: function submit() {
-	    var $form = this.$('.js-form');
-	    var identification = $form.find('.js-identification').val();
-	    var password = $form.find('.js-password').val();
-
-	    _jquery2.default.ajax({
-	      url: _config2.default.apiEndpoint + '/user',
-	      method: 'POST',
-	      data: {
-	        identification: identification,
-	        password: password
-	      }
-	    }).done(function (user) {
-	      console.log(user);
-	    });
-	  }
-	});
-
-/***/ },
-/* 14 */
-/***/ function(module, exports) {
-
-	module.exports = function(obj) {
-	obj || (obj = {});
-	var __t, __p = '';
-	with (obj) {
-	__p += '<div class="card">\n  <form class="js-form">\n    <div class="card__content">\n      <div class="input-box">\n        <label for="login-input-identification" class="label">Email or username</label>\n        <input type="text" class="input js-identification" id="login-input-identification"/>\n      </div>\n      <div class="input-box">\n        <label for="login-input-password" class="label">Password</label>\n        <input type="password" class="input js-password" id="login-input-password"/>\n      </div>\n    </div>\n    <div class="card__actions align-right">\n      <div class="button button--dialog js-submit">\n        LOGIN\n      </div>\n    </div>\n  </form>\n</div>\n';
-
-	}
-	return __p
-	};
-
-
-/***/ },
-/* 15 */,
-/* 16 */,
-/* 17 */,
-/* 18 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _backbone = __webpack_require__(1);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _underscore = __webpack_require__(2);
-
-	var _underscore2 = _interopRequireDefault(_underscore);
-
-	var _jquery = __webpack_require__(3);
-
-	var _jquery2 = _interopRequireDefault(_jquery);
-
-	var _config = __webpack_require__(11);
-
-	var _config2 = _interopRequireDefault(_config);
-
-	var _selectUsername = __webpack_require__(19);
-
-	var _selectUsername2 = _interopRequireDefault(_selectUsername);
-
-	var _router = __webpack_require__(9);
-
-	var _router2 = _interopRequireDefault(_router);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _backbone2.default.View.extend({
-	  tagName: 'div',
-
-	  className: 'page select-username-page',
-
-	  events: {
-	    'submit .js-form': 'submit'
-	  },
-
-	  template: _underscore2.default.template((0, _selectUsername2.default)()),
-
-	  render: function render() {
-	    this.$el.html(this.template());
-
-	    return this;
-	  },
-	  close: function close() {
-	    this.remove();
-	  },
-	  submit: function submit(event) {
-	    event.preventDefault();
-	    var $form = this.$('.js-form');
-	    var username = $form.find('.js-username').val();
-
-	    _jquery2.default.ajax({
-	      url: _config2.default.apiEndpoint + '/user',
-	      method: 'PATCH',
-	      data: {
-	        username: username
-	      }
-	    }).done(function (user) {
-	      console.log(user);
-	      _router2.default.navigate('login', true);
-	    }).fail(function (jqXHR) {
-	      if (jqXHR.status >= 400) {
-	        var errors = jqXHR.responseJSON.errors;
-	        _underscore2.default.each(errors, function (error) {
-	          $form.find('.js-error-' + error.field).text(error.message);
-	        });
-	      }
-	    });
-	  }
-	});
-
-/***/ },
-/* 19 */
-/***/ function(module, exports) {
-
-	module.exports = function(obj) {
-	obj || (obj = {});
-	var __t, __p = '';
-	with (obj) {
-	__p += '<div class="card">\n  <form class="js-form">\n    <div class="card__content">\n      <div class="input-box">\n        <label for="select-username-input-username" class="input-box__label">Username</label>\n        <input type="text" class="input-box__input js-username" id="select-username-input-username" required/>\n        <span class="input-box__message is-error js-error-username"></span>\n      </div>\n    </div>\n    <div class="card__actions align-right">\n      <button class="button button--dialog js-submit" type="submit">\n        DONE\n      </button>\n    </div>\n  </form>\n</div>\n';
-
-	}
-	return __p
-	};
 
 
 /***/ }

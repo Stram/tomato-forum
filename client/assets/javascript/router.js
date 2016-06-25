@@ -9,7 +9,7 @@ const Router = Backbone.Router.extend({
     '': 'landing',
     register: 'register',
     login: 'login',
-    username: 'selectUsername'
+    'username/:userId': 'selectUsername'
   },
 
   currentView: null,
@@ -46,8 +46,10 @@ const Router = Backbone.Router.extend({
     this.changeView(loginPage);
   },
 
-  selectUsername() {
-    const selectUsernamePage = new SelectUsernamePageView();
+  selectUsername(userId) {
+    const selectUsernamePage = new SelectUsernamePageView({
+      userId
+    });
     this.changeView(selectUsernamePage);
   }
 });

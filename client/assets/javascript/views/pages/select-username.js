@@ -4,6 +4,7 @@ import $ from 'jquery';
 import config from 'config';
 import template from 'views/pages/templates/select-username.html';
 import router from 'router';
+import utils from 'utils';
 
 export default Backbone.View.extend({
   tagName: 'div',
@@ -15,6 +16,10 @@ export default Backbone.View.extend({
   },
 
   template: _.template(template()),
+
+  initialize(args) {
+    this.userId = args.userId;
+  },
 
   render() {
     this.$el.html(
@@ -32,15 +37,15 @@ export default Backbone.View.extend({
     event.preventDefault();
     const $form = this.$('.js-form');
     const username = $form.find('.js-username').val();
+    const userId = this.userId;
 
     $.ajax({
-      url: `${config.apiEndpoint}/user`,
+      url: `${config.apiEndpoint}/user/${userId}`,
       method: 'PATCH',
       data: {
         username
       }
-    }).done((user) => {
-      console.log(user);
+    }).done(() => {
       router.navigate('login', true);
     }).fail((jqXHR) => {
       if (jqXHR.status >= 400) {

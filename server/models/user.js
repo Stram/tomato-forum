@@ -31,4 +31,13 @@ userSchema.methods.validPassword = function(password) {
   return bcrypt.compareSync(password, this.local.password);
 };
 
+userSchema.options.toObject = userSchema.options.toObject ? userSchema.options.toObject : {};
+userSchema.options.toObject.transform = function(doc, ret) {
+  ret.id = ret._id;
+  delete ret._id;
+  delete ret.__v;
+  delete ret.local;
+  return ret;
+};
+
 module.exports = mongoose.model('User', userSchema);

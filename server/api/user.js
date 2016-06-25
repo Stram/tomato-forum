@@ -5,24 +5,6 @@ import validate from '../services/validate';
 
 const router = new express.Router();
 
-router.use((req, res, next) => {
-  next();
-});
-
-router.get('/:id', (req, res) => {
-  const userId = req.params.id;
-  if (!userId) {
-    res.json({error: 'No id'});
-  }
-
-  User.findOne({id: userId}, (error, user) => {
-    if (error) {
-      res.json({error});
-    }
-    res.json(user);
-  });
-});
-
 router.post('/', (req, res, next) => {
   const errors = validate({
     email: req.body.email,
@@ -30,9 +12,7 @@ router.post('/', (req, res, next) => {
   });
   if (errors.length) {
     res.status(400);
-    res.json({
-      errors
-    });
+    res.json({errors});
     return;
   }
 
@@ -48,8 +28,54 @@ router.post('/', (req, res, next) => {
       return;
     }
     res.status(200);
-    res.json({user});
+    res.json({user: user.toObject()});
   })(req, res, next);
+});
+
+router.patch('/:id', (req, res, next) => {
+  const userId = req.params.id;
+  if (!userId) {
+    res.status(400);
+    res.json({
+      errors: [{
+        message: 'No user id provided'
+      }]
+    });
+    return;
+  }
+
+  const username = req.body.username;
+  const errors = validate({
+    username
+  });
+
+  if (errors.length) {
+    res.status(400);
+    res.json({errors});
+    return;
+  }
+
+  User.findOneAndUpdate(
+    {_id: userId},
+    {username},
+    {new: true},
+    (error, user) => {
+      if (error) {
+        next(error);
+      }
+      if (!user) {
+        res.status(404);
+        res.json({
+          errors: [{
+            message: 'User not found'
+          }]
+        });
+        return;
+      }
+
+      res.json(user);
+    }
+  );
 });
 
 router.post('/login', passport.authenticate('local-login'), (req, res) => {
