@@ -5275,7 +5275,7 @@
 	exports.push([module.id, "@import url(https://fonts.googleapis.com/css?family=Roboto&subset=latin,latin-ext);", ""]);
 
 	// module
-	exports.push([module.id, ".align-right {\n  text-align: right; }\n\nhtml {\n  height: 100%; }\n\n.body {\n  font-family: 'Roboto', sans-serif;\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  margin: 0;\n  background-color: #FAFAFA;\n  color: #212121; }\n\n.page-content {\n  flex: 1; }\n\n.header,\n.footer {\n  height: 50px;\n  background-color: #F5F5F5; }\n\n.card {\n  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3);\n  background-color: #FFFFFF;\n  border-radius: 2px; }\n  .card .card__content {\n    padding: 24px 24px 16px; }\n  .card .card__actions {\n    padding: 8px; }\n\n.input-box {\n  padding: 16px 0 8px; }\n  .input-box .label {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n  .input-box .input {\n    font-size: 16px;\n    line-height: 16px;\n    min-width: 250px;\n    display: block;\n    padding: 0 0 7px;\n    border-top: 0;\n    border-right: 0;\n    border-bottom: 1px solid #424242;\n    border-left: 0;\n    margin: 8px 0;\n    outline: 0; }\n    .input-box .input:focus {\n      border-bottom: 1px solid red; }\n\n.button {\n  display: inline-block;\n  text-align: center;\n  text-transform: uppercase;\n  cursor: pointer;\n  font-size: 14px;\n  border-radius: 2px;\n  line-height: 14px;\n  padding: 10px 16px; }\n  .button.button--dialog {\n    min-width: 64px;\n    padding: 10px 8px;\n    margin: 0 8px; }\n  .button.button--raised {\n    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n\n.header {\n  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n\n.register-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.login-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n", ""]);
+	exports.push([module.id, ".align-right {\n  text-align: right; }\n\nhtml {\n  height: 100%; }\n\n.body {\n  font-family: 'Roboto', sans-serif;\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  margin: 0;\n  background-color: #FAFAFA;\n  color: #212121; }\n\n.page-content {\n  flex: 1; }\n\n.header,\n.footer {\n  height: 50px;\n  background-color: #F5F5F5; }\n\n.card {\n  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3);\n  background-color: #FFFFFF;\n  border-radius: 2px; }\n  .card .card__content {\n    padding: 24px 24px 16px; }\n  .card .card__actions {\n    padding: 8px; }\n\n.input-box {\n  padding: 16px 0 8px; }\n  .input-box .input-box__label {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n  .input-box .input-box__input {\n    font-size: 16px;\n    line-height: 16px;\n    min-width: 250px;\n    display: block;\n    padding: 0 0 7px;\n    border-top: 0;\n    border-right: 0;\n    border-bottom: 1px solid #424242;\n    border-left: 0;\n    margin: 8px 0;\n    outline: 0; }\n    .input-box .input-box__input:focus {\n      border-bottom: 1px solid red; }\n  .input-box .input-box__message {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n    .input-box .input-box__message.is-error {\n      color: #F44336; }\n\n.button {\n  display: inline-block;\n  text-align: center;\n  text-transform: uppercase;\n  cursor: pointer;\n  font-size: 14px;\n  border-radius: 2px;\n  border: 0;\n  line-height: 14px;\n  padding: 10px 16px;\n  background-color: transparent; }\n  .button.button--dialog {\n    min-width: 64px;\n    padding: 10px 8px;\n    margin: 0 8px; }\n  .button.button--raised {\n    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n\n.header {\n  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n\n.register-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.login-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.select-username-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n", ""]);
 
 	// exports
 
@@ -5614,13 +5614,18 @@
 
 	var _login2 = _interopRequireDefault(_login);
 
+	var _selectUsername = __webpack_require__(18);
+
+	var _selectUsername2 = _interopRequireDefault(_selectUsername);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var Router = _backbone2.default.Router.extend({
 	  routes: {
 	    '': 'landing',
 	    register: 'register',
-	    login: 'login'
+	    login: 'login',
+	    username: 'selectUsername'
 	  },
 
 	  currentView: null,
@@ -5652,6 +5657,10 @@
 	  login: function login() {
 	    var loginPage = new _login2.default();
 	    this.changeView(loginPage);
+	  },
+	  selectUsername: function selectUsername() {
+	    var selectUsernamePage = new _selectUsername2.default();
+	    this.changeView(selectUsernamePage);
 	  }
 	});
 
@@ -5699,7 +5708,7 @@
 	  className: 'page register-page',
 
 	  events: {
-	    'click .js-submit': 'submit'
+	    'submit .js-form': 'submit'
 	  },
 
 	  template: _underscore2.default.template((0, _register2.default)()),
@@ -5712,7 +5721,8 @@
 	  close: function close() {
 	    this.remove();
 	  },
-	  submit: function submit() {
+	  submit: function submit(event) {
+	    event.preventDefault();
 	    var $form = this.$('.js-form');
 	    var email = $form.find('.js-email').val();
 	    var password = $form.find('.js-password').val();
@@ -5726,7 +5736,14 @@
 	      }
 	    }).done(function (user) {
 	      console.log(user);
-	      _router2.default.navigate('login', true);
+	      _router2.default.navigate('username', true);
+	    }).fail(function (jqXHR) {
+	      if (jqXHR.status >= 400) {
+	        var errors = jqXHR.responseJSON.errors;
+	        _underscore2.default.each(errors, function (error) {
+	          $form.find('.js-error-' + error.field).text(error.message);
+	        });
+	      }
 	    });
 	  }
 	});
@@ -5752,7 +5769,7 @@
 	obj || (obj = {});
 	var __t, __p = '';
 	with (obj) {
-	__p += '<div class="card">\n  <form class="js-form">\n    <div class="card__content">\n      <div class="input-box">\n        <label for="register-input-email" class="label">Email</label>\n        <input type="email" class="input js-email" id="register-input-email"/>\n      </div>\n      <div class="input-box">\n        <label for="register-input-password" class="label">Password</label>\n        <input type="password" class="input js-password" id="register-input-password"/>\n      </div>\n    </div>\n    <div class="card__actions align-right">\n      <div class="button button--dialog js-submit">\n        REGISTER\n      </div>\n    </div>\n  </form>\n</div>\n';
+	__p += '<div class="card">\n  <form class="js-form">\n    <div class="card__content">\n      <div class="input-box">\n        <label for="register-input-email" class="input-box__label">Email</label>\n        <input type="email" class="input-box__input js-email" id="register-input-email" required/>\n        <span class="input-box__message is-error js-error-email"></span>\n      </div>\n      <div class="input-box">\n        <label for="register-input-password" class="input-box__label">Password</label>\n        <input type="password" class="input-box__input js-password" id="register-input-password" required/>\n        <span class="input-box__message is-error js-error-password"></span>\n      </div>\n    </div>\n    <div class="card__actions align-right">\n      <button class="button button--dialog" type="submit">\n        REGISTER\n      </button>\n    </div>\n  </form>\n</div>\n';
 
 	}
 	return __p
@@ -5837,6 +5854,104 @@
 	var __t, __p = '';
 	with (obj) {
 	__p += '<div class="card">\n  <form class="js-form">\n    <div class="card__content">\n      <div class="input-box">\n        <label for="login-input-identification" class="label">Email or username</label>\n        <input type="text" class="input js-identification" id="login-input-identification"/>\n      </div>\n      <div class="input-box">\n        <label for="login-input-password" class="label">Password</label>\n        <input type="password" class="input js-password" id="login-input-password"/>\n      </div>\n    </div>\n    <div class="card__actions align-right">\n      <div class="button button--dialog js-submit">\n        LOGIN\n      </div>\n    </div>\n  </form>\n</div>\n';
+
+	}
+	return __p
+	};
+
+
+/***/ },
+/* 15 */,
+/* 16 */,
+/* 17 */,
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(1);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _underscore = __webpack_require__(2);
+
+	var _underscore2 = _interopRequireDefault(_underscore);
+
+	var _jquery = __webpack_require__(3);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _config = __webpack_require__(11);
+
+	var _config2 = _interopRequireDefault(_config);
+
+	var _selectUsername = __webpack_require__(19);
+
+	var _selectUsername2 = _interopRequireDefault(_selectUsername);
+
+	var _router = __webpack_require__(9);
+
+	var _router2 = _interopRequireDefault(_router);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+	  tagName: 'div',
+
+	  className: 'page select-username-page',
+
+	  events: {
+	    'submit .js-form': 'submit'
+	  },
+
+	  template: _underscore2.default.template((0, _selectUsername2.default)()),
+
+	  render: function render() {
+	    this.$el.html(this.template());
+
+	    return this;
+	  },
+	  close: function close() {
+	    this.remove();
+	  },
+	  submit: function submit(event) {
+	    event.preventDefault();
+	    var $form = this.$('.js-form');
+	    var username = $form.find('.js-username').val();
+
+	    _jquery2.default.ajax({
+	      url: _config2.default.apiEndpoint + '/user',
+	      method: 'PATCH',
+	      data: {
+	        username: username
+	      }
+	    }).done(function (user) {
+	      console.log(user);
+	      _router2.default.navigate('login', true);
+	    }).fail(function (jqXHR) {
+	      if (jqXHR.status >= 400) {
+	        var errors = jqXHR.responseJSON.errors;
+	        _underscore2.default.each(errors, function (error) {
+	          $form.find('.js-error-' + error.field).text(error.message);
+	        });
+	      }
+	    });
+	  }
+	});
+
+/***/ },
+/* 19 */
+/***/ function(module, exports) {
+
+	module.exports = function(obj) {
+	obj || (obj = {});
+	var __t, __p = '';
+	with (obj) {
+	__p += '<div class="card">\n  <form class="js-form">\n    <div class="card__content">\n      <div class="input-box">\n        <label for="select-username-input-username" class="input-box__label">Username</label>\n        <input type="text" class="input-box__input js-username" id="select-username-input-username" required/>\n        <span class="input-box__message is-error js-error-username"></span>\n      </div>\n    </div>\n    <div class="card__actions align-right">\n      <button class="button button--dialog js-submit" type="submit">\n        DONE\n      </button>\n    </div>\n  </form>\n</div>\n';
 
 	}
 	return __p

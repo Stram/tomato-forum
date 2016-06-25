@@ -43,7 +43,7 @@ router.post('/', (req, res, next) => {
     if (!user) {
       res.status(401);
       res.json({
-        error: info.message
+        errors: [info.error]
       });
       return;
     }

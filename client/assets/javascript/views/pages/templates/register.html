@@ -2,18 +2,20 @@
   <form class="js-form">
     <div class="card__content">
       <div class="input-box">
-        <label for="register-input-email" class="label">Email</label>
-        <input type="email" class="input js-email" id="register-input-email"/>
+        <label for="register-input-email" class="input-box__label">Email</label>
+        <input type="email" class="input-box__input js-email" id="register-input-email" required/>
+        <span class="input-box__message is-error js-error-email"></span>
       </div>
       <div class="input-box">
-        <label for="register-input-password" class="label">Password</label>
-        <input type="password" class="input js-password" id="register-input-password"/>
+        <label for="register-input-password" class="input-box__label">Password</label>
+        <input type="password" class="input-box__input js-password" id="register-input-password" required/>
+        <span class="input-box__message is-error js-error-password"></span>
       </div>
     </div>
     <div class="card__actions align-right">
-      <div class="button button--dialog js-submit">
+      <button class="button button--dialog" type="submit">
         REGISTER
-      </div>
+      </button>
     </div>
   </form>
 </div>

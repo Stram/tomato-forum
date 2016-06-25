@@ -2,12 +2,14 @@ import Backbone from 'backbone';
 import $ from 'jquery';
 import RegisterPageView from 'views/pages/register';
 import LoginPageView from 'views/pages/login';
+import SelectUsernamePageView from 'views/pages/select-username';
 
 const Router = Backbone.Router.extend({
   routes: {
     '': 'landing',
     register: 'register',
-    login: 'login'
+    login: 'login',
+    username: 'selectUsername'
   },
 
   currentView: null,
@@ -42,6 +44,11 @@ const Router = Backbone.Router.extend({
   login() {
     const loginPage = new LoginPageView();
     this.changeView(loginPage);
+  },
+
+  selectUsername() {
+    const selectUsernamePage = new SelectUsernamePageView();
+    this.changeView(selectUsernamePage);
   }
 });
 

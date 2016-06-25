@@ -2,13 +2,13 @@ import Backbone from 'backbone';
 import _ from 'underscore';
 import $ from 'jquery';
 import config from 'config';
-import template from 'views/pages/templates/register.html';
+import template from 'views/pages/templates/select-username.html';
 import router from 'router';
 
 export default Backbone.View.extend({
   tagName: 'div',
 
-  className: 'page register-page',
+  className: 'page select-username-page',
 
   events: {
     'submit .js-form': 'submit'
@@ -31,19 +31,17 @@ export default Backbone.View.extend({
   submit(event) {
     event.preventDefault();
     const $form = this.$('.js-form');
-    const email = $form.find('.js-email').val();
-    const password = $form.find('.js-password').val();
+    const username = $form.find('.js-username').val();
 
     $.ajax({
       url: `${config.apiEndpoint}/user`,
-      method: 'POST',
+      method: 'PATCH',
       data: {
-        email,
-        password
+        username
       }
     }).done((user) => {
       console.log(user);
-      router.navigate('username', true);
+      router.navigate('login', true);
     }).fail((jqXHR) => {
       if (jqXHR.status >= 400) {
         const errors = jqXHR.responseJSON.errors;

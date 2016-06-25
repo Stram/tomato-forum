@@ -28,7 +28,12 @@ module.exports = function(passport) {
         }
 
         if (user) {
-          return done(null, false, {message: 'That email is already taken.'});
+          return done(null, false, {
+            error: {
+              message: 'That email is already taken.',
+              field: 'email'
+            }
+          });
         }
         const newUser = new User();
 

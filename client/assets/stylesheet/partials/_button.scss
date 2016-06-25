@@ -6,9 +6,11 @@
 
   font-size: 14px;
   border-radius: 2px;
+  border: 0;
   line-height: 14px;
   padding: 10px 16px;
-
+  background-color: transparent;
+  
   &.button--dialog {
     min-width: 64px;
     padding: 10px 8px;

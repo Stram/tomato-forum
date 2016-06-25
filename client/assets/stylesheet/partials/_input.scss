@@ -1,13 +1,13 @@
 .input-box {
   padding: 16px 0 8px;
 
-  .label {
+  .input-box__label {
     font-size: 12px;
     line-height: 16px;
     color: $color-text-grey-600;
   }
 
-  .input {
+  .input-box__input {
     font-size: 16px;
     line-height: 16px;
     min-width: 250px;
@@ -29,10 +29,13 @@
     }
   }
 
-  .message {
+  .input-box__message {
+    font-size: 12px;
+    line-height: 16px;
+    color: $color-text-grey-600;
 
-    &.message--error {
-
+    &.is-error {
+      color: $color-text-error;
     }
   }
 }
