@@ -1,4 +1,4 @@
-import passportLocal from 'passport-local'
+import passportLocal from 'passport-local';
 import User from '../models/user';
 
 const LocalStrategy = passportLocal.Strategy;
@@ -22,16 +22,14 @@ module.exports = function(passport) {
   },
   function(req, email, password, done) {
     process.nextTick(function() {
-
       User.findOne({'local.email': email}, (err, user) => {
         if (err) {
           return done(err);
         }
 
         if (user) {
-          return done(null, false, req.flash('signupMessage', 'That email is already taken.'));
+          return done(null, false, {message: 'That email is already taken.'});
         }
-
         const newUser = new User();
 
         newUser.local.email = email;
