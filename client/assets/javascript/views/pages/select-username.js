@@ -4,7 +4,6 @@ import $ from 'jquery';
 import config from 'config';
 import template from 'views/pages/templates/select-username.html';
 import router from 'router';
-import utils from 'utils';
 
 export default Backbone.View.extend({
   tagName: 'div',

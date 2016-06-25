@@ -5551,10 +5551,6 @@
 
 	var _router2 = _interopRequireDefault(_router);
 
-	var _utils = __webpack_require__(13);
-
-	var _utils2 = _interopRequireDefault(_utils);
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.default = _backbone2.default.View.extend({
@@ -5620,33 +5616,7 @@
 
 
 /***/ },
-/* 13 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.default = {
-	  getQueryParam: function getQueryParam(name) {
-	    var url = arguments.length <= 1 || arguments[1] === undefined ? window.location.href : arguments[1];
-
-	    var queryName = name.replace(/[\[\]]/g, '\\$&');
-	    var regex = new RegExp('[?&]' + queryName + '(=([^&#]*)|&|#|$)');
-	    var results = regex.exec(url);
-
-	    if (!results) {
-	      return null;
-	    }
-	    if (!results[2]) {
-	      return '';
-	    }
-	    return decodeURIComponent(results[2].replace(/\+/g, ' '));
-	  }
-	};
-
-/***/ },
+/* 13 */,
 /* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
