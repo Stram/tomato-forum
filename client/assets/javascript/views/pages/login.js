@@ -33,7 +33,7 @@ export default Backbone.View.extend({
     const password = $form.find('.js-password').val();
 
     $.ajax({
-      url: `${config.apiEndpoint}/user`,
+      url: `${config.apiEndpoint}/user/login`,
       method: 'POST',
       data: {
         identification,
@@ -41,6 +41,13 @@ export default Backbone.View.extend({
       }
     }).done((user) => {
       console.log(user);
+    }).fail((jqXHR) => {
+      if (jqXHR.status >= 400) {
+        const errors = jqXHR.responseJSON.errors;
+        _.each(errors, (error) => {
+          $form.find(`.js-error-${error.field}`).text(error.message);
+        });
+      }
     });
   }
 });

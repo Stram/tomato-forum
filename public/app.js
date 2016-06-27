@@ -5485,7 +5485,7 @@
 	    var password = $form.find('.js-password').val();
 
 	    _jquery2.default.ajax({
-	      url: _config2.default.apiEndpoint + '/user',
+	      url: _config2.default.apiEndpoint + '/user/login',
 	      method: 'POST',
 	      data: {
 	        identification: identification,
@@ -5493,6 +5493,13 @@
 	      }
 	    }).done(function (user) {
 	      console.log(user);
+	    }).fail(function (jqXHR) {
+	      if (jqXHR.status >= 400) {
+	        var errors = jqXHR.responseJSON.errors;
+	        _underscore2.default.each(errors, function (error) {
+	          $form.find('.js-error-' + error.field).text(error.message);
+	        });
+	      }
 	    });
 	  }
 	});

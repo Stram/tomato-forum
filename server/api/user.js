@@ -24,7 +24,7 @@ router.post('/register', (req, res, next) => {
       next(error);
     }
     if (!user) {
-      res.status(401);
+      res.status(400);
       res.json({
         errors: [info.error]
       });
@@ -45,7 +45,7 @@ router.post('/verify', (req, res, next) => {
   const token = req.body.token;
   const username = req.body.username;
 
-  User.findOneAndUpdate({_id: userId}, {username}, {new: true}, (error, user) => {
+  User.findOneAndUpdate({_id: userId}, {username, token: null}, {new: true}, (error, user) => {
     if (error) {
       next(error);
     }
@@ -74,9 +74,22 @@ router.post('/verify', (req, res, next) => {
 
 // LOGIN
 
-router.post('/login', passport.authenticate('local-login'), (req, res) => {
-  const user = req.user;
-  res.json({user: user.toObject()});
+router.post('/login', (req, res, next) => {
+  passport.authenticate('local-login', (error, user, info) => {
+    if (error) {
+      next(error);
+    }
+    if (!user) {
+      res.status(400);
+      res.json({
+        errors: [info.error]
+      });
+      return;
+    }
+
+    res.status(200);
+    res.json({user: user.toObject()});
+  })(req, res, next);
 });
 
 // LOGOUT

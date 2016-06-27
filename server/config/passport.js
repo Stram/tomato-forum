@@ -57,7 +57,7 @@ module.exports = function(passport) {
   },
   function(req, identification, password, done) {
     let userQuery = {username: identification};
-    if (identification.contains('@')) {
+    if (identification.indexOf('@') > -1) {
       userQuery = {'local.email': identification};
     }
     User.findOne(userQuery, function(err, user) {
@@ -66,11 +66,21 @@ module.exports = function(passport) {
       }
 
       if (!user) {
-        return done(null, false, req.flash('loginMessage', 'No user found.'));
+        return done(null, false, {
+          error: {
+            message: 'Wrong user/email',
+            field: 'identification'
+          }
+        });
       }
 
       if (!user.validPassword(password)) {
-        return done(null, false, req.flash('loginMessage', 'Oops! Wrong password.'));
+        return done(null, false, {
+          error: {
+            message: 'Incorrect password',
+            field: 'password'
+          }
+        });
       }
 
       return done(null, user);
