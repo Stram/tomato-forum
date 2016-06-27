@@ -2,14 +2,14 @@ import Backbone from 'backbone';
 import $ from 'jquery';
 import RegisterPageView from 'views/pages/register';
 import LoginPageView from 'views/pages/login';
-import SelectUsernamePageView from 'views/pages/select-username';
+import VerifyPageView from 'views/pages/verify';
 
 const Router = Backbone.Router.extend({
   routes: {
     '': 'landing',
     register: 'register',
     login: 'login',
-    'username/:userId': 'selectUsername'
+    'verify?userId=:userId&token=:token': 'verify'
   },
 
   currentView: null,
@@ -46,11 +46,11 @@ const Router = Backbone.Router.extend({
     this.changeView(loginPage);
   },
 
-  selectUsername(userId) {
-    const selectUsernamePage = new SelectUsernamePageView({
-      userId
+  verify(userId, token) {
+    const verifyPage = new VerifyPageView({
+      userId, token
     });
-    this.changeView(selectUsernamePage);
+    this.changeView(verifyPage);
   }
 });
 

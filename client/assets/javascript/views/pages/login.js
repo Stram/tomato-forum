@@ -2,7 +2,7 @@ import Backbone from 'backbone';
 import _ from 'underscore';
 import $ from 'jquery';
 import config from 'config';
-import template from 'views/pages/templates/login.html';
+import template from 'views/templates/login.html';
 
 export default Backbone.View.extend({
   tagName: 'div',

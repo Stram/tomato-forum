@@ -2,10 +2,13 @@ import express from 'express';
 import passport from 'passport';
 import User from '../models/user';
 import validate from '../services/validate';
+import mailer from '../services/mailer';
 
 const router = new express.Router();
 
-router.post('/', (req, res, next) => {
+// REGISTRATION
+
+router.post('/register', (req, res, next) => {
   const errors = validate({
     email: req.body.email,
     password: req.body.password
@@ -16,7 +19,7 @@ router.post('/', (req, res, next) => {
     return;
   }
 
-  passport.authenticate('local-signup', (error, user, info) => {
+  passport.authenticate('local-register', (error, user, info) => {
     if (error) {
       next(error);
     }
@@ -27,10 +30,65 @@ router.post('/', (req, res, next) => {
       });
       return;
     }
+
+    mailer.sendVerification(user);
+
     res.status(200);
     res.json({user: user.toObject()});
   })(req, res, next);
 });
+
+// VERIFY EMAIL AND UPDATE ACCOUNT
+
+router.post('/verify', (req, res, next) => {
+  const userId = req.body.userId;
+  const token = req.body.token;
+  const username = req.body.username;
+
+  User.findOneAndUpdate({_id: userId}, {username}, {new: true}, (error, user) => {
+    if (error) {
+      next(error);
+    }
+    if (!user) {
+      res.status(404);
+      res.json({
+        errors: [{
+          message: 'User not found'
+        }]
+      });
+      return;
+    }
+    if (user.token !== token) {
+      res.status(400);
+      res.json({
+        errors: [{
+          message: 'Token is not valid'
+        }]
+      });
+      return;
+    }
+
+    res.json({user: user.toObject()});
+  });
+});
+
+// LOGIN
+
+router.post('/login', passport.authenticate('local-login'), (req, res) => {
+  const user = req.user;
+  res.json({user: user.toObject()});
+});
+
+// LOGOUT
+
+router.post('/logout', (req) => {
+  req.logout();
+});
+
+
+
+
+
 
 router.patch('/:id', (req, res, next) => {
   const userId = req.params.id;
@@ -78,13 +136,6 @@ router.patch('/:id', (req, res, next) => {
   );
 });
 
-router.post('/login', passport.authenticate('local-login'), (req, res) => {
-  const user = req.user;
-  res.json({user});
-});
 
-router.post('/logout', (req) => {
-  req.logout();
-});
 
 module.exports = router;

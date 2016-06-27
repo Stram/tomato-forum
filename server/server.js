@@ -7,6 +7,7 @@ import session from 'express-session';
 import passport from 'passport';
 import flash from 'connect-flash';
 
+import applicationConfig from './config/application';
 import databaseConfig from './config/database';
 import passportConfig from './config/passport';
 
@@ -36,6 +37,6 @@ app.get(/^(?!\/public|\/api).*$/, function(req, res) {
   res.sendFile(path.resolve('client/index.html'));
 });
 
-app.listen(3000, function() {
-  console.log('Example app listening on port 3000!');
+app.listen(applicationConfig.port, function() {
+  console.log(`Example app listening on port ${applicationConfig.port}!`);
 });

@@ -2,7 +2,7 @@ import Backbone from 'backbone';
 import _ from 'underscore';
 import $ from 'jquery';
 import config from 'config';
-import template from 'views/pages/templates/register.html';
+import template from 'views/templates/register.html';
 import router from 'router';
 
 export default Backbone.View.extend({
@@ -35,18 +35,15 @@ export default Backbone.View.extend({
     const password = $form.find('.js-password').val();
 
     $.ajax({
-      url: `${config.apiEndpoint}/user`,
+      url: `${config.apiEndpoint}/user/register`,
       method: 'POST',
       data: {
         email,
         password
       }
     }).done((response) => {
-      console.log('LALAL');
-      console.log(response);
       const user = response.user;
-      console.log(user);
-      router.navigate(`username/${user.id}`, true);
+      router.navigate(`verify/username/${user.id}`, true);
     }).fail((jqXHR) => {
       if (jqXHR.status >= 400) {
         const errors = jqXHR.responseJSON.errors;

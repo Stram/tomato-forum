@@ -1,5 +1,8 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt-nodejs';
+import randToken from 'rand-token';
+
+import applicationConfig from '../config/application';
 
 const Schema = mongoose.Schema;
 
@@ -20,7 +23,10 @@ const userSchema = new Schema({
     token: String,
     email: String,
     name: String
-  }
+  },
+
+  token: String
+
 });
 
 userSchema.methods.generateHash = function(password) {
@@ -29,6 +35,18 @@ userSchema.methods.generateHash = function(password) {
 
 userSchema.methods.validPassword = function(password) {
   return bcrypt.compareSync(password, this.local.password);
+};
+
+userSchema.methods.getVerificationLink = function() {
+  const hostName = applicationConfig.getFullHostname();
+
+  const userId = this.id;
+  const token = randToken.generate(32);
+
+  this.token = token;
+  this.save();
+
+  return `http://${hostName}/verify?userId=${userId}&token=${token}`;
 };
 
 userSchema.options.toObject = userSchema.options.toObject ? userSchema.options.toObject : {};
