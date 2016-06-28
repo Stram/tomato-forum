@@ -83,7 +83,13 @@ module.exports = function(passport) {
         });
       }
 
-      return done(null, user);
+      req.logIn(user, function(error) {
+        if (error) {
+          return done(error);
+        }
+
+        return done(null, user);
+      });
     });
   }));
 };

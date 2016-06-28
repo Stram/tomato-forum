@@ -41,9 +41,8 @@ export default Backbone.View.extend({
         email,
         password
       }
-    }).done((response) => {
-      const user = response.user;
-      router.navigate(`verify/username/${user.id}`, true);
+    }).done(() => {
+
     }).fail((jqXHR) => {
       if (jqXHR.status >= 400) {
         const errors = jqXHR.responseJSON.errors;

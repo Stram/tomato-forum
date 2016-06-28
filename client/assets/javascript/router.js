@@ -1,15 +1,22 @@
 import Backbone from 'backbone';
 import $ from 'jquery';
+
+import session from 'session';
+
 import RegisterPageView from 'views/pages/register';
 import LoginPageView from 'views/pages/login';
 import VerifyPageView from 'views/pages/verify';
+import DashboardPageView from 'views/pages/dashboard';
+import FirstStepsPhotoPageView from 'views/pages/first-steps/photo';
 
 const Router = Backbone.Router.extend({
   routes: {
     '': 'landing',
     register: 'register',
     login: 'login',
-    'verify?userId=:userId&token=:token': 'verify'
+    'verify?userId=:userId&token=:token': 'verify',
+    dashboard: 'dashboard',
+    'first-steps/photo': 'firstStepsPhoto'
   },
 
   currentView: null,
@@ -51,6 +58,20 @@ const Router = Backbone.Router.extend({
       userId, token
     });
     this.changeView(verifyPage);
+  },
+
+  dashboard() {
+    const dashboardView = new DashboardPageView();
+    this.changeView(dashboardView);
+  },
+
+  firstStepsPhoto() {
+    if (session.isAuthenticated()) {
+      const firstStepsPhotoView = new FirstStepsPhotoPageView();
+      this.changeView(firstStepsPhotoView);
+      return;
+    }
+    this.navigate('login', true);
   }
 });
 

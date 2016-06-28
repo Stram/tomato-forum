@@ -54,16 +54,20 @@
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
-	var _router = __webpack_require__(5);
+	var _session = __webpack_require__(6);
 
-	var _router2 = _interopRequireDefault(_router);
+	var _session2 = _interopRequireDefault(_session);
 
-	__webpack_require__(11);
+	__webpack_require__(5);
+
+	__webpack_require__(20);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	(0, _jquery2.default)(function () {
-	  _backbone2.default.history.start({ pushState: true });
+	  _session2.default.initSession(function () {
+	    _backbone2.default.history.start({ pushState: true });
+	  });
 	});
 
 /***/ },
@@ -5258,17 +5262,29 @@
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
-	var _register = __webpack_require__(6);
+	var _session = __webpack_require__(6);
+
+	var _session2 = _interopRequireDefault(_session);
+
+	var _register = __webpack_require__(8);
 
 	var _register2 = _interopRequireDefault(_register);
 
-	var _login = __webpack_require__(9);
+	var _login = __webpack_require__(10);
 
 	var _login2 = _interopRequireDefault(_login);
 
-	var _verify = __webpack_require__(17);
+	var _verify = __webpack_require__(13);
 
 	var _verify2 = _interopRequireDefault(_verify);
+
+	var _dashboard = __webpack_require__(17);
+
+	var _dashboard2 = _interopRequireDefault(_dashboard);
+
+	var _photo = __webpack_require__(25);
+
+	var _photo2 = _interopRequireDefault(_photo);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5277,7 +5293,9 @@
 	    '': 'landing',
 	    register: 'register',
 	    login: 'login',
-	    'verify?userId=:userId&token=:token': 'verify'
+	    'verify?userId=:userId&token=:token': 'verify',
+	    dashboard: 'dashboard',
+	    'first-steps/photo': 'firstStepsPhoto'
 	  },
 
 	  currentView: null,
@@ -5315,6 +5333,18 @@
 	      userId: userId, token: token
 	    });
 	    this.changeView(verifyPage);
+	  },
+	  dashboard: function dashboard() {
+	    var dashboardView = new _dashboard2.default();
+	    this.changeView(dashboardView);
+	  },
+	  firstStepsPhoto: function firstStepsPhoto() {
+	    if (_session2.default.isAuthenticated()) {
+	      var firstStepsPhotoView = new _photo2.default();
+	      this.changeView(firstStepsPhotoView);
+	      return;
+	    }
+	    this.navigate('login', true);
 	  }
 	});
 
@@ -5322,6 +5352,66 @@
 
 /***/ },
 /* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _jquery = __webpack_require__(3);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _config = __webpack_require__(7);
+
+	var _config2 = _interopRequireDefault(_config);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = {
+	  _currentUser: null,
+
+	  setCurrentUser: function setCurrentUser(user) {
+	    this._currentUser = user;
+	  },
+	  getCurrentUser: function getCurrentUser() {
+	    return this._currentUser;
+	  },
+	  isAuthenticated: function isAuthenticated() {
+	    return !!this._currentUser;
+	  },
+	  initSession: function initSession(callback) {
+	    var self = this;
+	    _jquery2.default.ajax({
+	      url: _config2.default.apiEndpoint + '/user/current'
+	    }).done(function (response) {
+	      var currentUser = response.user;
+	      self._currentUser = currentUser;
+
+	      callback.apply(self);
+
+	      console.log(currentUser);
+	    });
+	  }
+	};
+
+/***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports.default = {
+	  apiEndpoint: '/api'
+	};
+
+/***/ },
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5346,7 +5436,7 @@
 
 	var _config2 = _interopRequireDefault(_config);
 
-	var _register = __webpack_require__(8);
+	var _register = __webpack_require__(9);
 
 	var _register2 = _interopRequireDefault(_register);
 
@@ -5388,10 +5478,7 @@
 	        email: email,
 	        password: password
 	      }
-	    }).done(function (response) {
-	      var user = response.user;
-	      _router2.default.navigate('verify/username/' + user.id, true);
-	    }).fail(function (jqXHR) {
+	    }).done(function () {}).fail(function (jqXHR) {
 	      if (jqXHR.status >= 400) {
 	        var errors = jqXHR.responseJSON.errors;
 	        _underscore2.default.each(errors, function (error) {
@@ -5403,20 +5490,7 @@
 	});
 
 /***/ },
-/* 7 */
-/***/ function(module, exports) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-	exports.default = {
-	  apiEndpoint: '/api'
-	};
-
-/***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports) {
 
 	module.exports = function(obj){
@@ -5429,7 +5503,7 @@
 
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5454,9 +5528,21 @@
 
 	var _config2 = _interopRequireDefault(_config);
 
-	var _login = __webpack_require__(10);
+	var _login = __webpack_require__(11);
 
 	var _login2 = _interopRequireDefault(_login);
+
+	var _router = __webpack_require__(5);
+
+	var _router2 = _interopRequireDefault(_router);
+
+	var _session = __webpack_require__(6);
+
+	var _session2 = _interopRequireDefault(_session);
+
+	var _user = __webpack_require__(12);
+
+	var _user2 = _interopRequireDefault(_user);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5491,8 +5577,11 @@
 	        identification: identification,
 	        password: password
 	      }
-	    }).done(function (user) {
-	      console.log(user);
+	    }).done(function (response) {
+	      _session2.default.setCurrentUser(new _user2.default(response.user));
+	      // router.navigate('dashboard', true);
+	      // TODO: TESTING!
+	      _router2.default.navigate('first-steps/photo', true);
 	    }).fail(function (jqXHR) {
 	      if (jqXHR.status >= 400) {
 	        var errors = jqXHR.responseJSON.errors;
@@ -5505,7 +5594,7 @@
 	});
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports) {
 
 	module.exports = function(obj){
@@ -5518,16 +5607,269 @@
 
 
 /***/ },
-/* 11 */
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(1);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.Model.extend({});
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(1);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _underscore = __webpack_require__(2);
+
+	var _underscore2 = _interopRequireDefault(_underscore);
+
+	var _jquery = __webpack_require__(3);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _config = __webpack_require__(7);
+
+	var _config2 = _interopRequireDefault(_config);
+
+	var _router = __webpack_require__(5);
+
+	var _router2 = _interopRequireDefault(_router);
+
+	var _verify = __webpack_require__(14);
+
+	var _verify2 = _interopRequireDefault(_verify);
+
+	var _terms = __webpack_require__(15);
+
+	var _terms2 = _interopRequireDefault(_terms);
+
+	var _username = __webpack_require__(16);
+
+	var _username2 = _interopRequireDefault(_username);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+	  tagName: 'div',
+
+	  className: 'page verify-page',
+
+	  events: {
+	    'click .js-action': 'buttonClicked'
+	  },
+
+	  template: _underscore2.default.template((0, _verify2.default)()),
+
+	  initialize: function initialize(args) {
+	    this.step = 1;
+	    this.userId = args.userId;
+	    this.token = args.token;
+	  },
+	  render: function render() {
+	    this.$el.html(this.template());
+
+	    var $card = this.$('.js-verify-card');
+	    var $content = $card.find('.js-content');
+	    var $action = $card.find('.js-action');
+
+	    switch (this.step) {
+	      case 1:
+	        $content.html((0, _terms2.default)());
+	        $action.text('ACCEPT');
+	        break;
+	      case 2:
+	        $content.html((0, _username2.default)());
+	        $action.text('DONE');
+	        break;
+	      default:
+	        $content.html((0, _terms2.default)());
+	        $action.text('ACCEPT');
+	        break;
+	    }
+
+	    return this;
+	  },
+	  close: function close() {
+	    this.remove();
+	  },
+	  buttonClicked: function buttonClicked() {
+	    var _this = this;
+
+	    if (this.step === 1) {
+	      this.step = 2;
+	      this.render();
+	    } else if (this.step === 2) {
+	      (function () {
+	        var self = _this;
+	        var username = _this.$('.js-username').val();
+	        var userId = _this.userId;
+	        var token = _this.token;
+
+	        _jquery2.default.ajax({
+	          url: _config2.default.apiEndpoint + '/user/verify',
+	          method: 'POST',
+	          data: {
+	            username: username,
+	            userId: userId,
+	            token: token
+	          }
+	        }).done(function () {
+	          _router2.default.navigate('login', true);
+	        }).fail(function (jqXHR) {
+	          if (jqXHR.status >= 400) {
+	            var errors = jqXHR.responseJSON.errors;
+	            _underscore2.default.each(errors, function (error) {
+	              self.$('.js-error-' + error.field).text(error.message);
+	            });
+	          }
+	        });
+	      })();
+	    }
+	  }
+	});
+
+/***/ },
+/* 14 */
+/***/ function(module, exports) {
+
+	module.exports = function(obj){
+	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+	with(obj||{}){
+	__p+='<div class="card js-verify-card">\n  <div class="card__content js-content">\n\n  </div>\n  <div class="card__actions align-right">\n    <button class="button button--dialog js-action" type="submit">\n      REGISTER\n    </button>\n  </div>\n</div>\n';
+	}
+	return __p;
+	};
+
+
+/***/ },
+/* 15 */
+/***/ function(module, exports) {
+
+	module.exports = function(obj){
+	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+	with(obj||{}){
+	__p+='<div class="tos-container">\n  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n</div>\n';
+	}
+	return __p;
+	};
+
+
+/***/ },
+/* 16 */
+/***/ function(module, exports) {
+
+	module.exports = function(obj){
+	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+	with(obj||{}){
+	__p+='<div class="input-box">\n  <label for="select-username-input-username" class="input-box__label">Username</label>\n  <input type="text" class="input-box__input js-username" id="select-username-input-username" required/>\n  <span class="input-box__message is-error js-error-username"></span>\n</div>\n';
+	}
+	return __p;
+	};
+
+
+/***/ },
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(1);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _underscore = __webpack_require__(2);
+
+	var _underscore2 = _interopRequireDefault(_underscore);
+
+	var _dashboard = __webpack_require__(18);
+
+	var _dashboard2 = _interopRequireDefault(_dashboard);
+
+	var _session = __webpack_require__(6);
+
+	var _session2 = _interopRequireDefault(_session);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+	  tagName: 'div',
+
+	  className: 'page dashboard-page',
+
+	  events: {},
+
+	  template: _dashboard2.default,
+
+	  render: function render() {
+	    // console.log('AAADAA');
+	    // console.log(session.getCurrentUser());
+	    // console.log(session.getCurrentUser().get('username'));
+
+	    this.$el.html(_underscore2.default.template(this.template({
+	      currentUser: _session2.default.getCurrentUser()
+	    })));
+
+	    return this;
+	  },
+	  close: function close() {
+	    this.remove();
+	  }
+	});
+
+/***/ },
+/* 18 */
+/***/ function(module, exports) {
+
+	module.exports = function(obj){
+	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+	with(obj||{}){
+	__p+='<section>\n  ';
+	 if (currentUser) { 
+	__p+='\n  CurrentUser: <b>'+
+	((__t=( currentUser.username ))==null?'':__t)+
+	'</b>\n  ';
+	 } 
+	__p+='\n</section>\n\n<div class="card">\n\n</div>\n';
+	}
+	return __p;
+	};
+
+
+/***/ },
+/* 19 */,
+/* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(12);
+	var content = __webpack_require__(21);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(14)(content, {});
+	var update = __webpack_require__(23)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -5544,21 +5886,21 @@
 	}
 
 /***/ },
-/* 12 */
+/* 21 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(13)();
+	exports = module.exports = __webpack_require__(22)();
 	// imports
 	exports.push([module.id, "@import url(https://fonts.googleapis.com/css?family=Roboto&subset=latin,latin-ext);", ""]);
 
 	// module
-	exports.push([module.id, ".align-right {\n  text-align: right; }\n\nhtml {\n  height: 100%; }\n\n.body {\n  font-family: 'Roboto', sans-serif;\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  margin: 0;\n  background-color: #FAFAFA;\n  color: #212121; }\n\n.page-content {\n  flex: 1; }\n\n.header,\n.footer {\n  height: 50px;\n  background-color: #F5F5F5; }\n\n.card {\n  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3);\n  background-color: #FFFFFF;\n  border-radius: 2px; }\n  .card .card__content {\n    padding: 24px 24px 16px; }\n  .card .card__actions {\n    padding: 8px; }\n\n.input-box {\n  padding: 16px 0 8px; }\n  .input-box .input-box__label {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n  .input-box .input-box__input {\n    font-size: 16px;\n    line-height: 16px;\n    min-width: 250px;\n    display: block;\n    padding: 0 0 7px;\n    border-top: 0;\n    border-right: 0;\n    border-bottom: 1px solid #424242;\n    border-left: 0;\n    margin: 8px 0;\n    outline: 0; }\n    .input-box .input-box__input:focus {\n      border-bottom: 1px solid red; }\n  .input-box .input-box__message {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n    .input-box .input-box__message.is-error {\n      color: #F44336; }\n\n.button {\n  display: inline-block;\n  text-align: center;\n  text-transform: uppercase;\n  cursor: pointer;\n  font-size: 14px;\n  border-radius: 2px;\n  border: 0;\n  line-height: 14px;\n  padding: 10px 16px;\n  background-color: transparent; }\n  .button.button--dialog {\n    min-width: 64px;\n    padding: 10px 8px;\n    margin: 0 8px; }\n  .button.button--raised {\n    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n\n.header {\n  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n\n.register-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.login-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.verify-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n", ""]);
+	exports.push([module.id, ".align-right {\n  text-align: right; }\n\nhtml {\n  height: 100%; }\n\n.body {\n  font-family: 'Roboto', sans-serif;\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  margin: 0;\n  background-color: #FAFAFA;\n  color: #212121; }\n\n.page-content {\n  flex: 1; }\n\n.header,\n.footer {\n  height: 50px;\n  background-color: #F5F5F5; }\n\n.card {\n  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3);\n  background-color: #FFFFFF;\n  border-radius: 2px; }\n  .card__content {\n    padding: 24px 24px 16px; }\n  .card__actions {\n    padding: 8px; }\n\n.input-box {\n  padding: 16px 0 8px; }\n  .input-box__label {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n  .input-box__input {\n    font-size: 16px;\n    line-height: 16px;\n    min-width: 250px;\n    display: block;\n    padding: 0 0 7px;\n    border-top: 0;\n    border-right: 0;\n    border-bottom: 1px solid #424242;\n    border-left: 0;\n    margin: 8px 0;\n    outline: 0; }\n    .input-box__input:focus {\n      border-bottom: 1px solid red; }\n  .input-box__message {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n    .input-box__message.is-error {\n      color: #F44336; }\n\n.button {\n  display: inline-block;\n  text-align: center;\n  text-transform: uppercase;\n  cursor: pointer;\n  font-size: 14px;\n  border-radius: 2px;\n  border: 0;\n  line-height: 14px;\n  padding: 10px 16px;\n  background-color: transparent; }\n  .button.button--dialog {\n    min-width: 64px;\n    padding: 10px 8px;\n    margin: 0 8px; }\n  .button.button--raised {\n    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n\n.header {\n  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n\n.register-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.login-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.verify-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.first-steps-photo-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n", ""]);
 
 	// exports
 
 
 /***/ },
-/* 13 */
+/* 22 */
 /***/ function(module, exports) {
 
 	/*
@@ -5614,7 +5956,7 @@
 
 
 /***/ },
-/* 14 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -5866,9 +6208,8 @@
 
 
 /***/ },
-/* 15 */,
-/* 16 */,
-/* 17 */
+/* 24 */,
+/* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5885,145 +6226,46 @@
 
 	var _underscore2 = _interopRequireDefault(_underscore);
 
-	var _jquery = __webpack_require__(3);
+	var _photo = __webpack_require__(26);
 
-	var _jquery2 = _interopRequireDefault(_jquery);
+	var _photo2 = _interopRequireDefault(_photo);
 
-	var _config = __webpack_require__(7);
+	var _session = __webpack_require__(6);
 
-	var _config2 = _interopRequireDefault(_config);
-
-	var _router = __webpack_require__(5);
-
-	var _router2 = _interopRequireDefault(_router);
-
-	var _verify = __webpack_require__(18);
-
-	var _verify2 = _interopRequireDefault(_verify);
-
-	var _terms = __webpack_require__(19);
-
-	var _terms2 = _interopRequireDefault(_terms);
-
-	var _username = __webpack_require__(20);
-
-	var _username2 = _interopRequireDefault(_username);
+	var _session2 = _interopRequireDefault(_session);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.default = _backbone2.default.View.extend({
 	  tagName: 'div',
 
-	  className: 'page verify-page',
+	  className: 'page first-steps-photo-page',
 
-	  events: {
-	    'click .js-action': 'buttonClicked'
-	  },
+	  events: {},
 
-	  template: _underscore2.default.template((0, _verify2.default)()),
+	  template: _photo2.default,
 
-	  initialize: function initialize(args) {
-	    this.step = 1;
-	    this.userId = args.userId;
-	    this.token = args.token;
-	  },
+	  initialize: function initialize() {},
 	  render: function render() {
-	    this.$el.html(this.template());
-
-	    var $card = this.$('.js-verify-card');
-	    var $content = $card.find('.js-content');
-	    var $action = $card.find('.js-action');
-
-	    switch (this.step) {
-	      case 1:
-	        $content.html((0, _terms2.default)());
-	        $action.text('ACCEPT');
-	        break;
-	      case 2:
-	        $content.html((0, _username2.default)());
-	        $action.text('DONE');
-	        break;
-	      default:
-	        $content.html((0, _terms2.default)());
-	        $action.text('ACCEPT');
-	        break;
-	    }
+	    this.$el.html(_underscore2.default.template(this.template({
+	      currentUser: _session2.default.getCurrentUser()
+	    })));
 
 	    return this;
 	  },
 	  close: function close() {
 	    this.remove();
-	  },
-	  buttonClicked: function buttonClicked() {
-	    var _this = this;
-
-	    if (this.step === 1) {
-	      this.step = 2;
-	      this.render();
-	    } else if (this.step === 2) {
-	      (function () {
-	        var self = _this;
-	        var username = _this.$('.js-username').val();
-	        var userId = _this.userId;
-	        var token = _this.token;
-
-	        _jquery2.default.ajax({
-	          url: _config2.default.apiEndpoint + '/user/verify',
-	          method: 'POST',
-	          data: {
-	            username: username,
-	            userId: userId,
-	            token: token
-	          }
-	        }).done(function () {
-	          _router2.default.navigate('login', true);
-	        }).fail(function (jqXHR) {
-	          if (jqXHR.status >= 400) {
-	            var errors = jqXHR.responseJSON.errors;
-	            _underscore2.default.each(errors, function (error) {
-	              self.$('.js-error-' + error.field).text(error.message);
-	            });
-	          }
-	        });
-	      })();
-	    }
 	  }
 	});
 
 /***/ },
-/* 18 */
+/* 26 */
 /***/ function(module, exports) {
 
 	module.exports = function(obj){
 	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 	with(obj||{}){
-	__p+='<div class="card js-verify-card">\n  <div class="card__content js-content">\n\n  </div>\n  <div class="card__actions align-right">\n    <button class="button button--dialog js-action" type="submit">\n      REGISTER\n    </button>\n  </div>\n</div>\n';
-	}
-	return __p;
-	};
-
-
-/***/ },
-/* 19 */
-/***/ function(module, exports) {
-
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='<div class="tos-container">\n  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n</div>\n';
-	}
-	return __p;
-	};
-
-
-/***/ },
-/* 20 */
-/***/ function(module, exports) {
-
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='<div class="input-box">\n  <label for="select-username-input-username" class="input-box__label">Username</label>\n  <input type="text" class="input-box__input js-username" id="select-username-input-username" required/>\n  <span class="input-box__message is-error js-error-username"></span>\n</div>\n';
+	__p+='<div class="card">\n  <div class="card__content">\n    <div class="image-preview-container">\n\n    </div>\n    <div class="dropzone container">\n\n    </div>\n  </div>\n  <div class="card__actions">\n    <div class="button">\n      NEXT\n    </div>\n  </div>\n</div>\n';
 	}
 	return __p;
 	};

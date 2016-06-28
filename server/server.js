@@ -1,11 +1,11 @@
 import express from 'express';
 import path from 'path';
 import mongoose from 'mongoose';
+import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import session from 'express-session';
 import passport from 'passport';
-import flash from 'connect-flash';
 
 import applicationConfig from './config/application';
 import databaseConfig from './config/database';
@@ -17,6 +17,9 @@ const app = express();
 
 mongoose.connect(databaseConfig.url);
 
+app.use('/public', express.static(path.resolve('public')));
+
+app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('dev'));
@@ -25,11 +28,8 @@ app.use(session({secret: 'asdfagalvneiv3u4kj34j'}));
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(flash());
 
 passportConfig(passport);
-
-app.use('/public', express.static(path.resolve('public')));
 
 app.use('/api', api);
 

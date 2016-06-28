@@ -98,7 +98,19 @@ router.post('/logout', (req) => {
   req.logout();
 });
 
+// CURRENT USER
 
+router.get('/current', (req, res) => {
+  if (req.user) {
+    res.json({
+      user: req.user.toObject()
+    });
+    return;
+  }
+  res.json({
+    user: null
+  });
+});
 
 
 

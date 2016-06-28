@@ -3,6 +3,10 @@ import _ from 'underscore';
 import $ from 'jquery';
 import config from 'config';
 import template from 'views/templates/login.html';
+import router from 'router';
+import session from 'session';
+
+import User from 'models/user';
 
 export default Backbone.View.extend({
   tagName: 'div',
@@ -39,8 +43,12 @@ export default Backbone.View.extend({
         identification,
         password
       }
-    }).done((user) => {
-      console.log(user);
+    }).done((response) => {
+      session.setCurrentUser(new User(response.user));
+      // router.navigate('dashboard', true);
+      // TODO: TESTING!
+      router.navigate('first-steps/photo', true);
+
     }).fail((jqXHR) => {
       if (jqXHR.status >= 400) {
         const errors = jqXHR.responseJSON.errors;

@@ -1,9 +1,13 @@
 import Backbone from 'backbone';
 import $ from 'jquery';
-import router from 'router';
+import session from 'session';
+
+import 'router';
 
 import '../stylesheet/app.scss';
 
 $(function() {
-  Backbone.history.start({pushState: true});
+  session.initSession(() => {
+    Backbone.history.start({pushState: true});
+  });
 });
