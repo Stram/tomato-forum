@@ -3,4 +3,42 @@
   display: flex;
   justify-content: center;
   align-items: center;
+
+  .select-photo-container {
+    display: flex;
+    min-height: 250px;
+
+    .image-preview-container {
+      display: none;
+    }
+
+    &.has-photo {
+      .dropzone-container {
+        display: none;
+      }
+
+      .image-preview-container {
+        display: block;
+      }
+    }
+  }
+
+  .dropzone-container {
+    border: 5px dashed black;
+    width: 250px;
+  }
+
+  .image-preview-container {
+    width: 250px;
+
+    .image-preview {
+      height: 100%;
+
+      background: {
+        repeat: no-repeat;
+        position: center center;
+        size: cover;
+      }
+    }
+  }
 }

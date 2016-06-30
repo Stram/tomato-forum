@@ -1,8 +1,13 @@
 import express from 'express';
 import passport from 'passport';
+import randToken from 'rand-token';
+import fs from 'fs';
+import path from 'path';
 import User from '../models/user';
+import Photo from '../models/photo';
 import validate from '../services/validate';
 import mailer from '../services/mailer';
+import applicationConfig from '../config/application';
 
 const router = new express.Router();
 
@@ -112,6 +117,45 @@ router.get('/current', (req, res) => {
   });
 });
 
+// PHOTO UPLOAD
+
+router.post('/upload-photo', (req, res) => {
+  if (!req.user) {
+    res.status('401');
+    return;
+  }
+
+  if (!req.files) {
+    res.send('No files were uploaded.');
+    return;
+  }
+
+  const file = req.files.file;
+  const newFileName = randToken.generate(32).toLowerCase();
+  const uploadDirectory = applicationConfig.privateUploadDirectory;
+  const extension = path.extname(file.name);
+
+  const filePath = path.resolve(`${uploadDirectory}/${newFileName}${extension}`);
+
+  fs.writeFile(filePath, file.data, (err) => {
+    if (err) {
+      res.send({
+        err
+      });
+      return;
+    }
+
+    const newPhoto = new Photo({
+      url: `/${uploadDirectory}/${newFileName}${extension}`,
+      name: `${newFileName}${extension}`,
+      user: req.user.id
+    });
+
+    res.send({
+      photo: newPhoto.toObject()
+    });
+  });
+});
 
 
 

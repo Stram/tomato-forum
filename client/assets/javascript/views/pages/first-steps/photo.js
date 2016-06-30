@@ -1,5 +1,6 @@
 import Backbone from 'backbone';
 import _ from 'underscore';
+import Dropzone from 'dropzone';
 
 import template from 'views/templates/first-steps/photo.html';
 
@@ -11,15 +12,12 @@ export default Backbone.View.extend({
   className: 'page first-steps-photo-page',
 
   events: {
-
+    'click .js-action-skip': 'skip',
+    'click .js-action-upload-again': 'resetUpload',
+    'click .js-action-next': 'submit'
   },
-
 
   template,
-
-  initialize() {
-
-  },
 
   render() {
     this.$el.html(
@@ -30,10 +28,50 @@ export default Backbone.View.extend({
       )
     );
 
+    this.initDropzone();
+
     return this;
   },
 
   close() {
     this.remove();
+  },
+
+  initDropzone() {
+    const self = this;
+    const $dropzoneDontainer = this.$('.dropzone-container');
+
+    Dropzone.autoDiscover = false;
+
+    this.dropzone = new Dropzone($dropzoneDontainer.get(0), {
+      url: '/api/user/upload-photo',
+      createImageThumbnails: false,
+      previewTemplate: '<div></div>'
+    });
+
+    this.dropzone.on('success', (file, response) => {
+      const photo = response.photo;
+      self.$('.js-preview-image').css('background-image', `url('${photo.url}')`);
+
+      self.$('.js-select-photo-container').addClass('has-photo');
+      this.$('.js-action-skip').addClass('is-hidden');
+      this.$('.js-action-upload-again').removeClass('is-hidden');
+      this.$('.js-action-next').removeClass('is-hidden');
+    });
+  },
+
+  skip() {
+    // TODO: skip action
+  },
+
+  resetUpload() {
+    this.$('.js-select-photo-container').removeClass('has-photo');
+    this.$('.js-action-skip').removeClass('is-hidden');
+    this.$('.js-action-upload-again').addClass('is-hidden');
+    this.$('.js-action-next').addClass('is-hidden');
+  },
+
+  submit() {
+
   }
 });

@@ -39,8 +39,8 @@ const Router = Backbone.Router.extend({
   },
 
   landing() {
-    const registerPage = new RegisterPageView();
-    this.changeView(registerPage);
+    const loginPage = new LoginPageView();
+    this.changeView(loginPage);
   },
 
   register() {

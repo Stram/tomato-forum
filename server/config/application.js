@@ -1,6 +1,7 @@
 export default {
   host: 'localhost',
   port: '3000',
+  privateUploadDirectory: 'uploads/photos',
 
   getFullHostname() {
     if (this.port !== '8080') {

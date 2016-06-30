@@ -6,6 +6,7 @@ import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import session from 'express-session';
 import passport from 'passport';
+import fileUpload from 'express-fileupload';
 
 import applicationConfig from './config/application';
 import databaseConfig from './config/database';
@@ -29,12 +30,23 @@ app.use(session({secret: 'asdfagalvneiv3u4kj34j'}));
 app.use(passport.initialize());
 app.use(passport.session());
 
+app.use(fileUpload());
+
 passportConfig(passport);
 
 app.use('/api', api);
 
-app.get(/^(?!\/public|\/api).*$/, function(req, res) {
+app.get(/^(?!\/public|\/api|\/uploads).*$/, function(req, res) {
   res.sendFile(path.resolve('client/index.html'));
+});
+
+app.use('/uploads/photos', (req, res) => {
+  if (!req.user) {
+    res.status(401);
+    return;
+  }
+
+  res.sendFile(path.resolve(`uploads/photos${req.path}`));
 });
 
 app.listen(applicationConfig.port, function() {
