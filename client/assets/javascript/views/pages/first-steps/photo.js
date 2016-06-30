@@ -5,6 +5,7 @@ import Dropzone from 'dropzone';
 import template from 'views/templates/first-steps/photo.html';
 
 import session from 'session';
+import router from 'router';
 
 export default Backbone.View.extend({
   tagName: 'div',
@@ -61,7 +62,7 @@ export default Backbone.View.extend({
   },
 
   skip() {
-    // TODO: skip action
+    router.navigate('dashboard', true);
   },
 
   resetUpload() {
@@ -72,6 +73,6 @@ export default Backbone.View.extend({
   },
 
   submit() {
-
+    router.navigate('dashboard', true);
   }
 });

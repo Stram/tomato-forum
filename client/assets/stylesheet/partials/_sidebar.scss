@@ -1,0 +1,13 @@
+.sidebar {
+  position: absolute;
+
+  top: 0;
+  right: auto;
+  bottom: 0;
+  left: 0;
+
+  background-color: $color-bg-grey-100;
+  width: $sidebar-width;
+
+  box-shadow: 2px 0 16px 0 $color-light-shadow;
+}

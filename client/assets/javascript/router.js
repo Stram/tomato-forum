@@ -9,6 +9,8 @@ import VerifyPageView from 'views/pages/verify';
 import DashboardPageView from 'views/pages/dashboard';
 import FirstStepsPhotoPageView from 'views/pages/first-steps/photo';
 
+import ContentWrapperView from 'views/pages/content-wrapper';
+
 const Router = Backbone.Router.extend({
   routes: {
     '': 'landing',
@@ -38,6 +40,14 @@ const Router = Backbone.Router.extend({
     console.log(`changing view to ${view.className}`);
   },
 
+  changeWrappedView(view) {
+    if (!this.contentWrapperView) {
+      this.contentWrapperView = new ContentWrapperView();
+      this.changeView(this.contentWrapperView);
+    }
+    this.contentWrapperView.changeCurrentView(view);
+  },
+
   landing() {
     const loginPage = new LoginPageView();
     this.changeView(loginPage);
@@ -61,8 +71,12 @@ const Router = Backbone.Router.extend({
   },
 
   dashboard() {
-    const dashboardView = new DashboardPageView();
-    this.changeView(dashboardView);
+    if (session.isAuthenticated()) {
+      const dashboardView = new DashboardPageView();
+      this.changeWrappedView(dashboardView);
+      return;
+    }
+    this.navigate('login', true);
   },
 
   firstStepsPhoto() {

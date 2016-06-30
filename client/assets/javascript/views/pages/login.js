@@ -14,7 +14,7 @@ export default Backbone.View.extend({
   className: 'page login-page',
 
   events: {
-    'click .js-submit': 'submit'
+    'submit .js-form': 'submit'
   },
 
   template: _.template(template()),
@@ -31,7 +31,8 @@ export default Backbone.View.extend({
     this.remove();
   },
 
-  submit() {
+  submit(event) {
+    event.preventDefault();
     const $form = this.$('.js-form');
     const identification = $form.find('.js-identification').val();
     const password = $form.find('.js-password').val();

@@ -5346,6 +5346,10 @@
 
 	var _photo2 = _interopRequireDefault(_photo);
 
+	var _contentWrapper = __webpack_require__(26);
+
+	var _contentWrapper2 = _interopRequireDefault(_contentWrapper);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var Router = _backbone2.default.Router.extend({
@@ -5376,6 +5380,13 @@
 
 	    console.log('changing view to ' + view.className);
 	  },
+	  changeWrappedView: function changeWrappedView(view) {
+	    if (!this.contentWrapperView) {
+	      this.contentWrapperView = new _contentWrapper2.default();
+	      this.changeView(this.contentWrapperView);
+	    }
+	    this.contentWrapperView.changeCurrentView(view);
+	  },
 	  landing: function landing() {
 	    var loginPage = new _login2.default();
 	    this.changeView(loginPage);
@@ -5395,8 +5406,12 @@
 	    this.changeView(verifyPage);
 	  },
 	  dashboard: function dashboard() {
-	    var dashboardView = new _dashboard2.default();
-	    this.changeView(dashboardView);
+	    if (_session2.default.isAuthenticated()) {
+	      var dashboardView = new _dashboard2.default();
+	      this.changeWrappedView(dashboardView);
+	      return;
+	    }
+	    this.navigate('login', true);
 	  },
 	  firstStepsPhoto: function firstStepsPhoto() {
 	    if (_session2.default.isAuthenticated()) {
@@ -5552,7 +5567,7 @@
 	  className: 'page login-page',
 
 	  events: {
-	    'click .js-submit': 'submit'
+	    'submit .js-form': 'submit'
 	  },
 
 	  template: _underscore2.default.template((0, _login2.default)()),
@@ -5565,7 +5580,8 @@
 	  close: function close() {
 	    this.remove();
 	  },
-	  submit: function submit() {
+	  submit: function submit(event) {
+	    event.preventDefault();
 	    var $form = this.$('.js-form');
 	    var identification = $form.find('.js-identification').val();
 	    var password = $form.find('.js-password').val();
@@ -5600,7 +5616,7 @@
 	module.exports = function(obj){
 	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 	with(obj||{}){
-	__p+='<div class="card">\n  <form class="js-form">\n    <div class="card__content">\n      <div class="input-box">\n        <label for="login-input-identification" class="input-box__label">Email or username</label>\n        <input type="text" class="input-box__input js-identification" id="login-input-identification"/>\n        <span class="input-box__message is-error js-error-identification"></span>\n      </div>\n      <div class="input-box">\n        <label for="login-input-password" class="input-box__label">Password</label>\n        <input type="password" class="input-box__input js-password" id="login-input-password"/>\n        <span class="input-box__message is-error js-error-password"></span>\n      </div>\n    </div>\n    <div class="card__actions align-right">\n      <div class="button button--dialog js-submit">\n        LOGIN\n      </div>\n    </div>\n  </form>\n</div>\n';
+	__p+='<div class="card">\n  <form class="js-form">\n    <div class="card__content">\n      <div class="input-box">\n        <label for="login-input-identification" class="input-box__label">Email or username</label>\n        <input type="text" class="input-box__input js-identification" id="login-input-identification"/>\n        <span class="input-box__message is-error js-error-identification"></span>\n      </div>\n      <div class="input-box">\n        <label for="login-input-password" class="input-box__label">Password</label>\n        <input type="password" class="input-box__input js-password" id="login-input-password"/>\n        <span class="input-box__message is-error js-error-password"></span>\n      </div>\n    </div>\n    <div class="card__actions align-right">\n      <button class="button button--dialog" type="submit">\n        LOGIN\n      </button>\n    </div>\n  </form>\n</div>\n';
 	}
 	return __p;
 	};
@@ -5846,13 +5862,13 @@
 	module.exports = function(obj){
 	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 	with(obj||{}){
-	__p+='<section>\n  ';
+	__p+='<article>\n  <section>\n    ';
 	 if (currentUser) { 
-	__p+='\n  CurrentUser: <b>'+
+	__p+='\n      CurrentUser: <b>'+
 	((__t=( currentUser.username ))==null?'':__t)+
-	'</b>\n  ';
+	'</b>\n    ';
 	 } 
-	__p+='\n</section>\n\n<div class="card">\n\n</div>\n';
+	__p+='\n  </section>\n\n</article>\n';
 	}
 	return __p;
 	};
@@ -5887,6 +5903,10 @@
 	var _session = __webpack_require__(5);
 
 	var _session2 = _interopRequireDefault(_session);
+
+	var _router = __webpack_require__(7);
+
+	var _router2 = _interopRequireDefault(_router);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5940,7 +5960,7 @@
 	    });
 	  },
 	  skip: function skip() {
-	    // TODO: skip action
+	    _router2.default.navigate('dashboard', true);
 	  },
 	  resetUpload: function resetUpload() {
 	    this.$('.js-select-photo-container').removeClass('has-photo');
@@ -5948,7 +5968,9 @@
 	    this.$('.js-action-upload-again').addClass('is-hidden');
 	    this.$('.js-action-next').addClass('is-hidden');
 	  },
-	  submit: function submit() {}
+	  submit: function submit() {
+	    _router2.default.navigate('dashboard', true);
+	  }
 	});
 
 /***/ },
@@ -7778,7 +7800,7 @@
 	exports.push([module.id, "@import url(https://fonts.googleapis.com/css?family=Roboto&subset=latin,latin-ext);", ""]);
 
 	// module
-	exports.push([module.id, ".align-right {\n  text-align: right; }\n\nhtml {\n  height: 100%; }\n\n.body {\n  font-family: 'Roboto', sans-serif;\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  margin: 0;\n  background-color: #FAFAFA;\n  color: #212121; }\n\n.page-content {\n  flex: 1; }\n\n.header,\n.footer {\n  height: 50px;\n  background-color: #F5F5F5; }\n\n.card {\n  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3);\n  background-color: #FFFFFF;\n  border-radius: 2px; }\n  .card__content {\n    padding: 24px 24px 16px; }\n  .card__actions {\n    padding: 8px; }\n\n.input-box {\n  padding: 16px 0 8px; }\n  .input-box__label {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n  .input-box__input {\n    font-size: 16px;\n    line-height: 16px;\n    min-width: 250px;\n    display: block;\n    padding: 0 0 7px;\n    border-top: 0;\n    border-right: 0;\n    border-bottom: 1px solid #424242;\n    border-left: 0;\n    margin: 8px 0;\n    outline: 0; }\n    .input-box__input:focus {\n      border-bottom: 1px solid red; }\n  .input-box__message {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n    .input-box__message.is-error {\n      color: #F44336; }\n\n.button {\n  display: inline-block;\n  text-align: center;\n  text-transform: uppercase;\n  cursor: pointer;\n  font-size: 14px;\n  border-radius: 2px;\n  border: 0;\n  line-height: 14px;\n  padding: 10px 16px;\n  background-color: transparent; }\n  .button.button--dialog {\n    min-width: 64px;\n    padding: 10px 8px;\n    margin: 0 8px; }\n  .button.button--raised {\n    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n  .button.is-hidden {\n    display: none; }\n\n.header {\n  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n\n.register-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.login-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.verify-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.first-steps-photo-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n  .first-steps-photo-page .select-photo-container {\n    display: flex;\n    min-height: 250px; }\n    .first-steps-photo-page .select-photo-container .image-preview-container {\n      display: none; }\n    .first-steps-photo-page .select-photo-container.has-photo .dropzone-container {\n      display: none; }\n    .first-steps-photo-page .select-photo-container.has-photo .image-preview-container {\n      display: block; }\n  .first-steps-photo-page .dropzone-container {\n    border: 5px dashed black;\n    width: 250px; }\n  .first-steps-photo-page .image-preview-container {\n    width: 250px; }\n    .first-steps-photo-page .image-preview-container .image-preview {\n      height: 100%;\n      background-repeat: no-repeat;\n      background-position: center center;\n      background-size: cover; }\n", ""]);
+	exports.push([module.id, ".align-right {\n  text-align: right; }\n\nhtml {\n  height: 100%; }\n\n.body {\n  font-family: 'Roboto', sans-serif;\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  margin: 0;\n  background-color: #FAFAFA;\n  color: #212121; }\n\n.page-content {\n  position: relative;\n  flex: 1; }\n\n.header,\n.footer {\n  height: 50px;\n  background-color: #F5F5F5;\n  z-index: 1; }\n\n.card {\n  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3);\n  background-color: #FFFFFF;\n  border-radius: 2px; }\n  .card__content {\n    padding: 24px 24px 16px; }\n  .card__actions {\n    padding: 8px; }\n\n.input-box {\n  padding: 16px 0 8px; }\n  .input-box__label {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n  .input-box__input {\n    font-size: 16px;\n    line-height: 16px;\n    min-width: 250px;\n    display: block;\n    padding: 0 0 7px;\n    border-top: 0;\n    border-right: 0;\n    border-bottom: 1px solid #424242;\n    border-left: 0;\n    margin: 8px 0;\n    outline: 0; }\n    .input-box__input:focus {\n      border-bottom: 1px solid red; }\n  .input-box__message {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n    .input-box__message.is-error {\n      color: #F44336; }\n\n.button {\n  display: inline-block;\n  text-align: center;\n  text-transform: uppercase;\n  cursor: pointer;\n  font-size: 14px;\n  border-radius: 2px;\n  border: 0;\n  line-height: 14px;\n  padding: 10px 16px;\n  background-color: transparent; }\n  .button.button--dialog {\n    min-width: 64px;\n    padding: 10px 8px;\n    margin: 0 8px; }\n  .button.button--raised {\n    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n  .button.is-hidden {\n    display: none; }\n\n.navigation {\n  margin-top: 50px;\n  padding-left: 20px; }\n  .navigation__header {\n    font-weight: bold;\n    font-size: 20px;\n    color: #757575;\n    margin-top: 40px; }\n  .navigation__items {\n    margin-top: 10px; }\n  .navigation__item {\n    padding: 5px;\n    color: #212121; }\n\n.sidebar {\n  position: absolute;\n  top: 0;\n  right: auto;\n  bottom: 0;\n  left: 0;\n  background-color: #F5F5F5;\n  width: 250px;\n  box-shadow: 2px 0 16px 0 rgba(0, 0, 0, 0.1); }\n\n.header {\n  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n\n.register-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.login-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.verify-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.first-steps-photo-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n  .first-steps-photo-page .select-photo-container {\n    display: flex;\n    min-height: 250px; }\n    .first-steps-photo-page .select-photo-container .image-preview-container {\n      display: none; }\n    .first-steps-photo-page .select-photo-container.has-photo .dropzone-container {\n      display: none; }\n    .first-steps-photo-page .select-photo-container.has-photo .image-preview-container {\n      display: block; }\n  .first-steps-photo-page .dropzone-container {\n    border: 5px dashed black;\n    width: 250px; }\n  .first-steps-photo-page .image-preview-container {\n    width: 250px; }\n    .first-steps-photo-page .image-preview-container .image-preview {\n      height: 100%;\n      background-repeat: no-repeat;\n      background-position: center center;\n      background-size: cover; }\n\n.content-wrapper {\n  height: 100%; }\n\n.wrapped-page-content {\n  position: absolute;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 250px; }\n", ""]);
 
 	// exports
 
@@ -8089,6 +8111,86 @@
 		if(oldSrc)
 			URL.revokeObjectURL(oldSrc);
 	}
+
+
+/***/ },
+/* 26 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(1);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _underscore = __webpack_require__(2);
+
+	var _underscore2 = _interopRequireDefault(_underscore);
+
+	var _jquery = __webpack_require__(3);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _contentWrapper = __webpack_require__(27);
+
+	var _contentWrapper2 = _interopRequireDefault(_contentWrapper);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+	  tagName: 'div',
+
+	  className: 'content-wrapper',
+
+	  events: {},
+
+	  template: _contentWrapper2.default,
+
+	  $pageContent: (0, _jquery2.default)('.js-wrapped-page-content'),
+
+	  render: function render() {
+
+	    this.$el.html(_underscore2.default.template(this.template()));
+
+	    return this;
+	  },
+	  close: function close() {
+	    this.currentView.close();
+	    this.remove();
+	  },
+	  changeCurrentView: function changeCurrentView(view) {
+	    if (this.currentView) {
+	      this.currentView.close();
+	    }
+
+	    if (!this.$pageContent.length) {
+	      this.$pageContent = (0, _jquery2.default)('.js-wrapped-page-content');
+	    }
+
+	    this.currentView = view;
+	    view.render();
+
+	    this.$pageContent.html(view.el);
+
+	    console.log('changing wrapped view to ' + view.className);
+	  }
+	});
+
+/***/ },
+/* 27 */
+/***/ function(module, exports) {
+
+	module.exports = function(obj){
+	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+	with(obj||{}){
+	__p+='<aside class="sidebar">\n\n  <section class="navigation">\n    <div class="navigation__header">\n      DASHBOARD\n    </div>\n    <div class="navigation__header">\n      FORUM\n    </div>\n    <div class="navigation__items">\n      <div class="navigation__item">\n        Aktualno\n      </div>\n      <div class="navigation__item">\n        Moje teme\n      </div>\n      <div class="navigation__item">\n        Jos nesto\n      </div>\n    </div>\n  </section>\n\n</aside>\n\n<article class="js-wrapped-page-content wrapped-page-content">\n\n</article>\n';
+	}
+	return __p;
+	};
 
 
 /***/ }

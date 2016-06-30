@@ -16,6 +16,7 @@ html {
 }
 
 .page-content {
+  position: relative;
   flex: 1;
 }
 
@@ -23,4 +24,5 @@ html {
 .footer {
   height: 50px;
   background-color: $color-bg-grey-100;
+  z-index: 1;
 }

@@ -10,7 +10,10 @@ $base-grey-900: #212121;
 $base-red-500: #F44336;
 
 $base-gray-opaque: rgba(0,0,0,0.30);
+$base-gray-light-opaque: rgba(0,0,0,0.10);
+
 $color-shadow: $base-gray-opaque;
+$color-light-shadow: $base-gray-light-opaque;
 
 $color-bg-white: $base-white;
 $color-bg-grey-50: $base-grey-50;
