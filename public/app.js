@@ -5338,13 +5338,17 @@
 
 	var _verify2 = _interopRequireDefault(_verify);
 
+	var _photo = __webpack_require__(19);
+
+	var _photo2 = _interopRequireDefault(_photo);
+
 	var _dashboard = __webpack_require__(17);
 
 	var _dashboard2 = _interopRequireDefault(_dashboard);
 
-	var _photo = __webpack_require__(19);
+	var _forum = __webpack_require__(28);
 
-	var _photo2 = _interopRequireDefault(_photo);
+	var _forum2 = _interopRequireDefault(_forum);
 
 	var _contentWrapper = __webpack_require__(26);
 
@@ -5359,7 +5363,8 @@
 	    login: 'login',
 	    'verify?userId=:userId&token=:token': 'verify',
 	    dashboard: 'dashboard',
-	    'first-steps/photo': 'firstStepsPhoto'
+	    'first-steps/photo': 'firstStepsPhoto',
+	    forum: 'forum'
 	  },
 
 	  currentView: null,
@@ -5417,6 +5422,14 @@
 	    if (_session2.default.isAuthenticated()) {
 	      var firstStepsPhotoView = new _photo2.default();
 	      this.changeView(firstStepsPhotoView);
+	      return;
+	    }
+	    this.navigate('login', true);
+	  },
+	  forum: function forum() {
+	    if (_session2.default.isAuthenticated()) {
+	      var forumView = new _forum2.default();
+	      this.changeWrappedView(forumView);
 	      return;
 	    }
 	    this.navigate('login', true);
@@ -8139,6 +8152,10 @@
 
 	var _contentWrapper2 = _interopRequireDefault(_contentWrapper);
 
+	var _router = __webpack_require__(7);
+
+	var _router2 = _interopRequireDefault(_router);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.default = _backbone2.default.View.extend({
@@ -8146,7 +8163,10 @@
 
 	  className: 'content-wrapper',
 
-	  events: {},
+	  events: {
+	    'click .js-dashboard': 'toDashboard',
+	    'click .js-forum': 'toForum'
+	  },
 
 	  template: _contentWrapper2.default,
 
@@ -8177,6 +8197,12 @@
 	    this.$pageContent.html(view.el);
 
 	    console.log('changing wrapped view to ' + view.className);
+	  },
+	  toDashboard: function toDashboard() {
+	    _router2.default.navigate('dashboard', true);
+	  },
+	  toForum: function toForum() {
+	    _router2.default.navigate('forum', true);
 	  }
 	});
 
@@ -8187,7 +8213,64 @@
 	module.exports = function(obj){
 	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 	with(obj||{}){
-	__p+='<aside class="sidebar">\n\n  <section class="navigation">\n    <div class="navigation__header">\n      DASHBOARD\n    </div>\n    <div class="navigation__header">\n      FORUM\n    </div>\n    <div class="navigation__items">\n      <div class="navigation__item">\n        Aktualno\n      </div>\n      <div class="navigation__item">\n        Moje teme\n      </div>\n      <div class="navigation__item">\n        Jos nesto\n      </div>\n    </div>\n  </section>\n\n</aside>\n\n<article class="js-wrapped-page-content wrapped-page-content">\n\n</article>\n';
+	__p+='<aside class="sidebar">\n\n  <section class="navigation">\n    <div class="navigation__header js-dashboard">\n      DASHBOARD\n    </div>\n    <div class="navigation__header js-forum">\n      FORUM\n    </div>\n    <div class="navigation__items">\n      <div class="navigation__item">\n        Aktualno\n      </div>\n      <div class="navigation__item">\n        Moje teme\n      </div>\n      <div class="navigation__item">\n        Jos nesto\n      </div>\n    </div>\n  </section>\n\n</aside>\n\n<article class="js-wrapped-page-content wrapped-page-content">\n\n</article>\n';
+	}
+	return __p;
+	};
+
+
+/***/ },
+/* 28 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(1);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _underscore = __webpack_require__(2);
+
+	var _underscore2 = _interopRequireDefault(_underscore);
+
+	var _forum = __webpack_require__(29);
+
+	var _forum2 = _interopRequireDefault(_forum);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+	  tagName: 'div',
+
+	  className: 'page forum-page',
+
+	  events: {},
+
+	  template: _forum2.default,
+
+	  render: function render() {
+
+	    this.$el.html(_underscore2.default.template(this.template({})));
+
+	    return this;
+	  },
+	  close: function close() {
+	    this.remove();
+	  }
+	});
+
+/***/ },
+/* 29 */
+/***/ function(module, exports) {
+
+	module.exports = function(obj){
+	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+	with(obj||{}){
+	__p+='';
 	}
 	return __p;
 	};

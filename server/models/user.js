@@ -30,6 +30,10 @@ const userSchema = new Schema({
   photos: [{
     type: ObjectId,
     ref: 'photoSchema'
+  }],
+  threads: [{
+    type: ObjectId,
+    ref: 'threadSchema'
   }]
 
 });

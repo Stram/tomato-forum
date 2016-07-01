@@ -4,13 +4,16 @@ import $ from 'jquery';
 
 import template from 'views/templates/content-wrapper.html';
 
+import router from 'router';
+
 export default Backbone.View.extend({
   tagName: 'div',
 
   className: 'content-wrapper',
 
   events: {
-
+    'click .js-dashboard': 'toDashboard',
+    'click .js-forum': 'toForum'
   },
 
   template,
@@ -48,5 +51,13 @@ export default Backbone.View.extend({
     this.$pageContent.html(view.el);
 
     console.log(`changing wrapped view to ${view.className}`);
+  },
+
+  toDashboard() {
+    router.navigate('dashboard', true);
+  },
+
+  toForum() {
+    router.navigate('forum', true);
   }
 });

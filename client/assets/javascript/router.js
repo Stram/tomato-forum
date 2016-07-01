@@ -6,8 +6,9 @@ import session from 'session';
 import RegisterPageView from 'views/pages/register';
 import LoginPageView from 'views/pages/login';
 import VerifyPageView from 'views/pages/verify';
-import DashboardPageView from 'views/pages/dashboard';
 import FirstStepsPhotoPageView from 'views/pages/first-steps/photo';
+import DashboardPageView from 'views/pages/dashboard';
+import ForumPageView from 'views/pages/forum';
 
 import ContentWrapperView from 'views/pages/content-wrapper';
 
@@ -18,7 +19,8 @@ const Router = Backbone.Router.extend({
     login: 'login',
     'verify?userId=:userId&token=:token': 'verify',
     dashboard: 'dashboard',
-    'first-steps/photo': 'firstStepsPhoto'
+    'first-steps/photo': 'firstStepsPhoto',
+    forum: 'forum'
   },
 
   currentView: null,
@@ -83,6 +85,15 @@ const Router = Backbone.Router.extend({
     if (session.isAuthenticated()) {
       const firstStepsPhotoView = new FirstStepsPhotoPageView();
       this.changeView(firstStepsPhotoView);
+      return;
+    }
+    this.navigate('login', true);
+  },
+
+  forum() {
+    if (session.isAuthenticated()) {
+      const forumView = new ForumPageView();
+      this.changeWrappedView(forumView);
       return;
     }
     this.navigate('login', true);
