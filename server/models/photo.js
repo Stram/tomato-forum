@@ -1,7 +1,5 @@
 import mongoose from 'mongoose';
 
-import applicationConfig from '../config/application';
-
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
