@@ -119,7 +119,7 @@ router.get('/current', (req, res) => {
 
 // PHOTO UPLOAD
 
-router.post('/upload-photo', (req, res) => {
+router.post('/upload-photo', (req, res, next) => {
   if (!req.user) {
     res.status('401');
     return;
@@ -139,9 +139,7 @@ router.post('/upload-photo', (req, res) => {
 
   fs.writeFile(filePath, file.data, (err) => {
     if (err) {
-      res.send({
-        err
-      });
+      next(err);
       return;
     }
 
@@ -151,60 +149,17 @@ router.post('/upload-photo', (req, res) => {
       user: req.user.id
     });
 
-    res.send({
-      photo: newPhoto.toObject()
-    });
-  });
-});
-
-
-
-router.patch('/:id', (req, res, next) => {
-  const userId = req.params.id;
-  if (!userId) {
-    res.status(400);
-    res.json({
-      errors: [{
-        message: 'No user id provided'
-      }]
-    });
-    return;
-  }
-
-  const username = req.body.username;
-  const errors = validate({
-    username
-  });
-
-  if (errors.length) {
-    res.status(400);
-    res.json({errors});
-    return;
-  }
-
-  User.findOneAndUpdate(
-    {_id: userId},
-    {username},
-    {new: true},
-    (error, user) => {
+    newPhoto.save((error) => {
       if (error) {
         next(error);
-      }
-      if (!user) {
-        res.status(404);
-        res.json({
-          errors: [{
-            message: 'User not found'
-          }]
-        });
         return;
       }
+      res.send({
+        photo: newPhoto.toObject()
+      });
+    });
 
-      res.json(user);
-    }
-  );
+  });
 });
-
-
 
 module.exports = router;

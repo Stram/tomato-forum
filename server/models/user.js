@@ -5,6 +5,7 @@ import randToken from 'rand-token';
 import applicationConfig from '../config/application';
 
 const Schema = mongoose.Schema;
+const ObjectId = Schema.ObjectId;
 
 const userSchema = new Schema({
   username: String,
@@ -25,7 +26,11 @@ const userSchema = new Schema({
     name: String
   },
 
-  token: String
+  token: String,
+  photos: [{
+    type: ObjectId,
+    ref: 'photoSchema'
+  }]
 
 });
 
