@@ -1,0 +1,15 @@
+.forum-page {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.new-thread-button {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+
+  background-color: $color-bg-grey-600;
+  color: $color-text-white;
+}

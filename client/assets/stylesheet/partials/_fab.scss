@@ -1,0 +1,11 @@
+.fab {
+  height: $fab-size;
+  width: $fab-size;
+
+  border-radius: $fab-size / 2;
+  font-size: 20px;
+  
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
