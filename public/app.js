@@ -8159,7 +8159,7 @@
 	exports.push([module.id, "@import url(https://fonts.googleapis.com/css?family=Roboto&subset=latin,latin-ext);", ""]);
 
 	// module
-	exports.push([module.id, ".align-right {\n  text-align: right; }\n\nhtml {\n  height: 100%; }\n\n.body {\n  font-family: 'Roboto', sans-serif;\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  margin: 0;\n  background-color: #FAFAFA;\n  color: #212121; }\n  .body.is-scrolling-disabled {\n    overflow: hidden; }\n\n.page-content {\n  position: relative;\n  flex: 1; }\n\n.header,\n.footer {\n  height: 50px;\n  background-color: #F5F5F5;\n  z-index: 1; }\n\n.card {\n  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3);\n  background-color: #FFFFFF;\n  border-radius: 2px; }\n  .card__content {\n    padding: 24px 24px 16px; }\n  .card__actions {\n    padding: 8px; }\n\n.input-box {\n  padding: 16px 0 8px; }\n  .input-box__label {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n  .input-box__input {\n    font-size: 16px;\n    line-height: 16px;\n    min-width: 250px;\n    display: block;\n    padding: 0 0 7px;\n    border-top: 0;\n    border-right: 0;\n    border-bottom: 1px solid #424242;\n    border-left: 0;\n    margin: 8px 0;\n    outline: 0; }\n    .input-box__input:focus {\n      border-bottom: 1px solid red; }\n  .input-box__message {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n    .input-box__message.is-error {\n      color: #F44336; }\n\n.button {\n  display: inline-block;\n  text-align: center;\n  text-transform: uppercase;\n  cursor: pointer;\n  font-size: 14px;\n  border-radius: 2px;\n  border: 0;\n  line-height: 14px;\n  padding: 10px 16px;\n  background-color: transparent; }\n  .button.button--dialog {\n    min-width: 64px;\n    padding: 10px 8px;\n    margin: 0 8px; }\n  .button.button--raised {\n    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n  .button.is-hidden {\n    display: none; }\n\n.navigation {\n  margin-top: 50px;\n  padding-left: 20px; }\n  .navigation__header {\n    font-weight: bold;\n    font-size: 20px;\n    color: #757575;\n    margin-top: 40px; }\n  .navigation__items {\n    margin-top: 10px; }\n  .navigation__item {\n    padding: 5px;\n    color: #212121; }\n\n.sidebar {\n  position: absolute;\n  top: 0;\n  right: auto;\n  bottom: 0;\n  left: 0;\n  background-color: #F5F5F5;\n  width: 250px;\n  box-shadow: 2px 0 16px 0 rgba(0, 0, 0, 0.1); }\n\n.fab {\n  height: 50px;\n  width: 50px;\n  border-radius: 25px;\n  font-size: 20px;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.modal-container {\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  background-color: rgba(0, 0, 0, 0.3);\n  display: none;\n  align-items: center;\n  justify-content: center; }\n  .modal-container.is-shown {\n    display: flex; }\n\n.modal {\n  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3);\n  background-color: #FFFFFF;\n  border-radius: 2px; }\n  .modal__content {\n    padding: 24px 24px 16px; }\n  .modal__actions {\n    text-align: right;\n    padding: 8px; }\n\n.header {\n  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n\n.register-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.login-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.verify-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.first-steps-photo-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n  .first-steps-photo-page .select-photo-container {\n    display: flex;\n    min-height: 250px; }\n    .first-steps-photo-page .select-photo-container .image-preview-container {\n      display: none; }\n    .first-steps-photo-page .select-photo-container.has-photo .dropzone-container {\n      display: none; }\n    .first-steps-photo-page .select-photo-container.has-photo .image-preview-container {\n      display: block; }\n  .first-steps-photo-page .dropzone-container {\n    border: 5px dashed black;\n    width: 250px; }\n  .first-steps-photo-page .image-preview-container {\n    width: 250px; }\n    .first-steps-photo-page .image-preview-container .image-preview {\n      height: 100%;\n      background-repeat: no-repeat;\n      background-position: center center;\n      background-size: cover; }\n\n.content-wrapper {\n  height: 100%; }\n\n.wrapped-page-content {\n  position: absolute;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 250px; }\n\n.forum-page {\n  height: 100%; }\n\n.new-thread-button {\n  position: absolute;\n  bottom: 20px;\n  right: 20px;\n  background-color: #757575;\n  color: #FFFFFF; }\n\n.thread-page {\n  height: 100%; }\n  .thread-page .thread__header {\n    background-color: #757575;\n    color: #FFFFFF; }\n  .thread-page .thread__title {\n    font-size: 40px;\n    padding: 20px 20px 50px; }\n  .thread-page .thread__additional-info {\n    display: flex;\n    align-items: center;\n    padding: 20px 20px 30px; }\n  .thread-page .thread__owner-photo {\n    display: inline-block;\n    width: 50px;\n    height: 50px;\n    border-radius: 25px;\n    background-color: black;\n    margin-right: 10px; }\n  .thread-page .thread__owner-info {\n    display: inline-block;\n    line-height: 25px; }\n  .thread-page .thread__owner-username {\n    display: inline-block; }\n  .thread-page .thread__date {\n    font-size: 14px; }\n\n.loading {\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  background-color: rgba(0, 0, 0, 0.3);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000; }\n  .loading__icon {\n    width: 50px;\n    height: 50px;\n    background-image: url(\"/public/images/loader.svg\");\n    background-repeat: no-repeat;\n    background-position: center;\n    background-size: contain; }\n", ""]);
+	exports.push([module.id, ".align-right {\n  text-align: right; }\n\nhtml {\n  height: 100%; }\n\n.body {\n  font-family: 'Roboto', sans-serif;\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  margin: 0;\n  background-color: #FAFAFA;\n  color: #212121; }\n  .body.is-scrolling-disabled {\n    overflow: hidden; }\n\n.page-content {\n  position: relative;\n  flex: 1; }\n\n.header,\n.footer {\n  height: 50px;\n  background-color: #F5F5F5;\n  z-index: 1; }\n\n.card {\n  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3);\n  background-color: #FFFFFF;\n  border-radius: 2px; }\n  .card__content {\n    padding: 24px 24px 16px; }\n  .card__actions {\n    padding: 8px; }\n\n.input-box {\n  padding: 16px 0 8px; }\n  .input-box__label {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n  .input-box__input {\n    font-size: 16px;\n    line-height: 16px;\n    min-width: 250px;\n    display: block;\n    padding: 0 0 7px;\n    border-top: 0;\n    border-right: 0;\n    border-bottom: 1px solid #424242;\n    border-left: 0;\n    margin: 8px 0;\n    outline: 0; }\n    .input-box__input:focus {\n      border-bottom: 1px solid red; }\n  .input-box__message {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n    .input-box__message.is-error {\n      color: #F44336; }\n\n.button {\n  display: inline-block;\n  text-align: center;\n  text-transform: uppercase;\n  cursor: pointer;\n  font-size: 14px;\n  border-radius: 2px;\n  border: 0;\n  line-height: 14px;\n  padding: 10px 16px;\n  background-color: transparent; }\n  .button.button--dialog {\n    min-width: 64px;\n    padding: 10px 8px;\n    margin: 0 8px; }\n  .button.button--raised {\n    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n  .button.is-hidden {\n    display: none; }\n\n.navigation {\n  margin-top: 50px;\n  padding-left: 20px; }\n  .navigation__header {\n    font-weight: bold;\n    font-size: 20px;\n    color: #757575;\n    margin-top: 40px; }\n  .navigation__items {\n    margin-top: 10px; }\n  .navigation__item {\n    padding: 5px;\n    color: #212121; }\n\n.sidebar {\n  position: absolute;\n  top: 0;\n  right: auto;\n  bottom: 0;\n  left: 0;\n  background-color: #F5F5F5;\n  width: 250px;\n  box-shadow: 2px 0 16px 0 rgba(0, 0, 0, 0.1); }\n\n.fab {\n  height: 50px;\n  width: 50px;\n  border-radius: 25px;\n  font-size: 20px;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.modal-container {\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  background-color: rgba(0, 0, 0, 0.3);\n  display: none;\n  align-items: center;\n  justify-content: center; }\n  .modal-container.is-shown {\n    display: flex; }\n\n.modal {\n  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3);\n  background-color: #FFFFFF;\n  border-radius: 2px; }\n  .modal__content {\n    padding: 24px 24px 16px; }\n  .modal__actions {\n    text-align: right;\n    padding: 8px; }\n\n.header {\n  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n\n.register-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.login-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.verify-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.first-steps-photo-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n  .first-steps-photo-page .select-photo-container {\n    display: flex;\n    min-height: 250px; }\n    .first-steps-photo-page .select-photo-container .image-preview-container {\n      display: none; }\n    .first-steps-photo-page .select-photo-container.has-photo .dropzone-container {\n      display: none; }\n    .first-steps-photo-page .select-photo-container.has-photo .image-preview-container {\n      display: block; }\n  .first-steps-photo-page .dropzone-container {\n    border: 5px dashed black;\n    width: 250px; }\n  .first-steps-photo-page .image-preview-container {\n    width: 250px; }\n    .first-steps-photo-page .image-preview-container .image-preview {\n      height: 100%;\n      background-repeat: no-repeat;\n      background-position: center center;\n      background-size: cover; }\n\n.content-wrapper {\n  height: 100%; }\n\n.wrapped-page-content {\n  position: absolute;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 250px;\n  overflow: auto; }\n\n.forum-page {\n  height: 100%; }\n\n.new-thread-button {\n  position: absolute;\n  bottom: 20px;\n  right: 20px;\n  background-color: #757575;\n  color: #FFFFFF; }\n\n.thread-page {\n  height: 100%; }\n  .thread-page .thread__header {\n    background-color: #757575;\n    color: #FFFFFF; }\n  .thread-page .thread__title {\n    font-size: 40px;\n    padding: 20px 20px 30px; }\n  .thread-page .thread__content {\n    padding: 20px; }\n  .thread-page .thread__additional-info {\n    display: flex;\n    align-items: center;\n    padding: 20px 20px 30px; }\n  .thread-page .thread__owner-photo {\n    display: inline-block;\n    width: 50px;\n    height: 50px;\n    border-radius: 25px;\n    margin-right: 10px;\n    background-repeat: no-repeat;\n    background-position: center center;\n    background-size: cover; }\n  .thread-page .thread__owner-info {\n    display: inline-block;\n    line-height: 25px; }\n  .thread-page .thread__owner-username {\n    display: inline-block; }\n  .thread-page .thread__date {\n    font-size: 14px; }\n  .thread-page .thread__new-comment-container {\n    padding: 20px;\n    margin-top: 10px; }\n  .thread-page .comment {\n    position: relative;\n    margin: 30px 30px 0; }\n    .thread-page .comment::before {\n      position: absolute;\n      top: -30px;\n      bottom: 0px;\n      left: 25px;\n      right: auto;\n      content: '';\n      width: 1px;\n      background-color: rgba(0, 0, 0, 0.1); }\n    .thread-page .comment:last-child::before {\n      bottom: auto;\n      height: 50px; }\n    .thread-page .comment__image {\n      position: absolute;\n      top: 0;\n      left: 0;\n      width: 50px;\n      height: 50px;\n      border-radius: 25px;\n      margin-right: 10px;\n      background-repeat: no-repeat;\n      background-position: center center;\n      background-size: cover; }\n    .thread-page .comment__card {\n      background-color: #FFFFFF;\n      padding: 20px 30px;\n      margin-left: 78px;\n      box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3); }\n    .thread-page .comment__info {\n      font-size: 14px; }\n    .thread-page .comment__content {\n      margin-top: 10px; }\n\n.loading {\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  background-color: rgba(0, 0, 0, 0.3);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000; }\n  .loading__icon {\n    width: 50px;\n    height: 50px;\n    background-image: url(\"/public/images/loader.svg\");\n    background-repeat: no-repeat;\n    background-position: center;\n    background-size: contain; }\n", ""]);
 
 	// exports
 
@@ -8490,6 +8490,10 @@
 
 	var _underscore2 = _interopRequireDefault(_underscore);
 
+	var _jquery = __webpack_require__(3);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
 	var _thread = __webpack_require__(34);
 
 	var _thread2 = _interopRequireDefault(_thread);
@@ -8498,9 +8502,17 @@
 
 	var _loading2 = _interopRequireDefault(_loading);
 
+	var _session = __webpack_require__(5);
+
+	var _session2 = _interopRequireDefault(_session);
+
 	var _thread3 = __webpack_require__(26);
 
 	var _thread4 = _interopRequireDefault(_thread3);
+
+	var _comment = __webpack_require__(36);
+
+	var _comment2 = _interopRequireDefault(_comment);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8509,7 +8521,9 @@
 
 	  className: 'page thread-page',
 
-	  events: {},
+	  events: {
+	    'click .js-new-comment': 'postNewComment'
+	  },
 
 	  template: _thread2.default,
 	  loadingTemplate: _loading2.default,
@@ -8525,7 +8539,7 @@
 	      }
 	    });
 
-	    // this.listenTo(this.thread, 'change reset', this.render);
+	    this.listenTo(this.thread, 'change reset add remove', this.render);
 	  },
 	  render: function render() {
 	    if (this.threadLoaded) {
@@ -8540,6 +8554,25 @@
 	  },
 	  close: function close() {
 	    this.remove();
+	  },
+	  postNewComment: function postNewComment() {
+	    var self = this;
+
+	    var commentContent = (0, _jquery2.default)('.js-new-comment-content').val();
+	    var newComment = new _comment2.default({
+	      content: commentContent,
+	      user: _session2.default.getCurrentUser().id,
+	      thread: this.thread
+	    });
+
+	    newComment.save({}, {
+	      success: function success(model, response) {
+	        var comments = self.thread.get('comments');
+	        comments.push(response);
+	        self.thread.set('comments', comments);
+	        self.thread.trigger('change');
+	      }
+	    });
 	  }
 	});
 
@@ -8553,11 +8586,27 @@
 	with(obj||{}){
 	__p+='<div class="thread">\n  <div class="thread__header">\n    <div class="thread__title">\n      '+
 	((__t=( thread.get('title') ))==null?'':__t)+
-	'\n    </div>\n    <div class="thread__additional-info">\n      <div class="thread__owner-photo">\n\n      </div>\n      <div class="thread__owner-info">\n        <div class="thread__owner-username">\n          '+
+	'\n    </div>\n    <div class="thread__content">\n      '+
+	((__t=( thread.get('content') ))==null?'':__t)+
+	'\n    </div>\n    <div class="thread__additional-info">\n      <div class="thread__owner-photo" style="background-image: url(\''+
+	((__t=( thread.get('owner').profilePhoto.url ))==null?'':__t)+
+	'\')">\n\n      </div>\n      <div class="thread__owner-info">\n        <div class="thread__owner-username">\n          '+
 	((__t=( thread.get('owner').username ))==null?'':__t)+
 	'\n        </div>\n        <div class="thread__date">\n          '+
 	((__t=( thread.get('createdAt') ))==null?'':__t)+
-	'\n        </div>\n      </div>\n    </div>\n  </div>\n  <div class="thread__comments">\n\n  </div>\n</div>\n';
+	'\n        </div>\n      </div>\n    </div>\n  </div>\n  <div class="thread__comments">\n    ';
+	 thread.get('comments').forEach(function(comment) { 
+	__p+='\n      <div class="comment">\n        <div class="comment__image" style="background-image: url(\''+
+	((__t=( comment.user.profilePhoto.url ))==null?'':__t)+
+	'\')">\n\n        </div>\n        <div class="comment__card">\n          <div class="comment__info">\n            '+
+	((__t=( comment.user.username ))==null?'':__t)+
+	' u '+
+	((__t=( comment.createdAt ))==null?'':__t)+
+	'\n          </div>\n          <div class="comment__content">\n            '+
+	((__t=( comment.content ))==null?'':__t)+
+	'\n          </div>\n        </div>\n      </div>\n    ';
+	 }); 
+	__p+='\n  </div>\n  <div class="thread__new-comment-container">\n    <div class="thread__new-comment">\n      <div class="input-box">\n        <label for="thread-new-comment">Comment</label>\n        <textarea class="input-box__input js-new-comment-content" id="thread-new-comment"></textarea>\n      </div>\n      <div class="button button-raised js-new-comment">\n        SUBMIT\n      </div>\n    </div>\n  </div>\n</div>\n';
 	}
 	return __p;
 	};
@@ -8576,6 +8625,30 @@
 	return __p;
 	};
 
+
+/***/ },
+/* 36 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(1);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _config = __webpack_require__(6);
+
+	var _config2 = _interopRequireDefault(_config);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.Model.extend({
+	  urlRoot: _config2.default.apiEndpoint + '/comment'
+	});
 
 /***/ }
 /******/ ]);

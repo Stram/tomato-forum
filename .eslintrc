@@ -9,6 +9,9 @@
     "amd": false,
     "jquery": false
   },
+  "globals": {
+      "Promise": true
+  },
   "parserOptions": {
 
     # If you are using ES5 change ecmaVersion to 5 and comment last block of rules (ECMAScript 6 block)

@@ -143,19 +143,25 @@ router.post('/upload-photo', (req, res, next) => {
       return;
     }
 
+    const currentUser = req.user;
+
     const newPhoto = new Photo({
       url: `/${uploadDirectory}/${newFileName}${extension}`,
       name: `${newFileName}${extension}`,
-      user: req.user.id
+      user: currentUser.id
     });
 
-    newPhoto.save((error) => {
-      if (error) {
-        next(error);
-        return;
-      }
-      res.send({
-        photo: newPhoto.toObject()
+    if (!currentUser.photos.length) {
+      currentUser.profilePhoto = newPhoto;
+    }
+
+    currentUser.photos.push(newPhoto);
+
+    newPhoto.save().then((newSavedPhoto) => {
+      currentUser.save().then(() => {
+        res.send({
+          photo: newSavedPhoto.toObject()
+        });
       });
     });
 

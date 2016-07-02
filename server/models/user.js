@@ -27,6 +27,10 @@ const userSchema = new Schema({
   },
 
   token: String,
+  profilePhoto: {
+    type: ObjectId,
+    ref: 'Photo'
+  },
   photos: [{
     type: ObjectId,
     ref: 'Photo'

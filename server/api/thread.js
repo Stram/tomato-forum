@@ -24,14 +24,17 @@ router.post('/', (req, res, next) => {
   });
 });
 
-router.get('/', (req, res, next) => {
+router.get('/', (req, res) => {
   Thread.find().then((threads) => {
     res.json(threads.map((thread) => thread.toObject()));
   });
 });
 
-router.get('/:threadId', (req, res, next) => {
-  Thread.findById(req.params.threadId).populate('owner').then((thread) => res.json(thread.toObject()));
+router.get('/:threadId', (req, res) => {
+  Thread.findById(req.params.threadId)
+    .populate({path: 'owner', populate: {path: 'profilePhoto'}})
+    .populate({path: 'comments', populate: {path: 'user', populate: {path: 'profilePhoto'}}})
+    .then((thread) => res.json(thread.toObject()));
 });
 
 module.exports = router;

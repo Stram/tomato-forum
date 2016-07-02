@@ -1,10 +1,14 @@
 import Backbone from 'backbone';
 import _ from 'underscore';
+import $ from 'jquery';
 
 import template from 'views/templates/thread.html';
 import loadingTemplate from 'views/templates/loading.html';
 
+import session from 'session';
+
 import Thread from 'models/thread';
+import Comment from 'models/comment';
 
 export default Backbone.View.extend({
   tagName: 'div',
@@ -12,7 +16,7 @@ export default Backbone.View.extend({
   className: 'page thread-page',
 
   events: {
-
+    'click .js-new-comment': 'postNewComment'
   },
 
   template,
@@ -29,7 +33,7 @@ export default Backbone.View.extend({
       }
     });
 
-    // this.listenTo(this.thread, 'change reset', this.render);
+    this.listenTo(this.thread, 'change reset add remove', this.render);
   },
 
   render() {
@@ -52,5 +56,25 @@ export default Backbone.View.extend({
 
   close() {
     this.remove();
+  },
+
+  postNewComment() {
+    const self = this;
+
+    const commentContent = $('.js-new-comment-content').val();
+    const newComment = new Comment({
+      content: commentContent,
+      user: session.getCurrentUser().id,
+      thread: this.thread
+    });
+
+    newComment.save({}, {
+      success(model, response) {
+        const comments = self.thread.get('comments');
+        comments.push(response);
+        self.thread.set('comments', comments);
+        self.thread.trigger('change');
+      }
+    });
   }
 });

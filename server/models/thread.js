@@ -10,7 +10,11 @@ const threadSchema = new Schema({
     ref: 'User'
   },
   content: String,
-  createdAt: Date
+  createdAt: Date,
+  comments: [{
+    type: ObjectId,
+    ref: 'Comment'
+  }]
 });
 
 threadSchema.options.toObject = threadSchema.options.toObject ? threadSchema.options.toObject : {};

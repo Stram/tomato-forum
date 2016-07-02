@@ -9,7 +9,11 @@
 
     &__title {
       font-size: 40px;
-      padding: 20px 20px 50px;
+      padding: 20px 20px 30px;
+    }
+
+    &__content {
+      padding: 20px;
     }
 
     &__additional-info {
@@ -28,8 +32,12 @@
       height: $photo-size;
 
       border-radius: $photo-size / 2;
-      background-color: black;
       margin-right: 10px;
+      background: {
+        repeat: no-repeat;
+        position: center center;
+        size: cover;
+      }
     }
 
     &__owner-info {
@@ -43,6 +51,73 @@
 
     &__date {
       font-size: 14px;
+    }
+
+    &__new-comment-container {
+      // background-color: $color-bg-grey-600;
+      padding: 20px;
+      margin-top: 10px;
+    }
+
+    &__new-comment {
+
+    }
+  }
+
+  .comment {
+    position: relative;
+    margin: 30px 30px 0;
+
+    &::before {
+      position: absolute;
+      top: -30px;
+      bottom: 0px;
+      left: 25px;
+      right: auto;
+      content: '';
+      width: 1px;
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    &:last-child {
+      &::before {
+        bottom: auto;
+        height: 50px;
+      }
+    }
+
+    &__image {
+      $photo-size: 50px;
+
+      position: absolute;
+      top: 0;
+      left: 0;
+
+      width: $photo-size;
+      height: $photo-size;
+
+      border-radius: $photo-size / 2;
+      margin-right: 10px;
+      background: {
+        repeat: no-repeat;
+        position: center center;
+        size: cover;
+      }
+    }
+
+    &__card {
+      background-color: #FFFFFF;
+      padding: 20px 30px;
+      margin-left: 78px;
+      box-shadow: 0px 2px 2px 0px $color-shadow;
+    }
+
+    &__info {
+      font-size: 14px;
+    }
+
+    &__content {
+      margin-top: 10px;
     }
   }
 }
