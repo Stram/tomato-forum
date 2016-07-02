@@ -60,7 +60,7 @@
 
 	__webpack_require__(7);
 
-	__webpack_require__(22);
+	__webpack_require__(29);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5326,11 +5326,11 @@
 
 	var _session2 = _interopRequireDefault(_session);
 
-	var _pages = __webpack_require__(30);
+	var _pages = __webpack_require__(8);
 
 	var _pages2 = _interopRequireDefault(_pages);
 
-	var _contentWrapper = __webpack_require__(26);
+	var _contentWrapper = __webpack_require__(27);
 
 	var _contentWrapper2 = _interopRequireDefault(_contentWrapper);
 
@@ -5430,6 +5430,80 @@
 	  value: true
 	});
 
+	var _register = __webpack_require__(9);
+
+	var _register2 = _interopRequireDefault(_register);
+
+	var _login = __webpack_require__(11);
+
+	var _login2 = _interopRequireDefault(_login);
+
+	var _verify = __webpack_require__(14);
+
+	var _verify2 = _interopRequireDefault(_verify);
+
+	var _photo = __webpack_require__(18);
+
+	var _photo2 = _interopRequireDefault(_photo);
+
+	var _dashboard = __webpack_require__(21);
+
+	var _dashboard2 = _interopRequireDefault(_dashboard);
+
+	var _forum = __webpack_require__(23);
+
+	var _forum2 = _interopRequireDefault(_forum);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = {
+	  landing: {
+	    View: _login2.default,
+	    authenticated: false,
+	    wrapped: false
+	  },
+	  login: {
+	    View: _login2.default,
+	    authenticated: false,
+	    wrapped: false
+	  },
+	  register: {
+	    View: _register2.default,
+	    authenticated: false,
+	    wrapped: false
+	  },
+	  verify: {
+	    View: _verify2.default,
+	    authenticated: false,
+	    wrapped: false
+	  },
+	  dashboard: {
+	    View: _dashboard2.default,
+	    authenticated: true,
+	    wrapped: true
+	  },
+	  firstStepsPhoto: {
+	    View: _photo2.default,
+	    authenticated: true,
+	    wrapped: false
+	  },
+	  forum: {
+	    View: _forum2.default,
+	    authenticated: true,
+	    wrapped: true
+	  }
+	};
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
 	var _backbone = __webpack_require__(1);
 
 	var _backbone2 = _interopRequireDefault(_backbone);
@@ -5446,7 +5520,7 @@
 
 	var _config2 = _interopRequireDefault(_config);
 
-	var _register = __webpack_require__(9);
+	var _register = __webpack_require__(10);
 
 	var _register2 = _interopRequireDefault(_register);
 
@@ -5500,9 +5574,10 @@
 	});
 
 /***/ },
-/* 9 */
-/***/ function(module, exports) {
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
 
+	var _ = __webpack_require__(2);
 	module.exports = function(obj){
 	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 	with(obj||{}){
@@ -5513,7 +5588,7 @@
 
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5538,7 +5613,7 @@
 
 	var _config2 = _interopRequireDefault(_config);
 
-	var _login = __webpack_require__(11);
+	var _login = __webpack_require__(12);
 
 	var _login2 = _interopRequireDefault(_login);
 
@@ -5550,7 +5625,7 @@
 
 	var _session2 = _interopRequireDefault(_session);
 
-	var _user = __webpack_require__(12);
+	var _user = __webpack_require__(13);
 
 	var _user2 = _interopRequireDefault(_user);
 
@@ -5605,9 +5680,10 @@
 	});
 
 /***/ },
-/* 11 */
-/***/ function(module, exports) {
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
 
+	var _ = __webpack_require__(2);
 	module.exports = function(obj){
 	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 	with(obj||{}){
@@ -5618,7 +5694,7 @@
 
 
 /***/ },
-/* 12 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5636,7 +5712,7 @@
 	exports.default = _backbone2.default.Model.extend({});
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5665,15 +5741,15 @@
 
 	var _router2 = _interopRequireDefault(_router);
 
-	var _verify = __webpack_require__(14);
+	var _verify = __webpack_require__(15);
 
 	var _verify2 = _interopRequireDefault(_verify);
 
-	var _terms = __webpack_require__(15);
+	var _terms = __webpack_require__(16);
 
 	var _terms2 = _interopRequireDefault(_terms);
 
-	var _username = __webpack_require__(16);
+	var _username = __webpack_require__(17);
 
 	var _username2 = _interopRequireDefault(_username);
 
@@ -5759,9 +5835,10 @@
 	});
 
 /***/ },
-/* 14 */
-/***/ function(module, exports) {
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
 
+	var _ = __webpack_require__(2);
 	module.exports = function(obj){
 	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 	with(obj||{}){
@@ -5772,9 +5849,10 @@
 
 
 /***/ },
-/* 15 */
-/***/ function(module, exports) {
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
 
+	var _ = __webpack_require__(2);
 	module.exports = function(obj){
 	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 	with(obj||{}){
@@ -5785,9 +5863,10 @@
 
 
 /***/ },
-/* 16 */
-/***/ function(module, exports) {
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
 
+	var _ = __webpack_require__(2);
 	module.exports = function(obj){
 	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 	with(obj||{}){
@@ -5798,79 +5877,7 @@
 
 
 /***/ },
-/* 17 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _backbone = __webpack_require__(1);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _underscore = __webpack_require__(2);
-
-	var _underscore2 = _interopRequireDefault(_underscore);
-
-	var _dashboard = __webpack_require__(18);
-
-	var _dashboard2 = _interopRequireDefault(_dashboard);
-
-	var _session = __webpack_require__(5);
-
-	var _session2 = _interopRequireDefault(_session);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _backbone2.default.View.extend({
-	  tagName: 'div',
-
-	  className: 'page dashboard-page',
-
-	  events: {},
-
-	  template: _dashboard2.default,
-
-	  render: function render() {
-	    // console.log('AAADAA');
-	    // console.log(session.getCurrentUser());
-	    // console.log(session.getCurrentUser().get('username'));
-
-	    this.$el.html(_underscore2.default.template(this.template({
-	      currentUser: _session2.default.getCurrentUser()
-	    })));
-
-	    return this;
-	  },
-	  close: function close() {
-	    this.remove();
-	  }
-	});
-
-/***/ },
 /* 18 */
-/***/ function(module, exports) {
-
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='<article>\n  <section>\n    ';
-	 if (currentUser) { 
-	__p+='\n      CurrentUser: <b>'+
-	((__t=( currentUser.username ))==null?'':__t)+
-	'</b>\n    ';
-	 } 
-	__p+='\n  </section>\n\n</article>\n';
-	}
-	return __p;
-	};
-
-
-/***/ },
-/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -5887,11 +5894,11 @@
 
 	var _underscore2 = _interopRequireDefault(_underscore);
 
-	var _dropzone = __webpack_require__(20);
+	var _dropzone = __webpack_require__(19);
 
 	var _dropzone2 = _interopRequireDefault(_dropzone);
 
-	var _photo = __webpack_require__(21);
+	var _photo = __webpack_require__(20);
 
 	var _photo2 = _interopRequireDefault(_photo);
 
@@ -5969,7 +5976,7 @@
 	});
 
 /***/ },
-/* 20 */
+/* 19 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(module) {"use strict";
@@ -7748,9 +7755,10 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)(module)))
 
 /***/ },
-/* 21 */
-/***/ function(module, exports) {
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
 
+	var _ = __webpack_require__(2);
 	module.exports = function(obj){
 	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 	with(obj||{}){
@@ -7761,16 +7769,347 @@
 
 
 /***/ },
+/* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(1);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _underscore = __webpack_require__(2);
+
+	var _underscore2 = _interopRequireDefault(_underscore);
+
+	var _dashboard = __webpack_require__(22);
+
+	var _dashboard2 = _interopRequireDefault(_dashboard);
+
+	var _session = __webpack_require__(5);
+
+	var _session2 = _interopRequireDefault(_session);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+	  tagName: 'div',
+
+	  className: 'page dashboard-page',
+
+	  events: {},
+
+	  template: _dashboard2.default,
+
+	  render: function render() {
+	    // console.log('AAADAA');
+	    // console.log(session.getCurrentUser());
+	    // console.log(session.getCurrentUser().get('username'));
+
+	    this.$el.html(_underscore2.default.template(this.template({
+	      currentUser: _session2.default.getCurrentUser()
+	    })));
+
+	    return this;
+	  },
+	  close: function close() {
+	    this.remove();
+	  }
+	});
+
+/***/ },
 /* 22 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _ = __webpack_require__(2);
+	module.exports = function(obj){
+	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+	with(obj||{}){
+	__p+='<article>\n  <section>\n    ';
+	 if (currentUser) { 
+	__p+='\n      CurrentUser: <b>'+
+	((__t=( currentUser.username ))==null?'':__t)+
+	'</b>\n    ';
+	 } 
+	__p+='\n  </section>\n\n</article>\n';
+	}
+	return __p;
+	};
+
+
+/***/ },
+/* 23 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(1);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _underscore = __webpack_require__(2);
+
+	var _underscore2 = _interopRequireDefault(_underscore);
+
+	var _jquery = __webpack_require__(3);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _forum = __webpack_require__(24);
+
+	var _forum2 = _interopRequireDefault(_forum);
+
+	var _forum3 = __webpack_require__(25);
+
+	var _forum4 = _interopRequireDefault(_forum3);
+
+	var _thread = __webpack_require__(26);
+
+	var _thread2 = _interopRequireDefault(_thread);
+
+	var _config = __webpack_require__(6);
+
+	var _config2 = _interopRequireDefault(_config);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+	  tagName: 'div',
+
+	  className: 'page forum-page',
+
+	  events: {
+	    'click .js-new-thread-button': 'showNewThreadModal',
+	    'click .js-new-thread-cancel': 'hideNewThreadModal',
+	    'click .js-new-thread-submit': 'postNewThread'
+	  },
+
+	  template: _forum2.default,
+
+	  initialize: function initialize() {
+	    _forum4.default.fetch();
+	    this.listenTo(_forum4.default, 'change reset add remove', this.render);
+	  },
+	  render: function render() {
+	    this.$el.html(_underscore2.default.template(this.template({
+	      threads: _forum4.default
+	    })));
+
+	    return this;
+	  },
+	  close: function close() {
+	    this.remove();
+	  },
+	  showNewThreadModal: function showNewThreadModal() {
+	    this.$('.js-new-thread-modal').addClass('is-shown');
+	    (0, _jquery2.default)('body').addClass('is-scrolling-disabled');
+	  },
+	  hideNewThreadModal: function hideNewThreadModal() {
+	    this.$('.js-new-thread-modal').removeClass('is-shown');
+	    (0, _jquery2.default)('body').removeClass('is-scrolling-disabled');
+	  },
+	  postNewThread: function postNewThread() {
+	    var self = this;
+	    var title = this.$('.js-new-thread-title').val();
+	    var content = this.$('.js-new-thread-content').val();
+
+	    _jquery2.default.ajax({
+	      url: _config2.default.apiEndpoint + '/thread',
+	      method: 'POST',
+	      data: {
+	        title: title,
+	        content: content
+	      }
+	    }).done(function (response) {
+	      console.log(response);
+	      self.hideNewThreadModal();
+	      _forum4.default.add(new _thread2.default(response.thread));
+	    });
+	  }
+	});
+
+/***/ },
+/* 24 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _ = __webpack_require__(2);
+	module.exports = function(obj){
+	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+	with(obj||{}){
+	__p+='<div class="forum">\n  <div class="category">\n    <div class="category__title">\n\n    </div>\n    <div class="category__threads">\n      ';
+	 threads.each(function(thread) { 
+	__p+='\n        <div class="category__thread">\n          '+
+	((__t=( thread.get('title') ))==null?'':__t)+
+	'\n        </div>\n      ';
+	 }); 
+	__p+='\n    </div>\n  </div>\n</div>\n\n<div class="fab new-thread-button js-new-thread-button">\n+\n</div>\n\n<div class="new-thread-modal modal-container js-new-thread-modal">\n  <div class="modal">\n    <div class="modal__content">\n      <div class="input-box">\n        <label class="input-box__label" for="new-thread-title">Title</label>\n        <input class="input-box__input js-new-thread-title" type="text" id="new-thread-title">\n      </div>\n      <div class="input-box">\n        <label class="input-box__label" for="new-thread-content">Content</label>\n        <textarea class="input-box__input js-new-thread-content" type="text" id="new-thread-content"></textarea>\n      </div>\n    </div>\n    <div class="modal__actions">\n      <div class="button js-new-thread-cancel">\n        CANCEL\n      </div>\n      <div class="button js-new-thread-submit">\n        SUBMIT\n      </div>\n    </div>\n  </div>\n</div>\n';
+	}
+	return __p;
+	};
+
+
+/***/ },
+/* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(1);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _thread = __webpack_require__(26);
+
+	var _thread2 = _interopRequireDefault(_thread);
+
+	var _config = __webpack_require__(6);
+
+	var _config2 = _interopRequireDefault(_config);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Forum = _backbone2.default.Collection.extend({
+	  model: _thread2.default,
+	  url: _config2.default.apiEndpoint + '/thread'
+	});
+
+	exports.default = new Forum();
+
+/***/ },
+/* 26 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(1);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.Model.extend({});
+
+/***/ },
+/* 27 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(1);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _underscore = __webpack_require__(2);
+
+	var _underscore2 = _interopRequireDefault(_underscore);
+
+	var _jquery = __webpack_require__(3);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _contentWrapper = __webpack_require__(28);
+
+	var _contentWrapper2 = _interopRequireDefault(_contentWrapper);
+
+	var _router = __webpack_require__(7);
+
+	var _router2 = _interopRequireDefault(_router);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+	  tagName: 'div',
+
+	  className: 'content-wrapper',
+
+	  events: {
+	    'click .js-dashboard': 'toDashboard',
+	    'click .js-forum': 'toForum'
+	  },
+
+	  template: _contentWrapper2.default,
+
+	  $pageContent: (0, _jquery2.default)('.js-wrapped-page-content'),
+
+	  render: function render() {
+
+	    this.$el.html(_underscore2.default.template(this.template()));
+
+	    return this;
+	  },
+	  close: function close() {
+	    this.currentView.close();
+	    this.remove();
+	  },
+	  changeCurrentView: function changeCurrentView(view) {
+	    if (this.currentView) {
+	      this.currentView.close();
+	    }
+
+	    if (!this.$pageContent.length) {
+	      this.$pageContent = (0, _jquery2.default)('.js-wrapped-page-content');
+	    }
+
+	    this.currentView = view;
+	    view.render();
+
+	    this.$pageContent.html(view.el);
+
+	    console.log('changing wrapped view to ' + view.className);
+	  },
+	  toDashboard: function toDashboard() {
+	    _router2.default.navigate('dashboard', true);
+	  },
+	  toForum: function toForum() {
+	    _router2.default.navigate('forum', true);
+	  }
+	});
+
+/***/ },
+/* 28 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _ = __webpack_require__(2);
+	module.exports = function(obj){
+	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+	with(obj||{}){
+	__p+='<aside class="sidebar">\n\n  <section class="navigation">\n    <div class="navigation__header js-dashboard">\n      DASHBOARD\n    </div>\n    <div class="navigation__header js-forum">\n      FORUM\n    </div>\n    <div class="navigation__items">\n      <div class="navigation__item">\n        Aktualno\n      </div>\n      <div class="navigation__item">\n        Moje teme\n      </div>\n      <div class="navigation__item">\n        Jos nesto\n      </div>\n    </div>\n  </section>\n\n</aside>\n\n<article class="js-wrapped-page-content wrapped-page-content">\n\n</article>\n';
+	}
+	return __p;
+	};
+
+
+/***/ },
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(23);
+	var content = __webpack_require__(30);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(25)(content, {});
+	var update = __webpack_require__(32)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -7787,21 +8126,21 @@
 	}
 
 /***/ },
-/* 23 */
+/* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(24)();
+	exports = module.exports = __webpack_require__(31)();
 	// imports
 	exports.push([module.id, "@import url(https://fonts.googleapis.com/css?family=Roboto&subset=latin,latin-ext);", ""]);
 
 	// module
-	exports.push([module.id, ".align-right {\n  text-align: right; }\n\nhtml {\n  height: 100%; }\n\n.body {\n  font-family: 'Roboto', sans-serif;\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  margin: 0;\n  background-color: #FAFAFA;\n  color: #212121; }\n  .body.is-scrolling-disabled {\n    overflow: hidden; }\n\n.page-content {\n  position: relative;\n  flex: 1; }\n\n.header,\n.footer {\n  height: 50px;\n  background-color: #F5F5F5;\n  z-index: 1; }\n\n.card {\n  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3);\n  background-color: #FFFFFF;\n  border-radius: 2px; }\n  .card__content {\n    padding: 24px 24px 16px; }\n  .card__actions {\n    padding: 8px; }\n\n.input-box {\n  padding: 16px 0 8px; }\n  .input-box__label {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n  .input-box__input {\n    font-size: 16px;\n    line-height: 16px;\n    min-width: 250px;\n    display: block;\n    padding: 0 0 7px;\n    border-top: 0;\n    border-right: 0;\n    border-bottom: 1px solid #424242;\n    border-left: 0;\n    margin: 8px 0;\n    outline: 0; }\n    .input-box__input:focus {\n      border-bottom: 1px solid red; }\n  .input-box__message {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n    .input-box__message.is-error {\n      color: #F44336; }\n\n.button {\n  display: inline-block;\n  text-align: center;\n  text-transform: uppercase;\n  cursor: pointer;\n  font-size: 14px;\n  border-radius: 2px;\n  border: 0;\n  line-height: 14px;\n  padding: 10px 16px;\n  background-color: transparent; }\n  .button.button--dialog {\n    min-width: 64px;\n    padding: 10px 8px;\n    margin: 0 8px; }\n  .button.button--raised {\n    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n  .button.is-hidden {\n    display: none; }\n\n.navigation {\n  margin-top: 50px;\n  padding-left: 20px; }\n  .navigation__header {\n    font-weight: bold;\n    font-size: 20px;\n    color: #757575;\n    margin-top: 40px; }\n  .navigation__items {\n    margin-top: 10px; }\n  .navigation__item {\n    padding: 5px;\n    color: #212121; }\n\n.sidebar {\n  position: absolute;\n  top: 0;\n  right: auto;\n  bottom: 0;\n  left: 0;\n  background-color: #F5F5F5;\n  width: 250px;\n  box-shadow: 2px 0 16px 0 rgba(0, 0, 0, 0.1); }\n\n.fab {\n  height: 50px;\n  width: 50px;\n  border-radius: 25px;\n  font-size: 20px;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.modal-container {\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  background-color: rgba(0, 0, 0, 0.3);\n  display: none;\n  align-items: center;\n  justify-content: center; }\n  .modal-container.is-shown {\n    display: flex; }\n\n.modal {\n  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3);\n  background-color: #FFFFFF;\n  border-radius: 2px; }\n  .modal__content {\n    padding: 24px 24px 16px; }\n  .modal__actions {\n    text-align: right;\n    padding: 8px; }\n\n.header {\n  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n\n.register-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.login-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.verify-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.first-steps-photo-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n  .first-steps-photo-page .select-photo-container {\n    display: flex;\n    min-height: 250px; }\n    .first-steps-photo-page .select-photo-container .image-preview-container {\n      display: none; }\n    .first-steps-photo-page .select-photo-container.has-photo .dropzone-container {\n      display: none; }\n    .first-steps-photo-page .select-photo-container.has-photo .image-preview-container {\n      display: block; }\n  .first-steps-photo-page .dropzone-container {\n    border: 5px dashed black;\n    width: 250px; }\n  .first-steps-photo-page .image-preview-container {\n    width: 250px; }\n    .first-steps-photo-page .image-preview-container .image-preview {\n      height: 100%;\n      background-repeat: no-repeat;\n      background-position: center center;\n      background-size: cover; }\n\n.content-wrapper {\n  height: 100%; }\n\n.wrapped-page-content {\n  position: absolute;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 250px; }\n\n.forum-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.new-thread-button {\n  position: absolute;\n  bottom: 20px;\n  right: 20px;\n  background-color: #757575;\n  color: #FFFFFF; }\n", ""]);
+	exports.push([module.id, ".align-right {\n  text-align: right; }\n\nhtml {\n  height: 100%; }\n\n.body {\n  font-family: 'Roboto', sans-serif;\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  margin: 0;\n  background-color: #FAFAFA;\n  color: #212121; }\n  .body.is-scrolling-disabled {\n    overflow: hidden; }\n\n.page-content {\n  position: relative;\n  flex: 1; }\n\n.header,\n.footer {\n  height: 50px;\n  background-color: #F5F5F5;\n  z-index: 1; }\n\n.card {\n  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3);\n  background-color: #FFFFFF;\n  border-radius: 2px; }\n  .card__content {\n    padding: 24px 24px 16px; }\n  .card__actions {\n    padding: 8px; }\n\n.input-box {\n  padding: 16px 0 8px; }\n  .input-box__label {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n  .input-box__input {\n    font-size: 16px;\n    line-height: 16px;\n    min-width: 250px;\n    display: block;\n    padding: 0 0 7px;\n    border-top: 0;\n    border-right: 0;\n    border-bottom: 1px solid #424242;\n    border-left: 0;\n    margin: 8px 0;\n    outline: 0; }\n    .input-box__input:focus {\n      border-bottom: 1px solid red; }\n  .input-box__message {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n    .input-box__message.is-error {\n      color: #F44336; }\n\n.button {\n  display: inline-block;\n  text-align: center;\n  text-transform: uppercase;\n  cursor: pointer;\n  font-size: 14px;\n  border-radius: 2px;\n  border: 0;\n  line-height: 14px;\n  padding: 10px 16px;\n  background-color: transparent; }\n  .button.button--dialog {\n    min-width: 64px;\n    padding: 10px 8px;\n    margin: 0 8px; }\n  .button.button--raised {\n    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n  .button.is-hidden {\n    display: none; }\n\n.navigation {\n  margin-top: 50px;\n  padding-left: 20px; }\n  .navigation__header {\n    font-weight: bold;\n    font-size: 20px;\n    color: #757575;\n    margin-top: 40px; }\n  .navigation__items {\n    margin-top: 10px; }\n  .navigation__item {\n    padding: 5px;\n    color: #212121; }\n\n.sidebar {\n  position: absolute;\n  top: 0;\n  right: auto;\n  bottom: 0;\n  left: 0;\n  background-color: #F5F5F5;\n  width: 250px;\n  box-shadow: 2px 0 16px 0 rgba(0, 0, 0, 0.1); }\n\n.fab {\n  height: 50px;\n  width: 50px;\n  border-radius: 25px;\n  font-size: 20px;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.modal-container {\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  background-color: rgba(0, 0, 0, 0.3);\n  display: none;\n  align-items: center;\n  justify-content: center; }\n  .modal-container.is-shown {\n    display: flex; }\n\n.modal {\n  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3);\n  background-color: #FFFFFF;\n  border-radius: 2px; }\n  .modal__content {\n    padding: 24px 24px 16px; }\n  .modal__actions {\n    text-align: right;\n    padding: 8px; }\n\n.header {\n  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n\n.register-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.login-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.verify-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.first-steps-photo-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n  .first-steps-photo-page .select-photo-container {\n    display: flex;\n    min-height: 250px; }\n    .first-steps-photo-page .select-photo-container .image-preview-container {\n      display: none; }\n    .first-steps-photo-page .select-photo-container.has-photo .dropzone-container {\n      display: none; }\n    .first-steps-photo-page .select-photo-container.has-photo .image-preview-container {\n      display: block; }\n  .first-steps-photo-page .dropzone-container {\n    border: 5px dashed black;\n    width: 250px; }\n  .first-steps-photo-page .image-preview-container {\n    width: 250px; }\n    .first-steps-photo-page .image-preview-container .image-preview {\n      height: 100%;\n      background-repeat: no-repeat;\n      background-position: center center;\n      background-size: cover; }\n\n.content-wrapper {\n  height: 100%; }\n\n.wrapped-page-content {\n  position: absolute;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 250px; }\n\n.forum-page {\n  height: 100%; }\n\n.new-thread-button {\n  position: absolute;\n  bottom: 20px;\n  right: 20px;\n  background-color: #757575;\n  color: #FFFFFF; }\n", ""]);
 
 	// exports
 
 
 /***/ },
-/* 24 */
+/* 31 */
 /***/ function(module, exports) {
 
 	/*
@@ -7857,7 +8196,7 @@
 
 
 /***/ },
-/* 25 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -8107,267 +8446,6 @@
 			URL.revokeObjectURL(oldSrc);
 	}
 
-
-/***/ },
-/* 26 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _backbone = __webpack_require__(1);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _underscore = __webpack_require__(2);
-
-	var _underscore2 = _interopRequireDefault(_underscore);
-
-	var _jquery = __webpack_require__(3);
-
-	var _jquery2 = _interopRequireDefault(_jquery);
-
-	var _contentWrapper = __webpack_require__(27);
-
-	var _contentWrapper2 = _interopRequireDefault(_contentWrapper);
-
-	var _router = __webpack_require__(7);
-
-	var _router2 = _interopRequireDefault(_router);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _backbone2.default.View.extend({
-	  tagName: 'div',
-
-	  className: 'content-wrapper',
-
-	  events: {
-	    'click .js-dashboard': 'toDashboard',
-	    'click .js-forum': 'toForum'
-	  },
-
-	  template: _contentWrapper2.default,
-
-	  $pageContent: (0, _jquery2.default)('.js-wrapped-page-content'),
-
-	  render: function render() {
-
-	    this.$el.html(_underscore2.default.template(this.template()));
-
-	    return this;
-	  },
-	  close: function close() {
-	    this.currentView.close();
-	    this.remove();
-	  },
-	  changeCurrentView: function changeCurrentView(view) {
-	    if (this.currentView) {
-	      this.currentView.close();
-	    }
-
-	    if (!this.$pageContent.length) {
-	      this.$pageContent = (0, _jquery2.default)('.js-wrapped-page-content');
-	    }
-
-	    this.currentView = view;
-	    view.render();
-
-	    this.$pageContent.html(view.el);
-
-	    console.log('changing wrapped view to ' + view.className);
-	  },
-	  toDashboard: function toDashboard() {
-	    _router2.default.navigate('dashboard', true);
-	  },
-	  toForum: function toForum() {
-	    _router2.default.navigate('forum', true);
-	  }
-	});
-
-/***/ },
-/* 27 */
-/***/ function(module, exports) {
-
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='<aside class="sidebar">\n\n  <section class="navigation">\n    <div class="navigation__header js-dashboard">\n      DASHBOARD\n    </div>\n    <div class="navigation__header js-forum">\n      FORUM\n    </div>\n    <div class="navigation__items">\n      <div class="navigation__item">\n        Aktualno\n      </div>\n      <div class="navigation__item">\n        Moje teme\n      </div>\n      <div class="navigation__item">\n        Jos nesto\n      </div>\n    </div>\n  </section>\n\n</aside>\n\n<article class="js-wrapped-page-content wrapped-page-content">\n\n</article>\n';
-	}
-	return __p;
-	};
-
-
-/***/ },
-/* 28 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _backbone = __webpack_require__(1);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _underscore = __webpack_require__(2);
-
-	var _underscore2 = _interopRequireDefault(_underscore);
-
-	var _jquery = __webpack_require__(3);
-
-	var _jquery2 = _interopRequireDefault(_jquery);
-
-	var _forum = __webpack_require__(29);
-
-	var _forum2 = _interopRequireDefault(_forum);
-
-	var _config = __webpack_require__(6);
-
-	var _config2 = _interopRequireDefault(_config);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _backbone2.default.View.extend({
-	  tagName: 'div',
-
-	  className: 'page forum-page',
-
-	  events: {
-	    'click .js-new-thread-button': 'showNewThreadModal',
-	    'click .js-new-thread-cancel': 'hideNewThreadModal',
-	    'click .js-new-thread-submit': 'postNewThread'
-	  },
-
-	  template: _forum2.default,
-
-	  render: function render() {
-
-	    this.$el.html(_underscore2.default.template(this.template({})));
-
-	    return this;
-	  },
-	  close: function close() {
-	    this.remove();
-	  },
-	  showNewThreadModal: function showNewThreadModal() {
-	    this.$('.js-new-thread-modal').addClass('is-shown');
-	    (0, _jquery2.default)('body').addClass('is-scrolling-disabled');
-	  },
-	  hideNewThreadModal: function hideNewThreadModal() {
-	    this.$('.js-new-thread-modal').removeClass('is-shown');
-	    (0, _jquery2.default)('body').removeClass('is-scrolling-disabled');
-	  },
-	  postNewThread: function postNewThread() {
-	    var self = this;
-	    var title = this.$('.js-new-thread-title').val();
-	    var content = this.$('.js-new-thread-content').val();
-
-	    _jquery2.default.ajax({
-	      url: _config2.default.apiEndpoint + '/thread',
-	      method: 'POST',
-	      data: {
-	        title: title,
-	        content: content
-	      }
-	    }).done(function (response) {
-	      console.log(response);
-	      self.hideNewThreadModal();
-	    });
-	  }
-	});
-
-/***/ },
-/* 29 */
-/***/ function(module, exports) {
-
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='<div class="">\n\n</div>\n\n<div class="fab new-thread-button js-new-thread-button">\n+\n</div>\n\n<div class="new-thread-modal modal-container js-new-thread-modal">\n  <div class="modal">\n    <div class="modal__content">\n      <div class="input-box">\n        <label class="input-box__label" for="new-thread-title">Title</label>\n        <input class="input-box__input js-new-thread-title" type="text" id="new-thread-title">\n      </div>\n      <div class="input-box">\n        <label class="input-box__label" for="new-thread-content">Content</label>\n        <textarea class="input-box__input js-new-thread-content" type="text" id="new-thread-content"></textarea>\n      </div>\n    </div>\n    <div class="modal__actions">\n      <div class="button js-new-thread-cancel">\n        CANCEL\n      </div>\n      <div class="button js-new-thread-submit">\n        SUBMIT\n      </div>\n    </div>\n  </div>\n</div>\n';
-	}
-	return __p;
-	};
-
-
-/***/ },
-/* 30 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _register = __webpack_require__(8);
-
-	var _register2 = _interopRequireDefault(_register);
-
-	var _login = __webpack_require__(10);
-
-	var _login2 = _interopRequireDefault(_login);
-
-	var _verify = __webpack_require__(13);
-
-	var _verify2 = _interopRequireDefault(_verify);
-
-	var _photo = __webpack_require__(19);
-
-	var _photo2 = _interopRequireDefault(_photo);
-
-	var _dashboard = __webpack_require__(17);
-
-	var _dashboard2 = _interopRequireDefault(_dashboard);
-
-	var _forum = __webpack_require__(28);
-
-	var _forum2 = _interopRequireDefault(_forum);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = {
-	  landing: {
-	    View: _login2.default,
-	    authenticated: false,
-	    wrapped: false
-	  },
-	  login: {
-	    View: _login2.default,
-	    authenticated: false,
-	    wrapped: false
-	  },
-	  register: {
-	    View: _register2.default,
-	    authenticated: false,
-	    wrapped: false
-	  },
-	  verify: {
-	    View: _verify2.default,
-	    authenticated: false,
-	    wrapped: false
-	  },
-	  dashboard: {
-	    View: _dashboard2.default,
-	    authenticated: true,
-	    wrapped: true
-	  },
-	  firstStepsPhoto: {
-	    View: _photo2.default,
-	    authenticated: true,
-	    wrapped: false
-	  },
-	  forum: {
-	    View: _forum2.default,
-	    authenticated: true,
-	    wrapped: true
-	  }
-	};
 
 /***/ }
 /******/ ]);

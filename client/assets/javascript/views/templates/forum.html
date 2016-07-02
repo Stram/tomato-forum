@@ -1,5 +1,16 @@
-<div class="">
+<div class="forum">
+  <div class="category">
+    <div class="category__title">
 
+    </div>
+    <div class="category__threads">
+      <% threads.each(function(thread) { %>
+        <div class="category__thread">
+          <%= thread.get('title') %>
+        </div>
+      <% }); %>
+    </div>
+  </div>
 </div>
 
 <div class="fab new-thread-button js-new-thread-button">

@@ -24,4 +24,10 @@ router.post('/', (req, res, next) => {
   });
 });
 
+router.get('/', (req, res, next) => {
+  Thread.find().then((threads) => {
+    res.json(threads.map((thread) => thread.toObject()));
+  });
+});
+
 module.exports = router;

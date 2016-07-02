@@ -4,6 +4,9 @@ import $ from 'jquery';
 
 import template from 'views/templates/forum.html';
 
+import Forum from 'collections/forum';
+import Thread from 'models/thread';
+
 import config from 'config';
 
 export default Backbone.View.extend({
@@ -19,12 +22,16 @@ export default Backbone.View.extend({
 
   template,
 
+  initialize() {
+    Forum.fetch();
+    this.listenTo(Forum, 'change reset add remove', this.render);
+  },
 
   render() {
-
     this.$el.html(
       _.template(
         this.template({
+          threads: Forum
         })
       )
     );
@@ -61,6 +68,7 @@ export default Backbone.View.extend({
     }).done((response) => {
       console.log(response);
       self.hideNewThreadModal();
+      Forum.add(new Thread(response.thread));
     })
   }
 });

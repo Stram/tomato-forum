@@ -34,7 +34,10 @@ module.exports = {
       loaders: ['style', 'css', 'sass']
     }, {
       test: /\.html$/,
-      loader: 'underscore-template-loader'
+      loader: 'underscore-template-loader',
+      query: {
+        engine: 'underscore'
+      }
     }]
   }
 };
