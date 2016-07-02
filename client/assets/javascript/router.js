@@ -15,7 +15,8 @@ const Router = Backbone.Router.extend({
     'verify?userId=:userId&token=:token': 'verify',
     dashboard: 'dashboard',
     'first-steps/photo': 'firstStepsPhoto',
-    forum: 'forum'
+    forum: 'forum',
+    'thread/:threadId': 'thread'
   },
 
   pages,
@@ -46,7 +47,7 @@ const Router = Backbone.Router.extend({
     this.contentWrapperView.changeCurrentView(view);
   },
 
-  changePage(pageName, ...args) {
+  changePage(pageName, args) {
     const pageObject = this.pages[pageName];
     if (pageObject) {
       if (pageObject.authenticated && !session.isAuthenticated()) {
@@ -90,6 +91,10 @@ const Router = Backbone.Router.extend({
 
   forum() {
     this.changePage('forum');
+  },
+
+  thread(threadId) {
+    this.changePage('thread', {threadId});
   }
 
 });

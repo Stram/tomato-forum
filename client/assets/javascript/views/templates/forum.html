@@ -5,7 +5,7 @@
     </div>
     <div class="category__threads">
       <% threads.each(function(thread) { %>
-        <div class="category__thread">
+        <div class="category__thread js-navigate-to-thread" data-thread-id="<%= thread.get('id') %>">
           <%= thread.get('title') %>
         </div>
       <% }); %>

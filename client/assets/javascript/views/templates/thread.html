@@ -1,0 +1,23 @@
+<div class="thread">
+  <div class="thread__header">
+    <div class="thread__title">
+      <%= thread.get('title') %>
+    </div>
+    <div class="thread__additional-info">
+      <div class="thread__owner-photo">
+
+      </div>
+      <div class="thread__owner-info">
+        <div class="thread__owner-username">
+          <%= thread.get('owner').username %>
+        </div>
+        <div class="thread__date">
+          <%= thread.get('createdAt') %>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="thread__comments">
+
+  </div>
+</div>

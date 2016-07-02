@@ -30,4 +30,8 @@ router.get('/', (req, res, next) => {
   });
 });
 
+router.get('/:threadId', (req, res, next) => {
+  Thread.findById(req.params.threadId).populate('owner').then((thread) => res.json(thread.toObject()));
+});
+
 module.exports = router;

@@ -5344,7 +5344,8 @@
 	    'verify?userId=:userId&token=:token': 'verify',
 	    dashboard: 'dashboard',
 	    'first-steps/photo': 'firstStepsPhoto',
-	    forum: 'forum'
+	    forum: 'forum',
+	    'thread/:threadId': 'thread'
 	  },
 
 	  pages: _pages2.default,
@@ -5373,18 +5374,13 @@
 	    }
 	    this.contentWrapperView.changeCurrentView(view);
 	  },
-	  changePage: function changePage(pageName) {
+	  changePage: function changePage(pageName, args) {
 	    var pageObject = this.pages[pageName];
 	    if (pageObject) {
 	      if (pageObject.authenticated && !_session2.default.isAuthenticated()) {
 	        this.navigate('login', true);
 	        return;
 	      }
-
-	      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-	        args[_key - 1] = arguments[_key];
-	      }
-
 	      var pageView = new pageObject.View(args);
 	      if (pageObject.wrapped) {
 	        this.changeWrappedView(pageView);
@@ -5415,6 +5411,9 @@
 	  },
 	  forum: function forum() {
 	    this.changePage('forum');
+	  },
+	  thread: function thread(threadId) {
+	    this.changePage('thread', { threadId: threadId });
 	  }
 	});
 
@@ -5454,6 +5453,10 @@
 
 	var _forum2 = _interopRequireDefault(_forum);
 
+	var _thread = __webpack_require__(33);
+
+	var _thread2 = _interopRequireDefault(_thread);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.default = {
@@ -5489,6 +5492,11 @@
 	  },
 	  forum: {
 	    View: _forum2.default,
+	    authenticated: true,
+	    wrapped: true
+	  },
+	  thread: {
+	    View: _thread2.default,
 	    authenticated: true,
 	    wrapped: true
 	  }
@@ -7879,6 +7887,10 @@
 
 	var _config2 = _interopRequireDefault(_config);
 
+	var _router = __webpack_require__(7);
+
+	var _router2 = _interopRequireDefault(_router);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.default = _backbone2.default.View.extend({
@@ -7889,7 +7901,8 @@
 	  events: {
 	    'click .js-new-thread-button': 'showNewThreadModal',
 	    'click .js-new-thread-cancel': 'hideNewThreadModal',
-	    'click .js-new-thread-submit': 'postNewThread'
+	    'click .js-new-thread-submit': 'postNewThread',
+	    'click .js-navigate-to-thread': 'openThread'
 	  },
 
 	  template: _forum2.default,
@@ -7933,6 +7946,10 @@
 	      self.hideNewThreadModal();
 	      _forum4.default.add(new _thread2.default(response.thread));
 	    });
+	  },
+	  openThread: function openThread(event) {
+	    var threadId = event.target.dataset.threadId;
+	    _router2.default.navigate('thread/' + threadId, true);
 	  }
 	});
 
@@ -7946,7 +7963,9 @@
 	with(obj||{}){
 	__p+='<div class="forum">\n  <div class="category">\n    <div class="category__title">\n\n    </div>\n    <div class="category__threads">\n      ';
 	 threads.each(function(thread) { 
-	__p+='\n        <div class="category__thread">\n          '+
+	__p+='\n        <div class="category__thread js-navigate-to-thread" data-thread-id="'+
+	((__t=( thread.get('id') ))==null?'':__t)+
+	'">\n          '+
 	((__t=( thread.get('title') ))==null?'':__t)+
 	'\n        </div>\n      ';
 	 }); 
@@ -8001,9 +8020,15 @@
 
 	var _backbone2 = _interopRequireDefault(_backbone);
 
+	var _config = __webpack_require__(6);
+
+	var _config2 = _interopRequireDefault(_config);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	exports.default = _backbone2.default.Model.extend({});
+	exports.default = _backbone2.default.Model.extend({
+	  urlRoot: _config2.default.apiEndpoint + '/thread'
+	});
 
 /***/ },
 /* 27 */
@@ -8134,7 +8159,7 @@
 	exports.push([module.id, "@import url(https://fonts.googleapis.com/css?family=Roboto&subset=latin,latin-ext);", ""]);
 
 	// module
-	exports.push([module.id, ".align-right {\n  text-align: right; }\n\nhtml {\n  height: 100%; }\n\n.body {\n  font-family: 'Roboto', sans-serif;\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  margin: 0;\n  background-color: #FAFAFA;\n  color: #212121; }\n  .body.is-scrolling-disabled {\n    overflow: hidden; }\n\n.page-content {\n  position: relative;\n  flex: 1; }\n\n.header,\n.footer {\n  height: 50px;\n  background-color: #F5F5F5;\n  z-index: 1; }\n\n.card {\n  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3);\n  background-color: #FFFFFF;\n  border-radius: 2px; }\n  .card__content {\n    padding: 24px 24px 16px; }\n  .card__actions {\n    padding: 8px; }\n\n.input-box {\n  padding: 16px 0 8px; }\n  .input-box__label {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n  .input-box__input {\n    font-size: 16px;\n    line-height: 16px;\n    min-width: 250px;\n    display: block;\n    padding: 0 0 7px;\n    border-top: 0;\n    border-right: 0;\n    border-bottom: 1px solid #424242;\n    border-left: 0;\n    margin: 8px 0;\n    outline: 0; }\n    .input-box__input:focus {\n      border-bottom: 1px solid red; }\n  .input-box__message {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n    .input-box__message.is-error {\n      color: #F44336; }\n\n.button {\n  display: inline-block;\n  text-align: center;\n  text-transform: uppercase;\n  cursor: pointer;\n  font-size: 14px;\n  border-radius: 2px;\n  border: 0;\n  line-height: 14px;\n  padding: 10px 16px;\n  background-color: transparent; }\n  .button.button--dialog {\n    min-width: 64px;\n    padding: 10px 8px;\n    margin: 0 8px; }\n  .button.button--raised {\n    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n  .button.is-hidden {\n    display: none; }\n\n.navigation {\n  margin-top: 50px;\n  padding-left: 20px; }\n  .navigation__header {\n    font-weight: bold;\n    font-size: 20px;\n    color: #757575;\n    margin-top: 40px; }\n  .navigation__items {\n    margin-top: 10px; }\n  .navigation__item {\n    padding: 5px;\n    color: #212121; }\n\n.sidebar {\n  position: absolute;\n  top: 0;\n  right: auto;\n  bottom: 0;\n  left: 0;\n  background-color: #F5F5F5;\n  width: 250px;\n  box-shadow: 2px 0 16px 0 rgba(0, 0, 0, 0.1); }\n\n.fab {\n  height: 50px;\n  width: 50px;\n  border-radius: 25px;\n  font-size: 20px;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.modal-container {\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  background-color: rgba(0, 0, 0, 0.3);\n  display: none;\n  align-items: center;\n  justify-content: center; }\n  .modal-container.is-shown {\n    display: flex; }\n\n.modal {\n  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3);\n  background-color: #FFFFFF;\n  border-radius: 2px; }\n  .modal__content {\n    padding: 24px 24px 16px; }\n  .modal__actions {\n    text-align: right;\n    padding: 8px; }\n\n.header {\n  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n\n.register-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.login-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.verify-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.first-steps-photo-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n  .first-steps-photo-page .select-photo-container {\n    display: flex;\n    min-height: 250px; }\n    .first-steps-photo-page .select-photo-container .image-preview-container {\n      display: none; }\n    .first-steps-photo-page .select-photo-container.has-photo .dropzone-container {\n      display: none; }\n    .first-steps-photo-page .select-photo-container.has-photo .image-preview-container {\n      display: block; }\n  .first-steps-photo-page .dropzone-container {\n    border: 5px dashed black;\n    width: 250px; }\n  .first-steps-photo-page .image-preview-container {\n    width: 250px; }\n    .first-steps-photo-page .image-preview-container .image-preview {\n      height: 100%;\n      background-repeat: no-repeat;\n      background-position: center center;\n      background-size: cover; }\n\n.content-wrapper {\n  height: 100%; }\n\n.wrapped-page-content {\n  position: absolute;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 250px; }\n\n.forum-page {\n  height: 100%; }\n\n.new-thread-button {\n  position: absolute;\n  bottom: 20px;\n  right: 20px;\n  background-color: #757575;\n  color: #FFFFFF; }\n", ""]);
+	exports.push([module.id, ".align-right {\n  text-align: right; }\n\nhtml {\n  height: 100%; }\n\n.body {\n  font-family: 'Roboto', sans-serif;\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  margin: 0;\n  background-color: #FAFAFA;\n  color: #212121; }\n  .body.is-scrolling-disabled {\n    overflow: hidden; }\n\n.page-content {\n  position: relative;\n  flex: 1; }\n\n.header,\n.footer {\n  height: 50px;\n  background-color: #F5F5F5;\n  z-index: 1; }\n\n.card {\n  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3);\n  background-color: #FFFFFF;\n  border-radius: 2px; }\n  .card__content {\n    padding: 24px 24px 16px; }\n  .card__actions {\n    padding: 8px; }\n\n.input-box {\n  padding: 16px 0 8px; }\n  .input-box__label {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n  .input-box__input {\n    font-size: 16px;\n    line-height: 16px;\n    min-width: 250px;\n    display: block;\n    padding: 0 0 7px;\n    border-top: 0;\n    border-right: 0;\n    border-bottom: 1px solid #424242;\n    border-left: 0;\n    margin: 8px 0;\n    outline: 0; }\n    .input-box__input:focus {\n      border-bottom: 1px solid red; }\n  .input-box__message {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n    .input-box__message.is-error {\n      color: #F44336; }\n\n.button {\n  display: inline-block;\n  text-align: center;\n  text-transform: uppercase;\n  cursor: pointer;\n  font-size: 14px;\n  border-radius: 2px;\n  border: 0;\n  line-height: 14px;\n  padding: 10px 16px;\n  background-color: transparent; }\n  .button.button--dialog {\n    min-width: 64px;\n    padding: 10px 8px;\n    margin: 0 8px; }\n  .button.button--raised {\n    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n  .button.is-hidden {\n    display: none; }\n\n.navigation {\n  margin-top: 50px;\n  padding-left: 20px; }\n  .navigation__header {\n    font-weight: bold;\n    font-size: 20px;\n    color: #757575;\n    margin-top: 40px; }\n  .navigation__items {\n    margin-top: 10px; }\n  .navigation__item {\n    padding: 5px;\n    color: #212121; }\n\n.sidebar {\n  position: absolute;\n  top: 0;\n  right: auto;\n  bottom: 0;\n  left: 0;\n  background-color: #F5F5F5;\n  width: 250px;\n  box-shadow: 2px 0 16px 0 rgba(0, 0, 0, 0.1); }\n\n.fab {\n  height: 50px;\n  width: 50px;\n  border-radius: 25px;\n  font-size: 20px;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.modal-container {\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  background-color: rgba(0, 0, 0, 0.3);\n  display: none;\n  align-items: center;\n  justify-content: center; }\n  .modal-container.is-shown {\n    display: flex; }\n\n.modal {\n  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3);\n  background-color: #FFFFFF;\n  border-radius: 2px; }\n  .modal__content {\n    padding: 24px 24px 16px; }\n  .modal__actions {\n    text-align: right;\n    padding: 8px; }\n\n.header {\n  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n\n.register-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.login-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.verify-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.first-steps-photo-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n  .first-steps-photo-page .select-photo-container {\n    display: flex;\n    min-height: 250px; }\n    .first-steps-photo-page .select-photo-container .image-preview-container {\n      display: none; }\n    .first-steps-photo-page .select-photo-container.has-photo .dropzone-container {\n      display: none; }\n    .first-steps-photo-page .select-photo-container.has-photo .image-preview-container {\n      display: block; }\n  .first-steps-photo-page .dropzone-container {\n    border: 5px dashed black;\n    width: 250px; }\n  .first-steps-photo-page .image-preview-container {\n    width: 250px; }\n    .first-steps-photo-page .image-preview-container .image-preview {\n      height: 100%;\n      background-repeat: no-repeat;\n      background-position: center center;\n      background-size: cover; }\n\n.content-wrapper {\n  height: 100%; }\n\n.wrapped-page-content {\n  position: absolute;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 250px; }\n\n.forum-page {\n  height: 100%; }\n\n.new-thread-button {\n  position: absolute;\n  bottom: 20px;\n  right: 20px;\n  background-color: #757575;\n  color: #FFFFFF; }\n\n.thread-page {\n  height: 100%; }\n  .thread-page .thread__header {\n    background-color: #757575;\n    color: #FFFFFF; }\n  .thread-page .thread__title {\n    font-size: 40px;\n    padding: 20px 20px 50px; }\n  .thread-page .thread__additional-info {\n    display: flex;\n    align-items: center;\n    padding: 20px 20px 30px; }\n  .thread-page .thread__owner-photo {\n    display: inline-block;\n    width: 50px;\n    height: 50px;\n    border-radius: 25px;\n    background-color: black;\n    margin-right: 10px; }\n  .thread-page .thread__owner-info {\n    display: inline-block;\n    line-height: 25px; }\n  .thread-page .thread__owner-username {\n    display: inline-block; }\n  .thread-page .thread__date {\n    font-size: 14px; }\n\n.loading {\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  background-color: rgba(0, 0, 0, 0.3);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000; }\n  .loading__icon {\n    width: 50px;\n    height: 50px;\n    background-image: url(\"/public/images/loader.svg\");\n    background-repeat: no-repeat;\n    background-position: center;\n    background-size: contain; }\n", ""]);
 
 	// exports
 
@@ -8445,6 +8470,111 @@
 		if(oldSrc)
 			URL.revokeObjectURL(oldSrc);
 	}
+
+
+/***/ },
+/* 33 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(1);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _underscore = __webpack_require__(2);
+
+	var _underscore2 = _interopRequireDefault(_underscore);
+
+	var _thread = __webpack_require__(34);
+
+	var _thread2 = _interopRequireDefault(_thread);
+
+	var _loading = __webpack_require__(35);
+
+	var _loading2 = _interopRequireDefault(_loading);
+
+	var _thread3 = __webpack_require__(26);
+
+	var _thread4 = _interopRequireDefault(_thread3);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+	  tagName: 'div',
+
+	  className: 'page thread-page',
+
+	  events: {},
+
+	  template: _thread2.default,
+	  loadingTemplate: _loading2.default,
+
+	  initialize: function initialize(args) {
+	    var self = this;
+	    this.threadLoaded = false;
+	    this.thread = new _thread4.default({ id: args.threadId });
+	    this.thread.fetch({
+	      success: function success() {
+	        self.threadLoaded = true;
+	        self.render();
+	      }
+	    });
+
+	    // this.listenTo(this.thread, 'change reset', this.render);
+	  },
+	  render: function render() {
+	    if (this.threadLoaded) {
+	      this.$el.html(_underscore2.default.template(this.template({
+	        thread: this.thread
+	      })));
+	    } else {
+	      this.$el.html(this.loadingTemplate());
+	    }
+
+	    return this;
+	  },
+	  close: function close() {
+	    this.remove();
+	  }
+	});
+
+/***/ },
+/* 34 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _ = __webpack_require__(2);
+	module.exports = function(obj){
+	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+	with(obj||{}){
+	__p+='<div class="thread">\n  <div class="thread__header">\n    <div class="thread__title">\n      '+
+	((__t=( thread.get('title') ))==null?'':__t)+
+	'\n    </div>\n    <div class="thread__additional-info">\n      <div class="thread__owner-photo">\n\n      </div>\n      <div class="thread__owner-info">\n        <div class="thread__owner-username">\n          '+
+	((__t=( thread.get('owner').username ))==null?'':__t)+
+	'\n        </div>\n        <div class="thread__date">\n          '+
+	((__t=( thread.get('createdAt') ))==null?'':__t)+
+	'\n        </div>\n      </div>\n    </div>\n  </div>\n  <div class="thread__comments">\n\n  </div>\n</div>\n';
+	}
+	return __p;
+	};
+
+
+/***/ },
+/* 35 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _ = __webpack_require__(2);
+	module.exports = function(obj){
+	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+	with(obj||{}){
+	__p+='<div class="loading">\n  <div class="loading__icon">\n    \n  </div>\n</div>\n';
+	}
+	return __p;
+	};
 
 
 /***/ }

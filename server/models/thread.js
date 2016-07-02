@@ -7,7 +7,7 @@ const threadSchema = new Schema({
   title: String,
   owner: {
     type: ObjectId,
-    ref: 'userSchema'
+    ref: 'User'
   },
   content: String,
   createdAt: Date

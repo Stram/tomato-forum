@@ -8,6 +8,7 @@ import Forum from 'collections/forum';
 import Thread from 'models/thread';
 
 import config from 'config';
+import router from 'router';
 
 export default Backbone.View.extend({
   tagName: 'div',
@@ -17,7 +18,8 @@ export default Backbone.View.extend({
   events: {
     'click .js-new-thread-button': 'showNewThreadModal',
     'click .js-new-thread-cancel': 'hideNewThreadModal',
-    'click .js-new-thread-submit': 'postNewThread'
+    'click .js-new-thread-submit': 'postNewThread',
+    'click .js-navigate-to-thread': 'openThread'
   },
 
   template,
@@ -69,6 +71,11 @@ export default Backbone.View.extend({
       console.log(response);
       self.hideNewThreadModal();
       Forum.add(new Thread(response.thread));
-    })
+    });
+  },
+
+  openThread(event) {
+    const threadId = event.target.dataset.threadId;
+    router.navigate(`thread/${threadId}`, true);
   }
 });

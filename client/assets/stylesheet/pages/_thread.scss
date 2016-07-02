@@ -1,0 +1,48 @@
+.thread-page {
+  height: 100%;
+
+  .thread {
+    &__header {
+      background-color: $color-bg-grey-600;
+      color: $color-text-white;
+    }
+
+    &__title {
+      font-size: 40px;
+      padding: 20px 20px 50px;
+    }
+
+    &__additional-info {
+      display: flex;
+      align-items: center;
+
+      padding: 20px 20px 30px;
+    }
+
+    &__owner-photo {
+      $photo-size: 50px;
+
+      display: inline-block;
+
+      width: $photo-size;
+      height: $photo-size;
+
+      border-radius: $photo-size / 2;
+      background-color: black;
+      margin-right: 10px;
+    }
+
+    &__owner-info {
+      display: inline-block;
+      line-height: 25px;
+    }
+
+    &__owner-username {
+      display: inline-block;
+    }
+
+    &__date {
+      font-size: 14px;
+    }
+  }
+}

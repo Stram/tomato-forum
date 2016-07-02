@@ -29,11 +29,11 @@ const userSchema = new Schema({
   token: String,
   photos: [{
     type: ObjectId,
-    ref: 'photoSchema'
+    ref: 'Photo'
   }],
   threads: [{
     type: ObjectId,
-    ref: 'threadSchema'
+    ref: 'Thread'
   }]
 
 });

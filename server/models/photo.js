@@ -8,7 +8,7 @@ const photoSchema = new Schema({
   url: String,
   user: {
     type: ObjectId,
-    ref: 'userSchema'
+    ref: 'User'
   }
 });
 
