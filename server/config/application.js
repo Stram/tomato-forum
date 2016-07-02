@@ -1,4 +1,4 @@
-export default {
+const applicationConfig = {
   host: 'localhost',
   port: '3000',
   privateUploadDirectory: 'uploads/photos',
@@ -10,3 +10,10 @@ export default {
     return this.host;
   }
 };
+
+if (process.env.NODE_ENV === 'production') {
+  applicationConfig.host = 'sheltered-plateau-86472.herokuapp.com';
+  applicationConfig.post = '8080';
+}
+
+export default applicationConfig;
