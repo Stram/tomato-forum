@@ -5326,29 +5326,9 @@
 
 	var _session2 = _interopRequireDefault(_session);
 
-	var _register = __webpack_require__(8);
+	var _pages = __webpack_require__(30);
 
-	var _register2 = _interopRequireDefault(_register);
-
-	var _login = __webpack_require__(10);
-
-	var _login2 = _interopRequireDefault(_login);
-
-	var _verify = __webpack_require__(13);
-
-	var _verify2 = _interopRequireDefault(_verify);
-
-	var _photo = __webpack_require__(19);
-
-	var _photo2 = _interopRequireDefault(_photo);
-
-	var _dashboard = __webpack_require__(17);
-
-	var _dashboard2 = _interopRequireDefault(_dashboard);
-
-	var _forum = __webpack_require__(28);
-
-	var _forum2 = _interopRequireDefault(_forum);
+	var _pages2 = _interopRequireDefault(_pages);
 
 	var _contentWrapper = __webpack_require__(26);
 
@@ -5367,6 +5347,7 @@
 	    forum: 'forum'
 	  },
 
+	  pages: _pages2.default,
 	  currentView: null,
 	  $pageElement: (0, _jquery2.default)('.page-content'),
 
@@ -5392,47 +5373,48 @@
 	    }
 	    this.contentWrapperView.changeCurrentView(view);
 	  },
+	  changePage: function changePage(pageName) {
+	    var pageObject = this.pages[pageName];
+	    if (pageObject) {
+	      if (pageObject.authenticated && !_session2.default.isAuthenticated()) {
+	        this.navigate('login', true);
+	        return;
+	      }
+
+	      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+	        args[_key - 1] = arguments[_key];
+	      }
+
+	      var pageView = new pageObject.View(args);
+	      if (pageObject.wrapped) {
+	        this.changeWrappedView(pageView);
+	      } else {
+	        this.changeView(pageView);
+	      }
+	    } else {
+	      // TODO: 404
+	    }
+	  },
 	  landing: function landing() {
-	    var loginPage = new _login2.default();
-	    this.changeView(loginPage);
+	    this.changePage('landing');
 	  },
 	  register: function register() {
-	    var registerPage = new _register2.default();
-	    this.changeView(registerPage);
+	    this.changePage('register');
 	  },
 	  login: function login() {
-	    var loginPage = new _login2.default();
-	    this.changeView(loginPage);
+	    this.changePage('login');
 	  },
 	  verify: function verify(userId, token) {
-	    var verifyPage = new _verify2.default({
-	      userId: userId, token: token
-	    });
-	    this.changeView(verifyPage);
+	    this.changePage('verify', { userId: userId, token: token });
 	  },
 	  dashboard: function dashboard() {
-	    if (_session2.default.isAuthenticated()) {
-	      var dashboardView = new _dashboard2.default();
-	      this.changeWrappedView(dashboardView);
-	      return;
-	    }
-	    this.navigate('login', true);
+	    this.changePage('dashboard');
 	  },
 	  firstStepsPhoto: function firstStepsPhoto() {
-	    if (_session2.default.isAuthenticated()) {
-	      var firstStepsPhotoView = new _photo2.default();
-	      this.changeView(firstStepsPhotoView);
-	      return;
-	    }
-	    this.navigate('login', true);
+	    this.changePage('firstStepsPhoto');
 	  },
 	  forum: function forum() {
-	    if (_session2.default.isAuthenticated()) {
-	      var forumView = new _forum2.default();
-	      this.changeWrappedView(forumView);
-	      return;
-	    }
-	    this.navigate('login', true);
+	    this.changePage('forum');
 	  }
 	});
 
@@ -8312,6 +8294,80 @@
 	return __p;
 	};
 
+
+/***/ },
+/* 30 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _register = __webpack_require__(8);
+
+	var _register2 = _interopRequireDefault(_register);
+
+	var _login = __webpack_require__(10);
+
+	var _login2 = _interopRequireDefault(_login);
+
+	var _verify = __webpack_require__(13);
+
+	var _verify2 = _interopRequireDefault(_verify);
+
+	var _photo = __webpack_require__(19);
+
+	var _photo2 = _interopRequireDefault(_photo);
+
+	var _dashboard = __webpack_require__(17);
+
+	var _dashboard2 = _interopRequireDefault(_dashboard);
+
+	var _forum = __webpack_require__(28);
+
+	var _forum2 = _interopRequireDefault(_forum);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = {
+	  landing: {
+	    View: _login2.default,
+	    authenticated: false,
+	    wrapped: false
+	  },
+	  login: {
+	    View: _login2.default,
+	    authenticated: false,
+	    wrapped: false
+	  },
+	  register: {
+	    View: _register2.default,
+	    authenticated: false,
+	    wrapped: false
+	  },
+	  verify: {
+	    View: _verify2.default,
+	    authenticated: false,
+	    wrapped: false
+	  },
+	  dashboard: {
+	    View: _dashboard2.default,
+	    authenticated: true,
+	    wrapped: true
+	  },
+	  firstStepsPhoto: {
+	    View: _photo2.default,
+	    authenticated: true,
+	    wrapped: false
+	  },
+	  forum: {
+	    View: _forum2.default,
+	    authenticated: true,
+	    wrapped: true
+	  }
+	};
 
 /***/ }
 /******/ ]);

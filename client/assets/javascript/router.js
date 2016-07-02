@@ -3,12 +3,7 @@ import $ from 'jquery';
 
 import session from 'session';
 
-import RegisterPageView from 'views/pages/register';
-import LoginPageView from 'views/pages/login';
-import VerifyPageView from 'views/pages/verify';
-import FirstStepsPhotoPageView from 'views/pages/first-steps/photo';
-import DashboardPageView from 'views/pages/dashboard';
-import ForumPageView from 'views/pages/forum';
+import pages from 'pages';
 
 import ContentWrapperView from 'views/pages/content-wrapper';
 
@@ -23,6 +18,7 @@ const Router = Backbone.Router.extend({
     forum: 'forum'
   },
 
+  pages,
   currentView: null,
   $pageElement: $('.page-content'),
 
@@ -50,54 +46,52 @@ const Router = Backbone.Router.extend({
     this.contentWrapperView.changeCurrentView(view);
   },
 
+  changePage(pageName, ...args) {
+    const pageObject = this.pages[pageName];
+    if (pageObject) {
+      if (pageObject.authenticated && !session.isAuthenticated()) {
+        this.navigate('login', true);
+        return;
+      }
+      const pageView = new pageObject.View(args);
+      if (pageObject.wrapped) {
+        this.changeWrappedView(pageView);
+      } else {
+        this.changeView(pageView);
+      }
+    } else {
+      // TODO: 404
+    }
+  },
+
   landing() {
-    const loginPage = new LoginPageView();
-    this.changeView(loginPage);
+    this.changePage('landing');
   },
 
   register() {
-    const registerPage = new RegisterPageView();
-    this.changeView(registerPage);
+    this.changePage('register');
   },
 
   login() {
-    const loginPage = new LoginPageView();
-    this.changeView(loginPage);
+    this.changePage('login');
   },
 
   verify(userId, token) {
-    const verifyPage = new VerifyPageView({
-      userId, token
-    });
-    this.changeView(verifyPage);
+    this.changePage('verify', {userId, token});
   },
 
   dashboard() {
-    if (session.isAuthenticated()) {
-      const dashboardView = new DashboardPageView();
-      this.changeWrappedView(dashboardView);
-      return;
-    }
-    this.navigate('login', true);
+    this.changePage('dashboard');
   },
 
   firstStepsPhoto() {
-    if (session.isAuthenticated()) {
-      const firstStepsPhotoView = new FirstStepsPhotoPageView();
-      this.changeView(firstStepsPhotoView);
-      return;
-    }
-    this.navigate('login', true);
+    this.changePage('firstStepsPhoto');
   },
 
   forum() {
-    if (session.isAuthenticated()) {
-      const forumView = new ForumPageView();
-      this.changeWrappedView(forumView);
-      return;
-    }
-    this.navigate('login', true);
+    this.changePage('forum');
   }
+
 });
 
 export default new Router();
