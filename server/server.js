@@ -8,6 +8,8 @@ import session from 'express-session';
 import passport from 'passport';
 import fileUpload from 'express-fileupload';
 
+import 'babel-register';
+
 import applicationConfig from './config/application';
 import databaseConfig from './config/database';
 import passportConfig from './config/passport';
