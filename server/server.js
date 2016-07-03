@@ -7,6 +7,7 @@ import morgan from 'morgan';
 import session from 'express-session';
 import passport from 'passport';
 import fileUpload from 'express-fileupload';
+import fs from 'fs';
 
 import applicationConfig from './config/application';
 import databaseConfig from './config/database';
@@ -40,6 +41,13 @@ app.get(/^(?!\/public|\/api|\/uploads).*$/, function(req, res) {
   res.sendFile(path.resolve('client/index.html'));
 });
 
+fs.stat(path.resolve('uploads/photos'), function(err) {
+  if (err && err.code === 'ENOENT') {
+    fs.mkdirSync(path.resolve('uploads'));
+    fs.mkdirSync(path.resolve('uploads/photos'));
+  }
+});
+
 app.use('/uploads/photos', (req, res) => {
   if (!req.user) {
     res.status(401);
@@ -48,8 +56,6 @@ app.use('/uploads/photos', (req, res) => {
 
   res.sendFile(path.resolve(`uploads/photos${req.path}`));
 });
-
-console.log(process.env.NODE_ENV);
 
 app.listen(applicationConfig.port, function() {
   console.log(`Example app listening on port ${applicationConfig.port}!`);
