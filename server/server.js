@@ -49,6 +49,8 @@ app.use('/uploads/photos', (req, res) => {
   res.sendFile(path.resolve(`uploads/photos${req.path}`));
 });
 
+console.log(process.env.NODE_ENV);
+
 app.listen(applicationConfig.port, function() {
   console.log(`Example app listening on port ${applicationConfig.port}!`);
 });

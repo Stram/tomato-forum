@@ -4,7 +4,7 @@ const applicationConfig = {
   privateUploadDirectory: 'uploads/photos',
 
   getFullHostname() {
-    if (this.port !== '8080') {
+    if (this.port !== '443') {
       return `${this.host}:${this.port}`;
     }
     return this.host;
@@ -12,8 +12,8 @@ const applicationConfig = {
 };
 
 if (process.env.NODE_ENV === 'production') {
-  applicationConfig.host = 'sheltered-plateau-86472.herokuapp.com';
-  applicationConfig.post = '8080';
+  applicationConfig.host = 'https://sheltered-plateau-86472.herokuapp.com/';
+  applicationConfig.port = '443';
 }
 
 export default applicationConfig;
