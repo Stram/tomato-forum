@@ -50,7 +50,7 @@ router.post('/verify', (req, res, next) => {
   const token = req.body.token;
   const username = req.body.username;
 
-  User.findOneAndUpdate({_id: userId}, {username, token: null}, {new: true}, (error, user) => {
+  User.findOne({_id: userId}, (error, user) => {
     if (error) {
       next(error);
     }
@@ -72,8 +72,27 @@ router.post('/verify', (req, res, next) => {
       });
       return;
     }
+    User.findOne({username}, (sameUsernameError, sameUsernameUser) => {
+      if (sameUsernameError) {
+        next(sameUsernameError);
+      }
+      if (sameUsernameUser) {
+        res.status(400);
+        res.json({
+          errors: [{
+            message: 'Username is already taken'
+          }]
+        });
+        return;
+      }
 
-    res.json({user: user.toObject()});
+      user.username = username;
+      user.token = null;
+
+      user.save().then((changedUser) => {
+        res.json({user: changedUser.toObject()});
+      });
+    });
   });
 });
 

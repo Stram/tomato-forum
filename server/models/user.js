@@ -59,8 +59,8 @@ userSchema.methods.getVerificationLink = function() {
 
   this.token = token;
   return new Promise((resolve, reject) => {
-    self.save().then(() => {
-      resolve(`${hostName}/verify?userId=${userId}&token=${token}`);
+    self.save().then((user) => {
+      resolve(`${hostName}/verify?userId=${userId}&token=${user.token}`);
     }).catch((error) => {
       reject(error);
     });
