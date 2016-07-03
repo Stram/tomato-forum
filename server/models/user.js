@@ -51,15 +51,22 @@ userSchema.methods.validPassword = function(password) {
 };
 
 userSchema.methods.getVerificationLink = function() {
+  const self = this;
   const hostName = applicationConfig.getFullHostname();
 
   const userId = this.id;
   const token = randToken.generate(32);
 
   this.token = token;
-  this.save();
+  return new Promise((resolve, reject) => {
+    self.save().then(() => {
+      resolve(`${hostName}/verify?userId=${userId}&token=${token}`);
+    }).catch((error) => {
+      reject(error);
+    });
+  });
 
-  return `http://${hostName}/verify?userId=${userId}&token=${token}`;
+
 };
 
 userSchema.options.toObject = userSchema.options.toObject ? userSchema.options.toObject : {};
