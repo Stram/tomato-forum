@@ -10,7 +10,8 @@ export default Backbone.View.extend({
   className: 'page login-page',
 
   events: {
-    'submit .js-form': 'submit'
+    'submit .js-form': 'submit',
+    'click .js-register': 'toRegister'
   },
 
   template: _.template(template()),
@@ -45,5 +46,9 @@ export default Backbone.View.extend({
         $form.find(`.js-error-${error.field}`).text(error.message);
       });
     });
+  },
+
+  toRegister() {
+    router.navigate('register', true);
   }
 });
