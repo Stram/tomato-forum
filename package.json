@@ -9,7 +9,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "webpackDev": "webpack --progress --colors --watch",
     "build": "webpack",
-    "production": "babel-node server/server.js"
+    "production": "node dist/server.js"
   },
   "author": "Stjepan Petrusa",
   "license": "ISC",
