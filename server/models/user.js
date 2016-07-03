@@ -9,16 +9,19 @@ const ObjectId = Schema.ObjectId;
 
 const userSchema = new Schema({
   username: String,
+
   local: {
     email: String,
     password: String
   },
+
   facebook: {
     id: String,
     token: String,
     email: String,
     name: String
   },
+
   google: {
     id: String,
     token: String,
@@ -27,21 +30,41 @@ const userSchema = new Schema({
   },
 
   token: String,
-  location: String,
+  createdAt: {
+    type: Date,
+    default: new Date()
+  },
+
+  lastActivity: {
+    type: Date,
+    default: new Date()
+  },
+
+  location: {
+    type: String,
+    default: 'Croatia'
+  },
+
   background: {
     type: Number,
     default: '0'
   },
+
+  membership: {
+    type: Number
+    // default:
+  },
+
   profilePhoto: {
     type: ObjectId,
     ref: 'Photo'
   },
-  
 
   photos: [{
     type: ObjectId,
     ref: 'Photo'
   }],
+
   threads: [{
     type: ObjectId,
     ref: 'Thread'
