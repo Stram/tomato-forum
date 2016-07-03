@@ -99,8 +99,10 @@ router.post('/login', (req, res, next) => {
 
 // LOGOUT
 
-router.post('/logout', (req) => {
+router.post('/logout', (req, res) => {
   req.logout();
+  res.status(200);
+  res.send('loging out');
 });
 
 // CURRENT USER

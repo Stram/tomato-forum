@@ -5,6 +5,7 @@ import $ from 'jquery';
 import template from 'views/templates/content-wrapper.html';
 
 import router from 'router';
+import session from 'session';
 
 export default Backbone.View.extend({
   tagName: 'div',
@@ -12,8 +13,8 @@ export default Backbone.View.extend({
   className: 'content-wrapper',
 
   events: {
-    'click .js-dashboard': 'toDashboard',
-    'click .js-forum': 'toForum'
+    'click .js-logout': 'logout',
+    'click .js-navigate': 'navigate'
   },
 
   template,
@@ -53,11 +54,12 @@ export default Backbone.View.extend({
     console.log(`changing wrapped view to ${view.className}`);
   },
 
-  toDashboard() {
-    router.navigate('dashboard', true);
+  navigate(event) {
+    const page = event.target.dataset.page;
+    router.navigate(page, true);
   },
 
-  toForum() {
-    router.navigate('forum', true);
+  logout() {
+    session.logout();
   }
 });
