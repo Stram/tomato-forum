@@ -24,20 +24,19 @@ export default Backbone.View.extend({
 
   initialize(args) {
     const self = this;
-    this.threadLoaded = false;
+    this.loading = true;
     this.thread = new Thread({id: args.threadId});
-    this.thread.fetch({
-      success() {
-        self.threadLoaded = true;
-        self.render();
-      }
+
+    this.thread.fetch().then(() => {
+      self.loading = false;
+      self.render();
     });
 
-    this.listenTo(this.thread, 'change reset add remove', this.render);
+    // this.listenTo(this.thread, 'change', this.render);
   },
 
   render() {
-    if (this.threadLoaded) {
+    if (!this.loading) {
       this.$el.html(
         _.template(
           this.template({
@@ -73,7 +72,8 @@ export default Backbone.View.extend({
         const comments = self.thread.get('comments');
         comments.push(response);
         self.thread.set('comments', comments);
-        self.thread.trigger('change');
+        // self.thread.trigger('change');
+        self.render();
       }
     });
   }

@@ -5,6 +5,7 @@ import FirstStepsPhotoPageView from 'views/pages/first-steps/photo';
 import DashboardPageView from 'views/pages/dashboard';
 import ForumPageView from 'views/pages/forum';
 import ThreadPageView from 'views/pages/thread';
+import ProfilePageView from 'views/pages/profile';
 
 export default {
   landing: {
@@ -44,6 +45,11 @@ export default {
   },
   thread: {
     View: ThreadPageView,
+    authenticated: true,
+    wrapped: true
+  },
+  profile: {
+    View: ProfilePageView,
     authenticated: true,
     wrapped: true
   }

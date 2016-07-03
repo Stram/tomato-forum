@@ -16,7 +16,8 @@ const Router = Backbone.Router.extend({
     dashboard: 'dashboard',
     'first-steps/photo': 'firstStepsPhoto',
     forum: 'forum',
-    'thread/:threadId': 'thread'
+    'thread/:threadId': 'thread',
+    'profile/:profileId': 'profile'
   },
 
   pages,
@@ -95,6 +96,10 @@ const Router = Backbone.Router.extend({
 
   thread(threadId) {
     this.changePage('thread', {threadId});
+  },
+
+  profile(profileId) {
+    this.changePage('profile', {userId: profileId});
   }
 
 });

@@ -25,7 +25,9 @@ export default Backbone.View.extend({
 
     this.$el.html(
       _.template(
-        this.template()
+        this.template({
+          currentUser: session.getCurrentUser()
+        })
       )
     );
 

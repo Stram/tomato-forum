@@ -83,6 +83,15 @@ module.exports = function(passport) {
         });
       }
 
+      if (user.token) {
+        return done(null, false, {
+          error: {
+            message: 'Please verify email first',
+            field: 'identification'
+          }
+        });
+      }
+
       req.logIn(user, function(error) {
         if (error) {
           return done(error);

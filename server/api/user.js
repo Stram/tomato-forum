@@ -189,4 +189,21 @@ router.post('/upload-photo', (req, res, next) => {
   });
 });
 
+// GET USER
+
+router.get('/:userId', (req, res, next) => {
+  User.findById(req.params.userId, (error, user) => {
+    if (error) {
+      next(error);
+    }
+
+    if (!user) {
+      res.status(404);
+      return;
+    }
+
+    res.json(user.toObject());
+  });
+});
+
 module.exports = router;
