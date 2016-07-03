@@ -13,7 +13,7 @@ const applicationConfig = {
 
 if (process.env.NODE_ENV === 'production') {
   applicationConfig.host = 'https://sheltered-plateau-86472.herokuapp.com/';
-  applicationConfig.port = '443';
+  applicationConfig.port = process.env.PORT;
 }
 
 export default applicationConfig;
