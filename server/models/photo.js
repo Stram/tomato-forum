@@ -9,6 +9,10 @@ const photoSchema = new Schema({
   user: {
     type: ObjectId,
     ref: 'User'
+  },
+  createdAt: {
+    type: Date,
+    default: new Date()
   }
 });
 

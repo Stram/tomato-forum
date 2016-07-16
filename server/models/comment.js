@@ -5,15 +5,20 @@ const ObjectId = Schema.ObjectId;
 
 const commentSchema = new Schema({
   content: String,
+  createdAt: {
+    type: Date,
+    default: new Date()
+  },
+
   thread: {
     type: ObjectId,
     ref: 'Thread'
   },
+  
   user: {
     type: ObjectId,
     ref: 'User'
-  },
-  createdAt: Date
+  }
 });
 
 commentSchema.options.toObject = commentSchema.options.toObject ? commentSchema.options.toObject : {};
