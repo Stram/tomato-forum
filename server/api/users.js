@@ -101,7 +101,8 @@ router.post('/verify', (req, res, next) => {
 router.post('/login', (req, res, next) => {
   passport.authenticate('local-login', (error, user, info) => {
     if (error) {
-      next(error);
+      res.json({error});
+      return;
     }
     if (!user) {
       res.status(400);

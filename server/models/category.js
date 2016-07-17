@@ -5,7 +5,10 @@ const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
 const categorySchema = new Schema({
-  name: String,
+  name: {
+    type: String,
+    required: true
+  },
   createdAt: {
     type: Date,
     default: new Date()

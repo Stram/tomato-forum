@@ -20,6 +20,7 @@ const app = express();
 mongoose.connect(databaseConfig.url);
 
 app.use('/public', express.static(path.resolve('public')));
+app.use('/doc', express.static(path.resolve('doc')));
 
 app.use(cookieParser());
 app.use(bodyParser.json());
@@ -37,7 +38,7 @@ passportConfig(passport);
 
 app.use('/api', api);
 
-app.get(/^(?!\/public|\/api|\/uploads).*$/, function(req, res) {
+app.get(/^(?!\/public|\/api|\/uploads|\/docs).*$/, function(req, res) {
   res.sendFile(path.resolve('client/index.html'));
 });
 

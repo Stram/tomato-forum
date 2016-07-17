@@ -78,6 +78,6 @@ module.exports = function(validateObject) {
   if (validateObject.password !== undefined) {
     validatePassword(errors, validateObject.password);
   }
-
+  
   return errors;
 };

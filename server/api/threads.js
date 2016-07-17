@@ -2,11 +2,23 @@ import express from 'express';
 
 import Thread from '../models/thread';
 
+import handleError from '../services/handle-error';
+import permissions from '../services/permissions';
+
 const router = new express.Router();
 
-// NEW THREAD
+// router.use(permissions.checkAuthentification);
 
-router.post('/', (req, res, next) => {
+/**
+ * @api {post} /threads/ Create thread
+ * @apiName CreateThread
+ * @apiGroup Threads
+ *
+ * @apiParam {String} title Threads title.
+ * @apiParam {String} content Threads content.
+ * @apiParam {ObjectId} owner Threads owner.
+ */
+router.post('/', (req, res) => {
   const newThread = new Thread({
     title: req.body.title,
     content: req.body.content,
@@ -16,8 +28,10 @@ router.post('/', (req, res, next) => {
 
   newThread.save((error) => {
     if (error) {
-      next(error);
+      handleError(error, res);
+      return;
     }
+    res.status(201);
     res.json({
       thread: newThread.toObject()
     });

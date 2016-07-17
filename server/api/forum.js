@@ -12,11 +12,4 @@ router.get('/', (req, res) => {
   });
 });
 
-// router.get('/:categoryId', (req, res) => {
-//   Category.findById(req.params.categoryId)
-//     .populate({path: 'owner', populate: {path: 'profilePhoto'}})
-//     .populate({path: 'comments', populate: {path: 'user', populate: {path: 'profilePhoto'}}})
-//     .then((thread) => res.json(thread.toObject()));
-// });
-
 module.exports = router;

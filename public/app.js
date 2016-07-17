@@ -5273,6 +5273,9 @@
 
 	  setCurrentUser: function setCurrentUser(user) {
 	    this._currentUser = user;
+	    if (user) {
+	      (0, _jquery2.default)('body').addClass('theme-' + user.background);
+	    }
 	  },
 	  getCurrentUser: function getCurrentUser() {
 	    return this._currentUser;
@@ -5284,7 +5287,7 @@
 	    var self = this;
 	    return new Promise(function (resolve, reject) {
 	      _jquery2.default.ajax({
-	        url: _config2.default.apiEndpoint + '/user/login',
+	        url: _config2.default.apiEndpoint + '/users/login',
 	        method: 'POST',
 	        data: {
 	          identification: identification,
@@ -5305,7 +5308,7 @@
 	    var self = this;
 
 	    _jquery2.default.ajax({
-	      url: _config2.default.apiEndpoint + '/user/logout',
+	      url: _config2.default.apiEndpoint + '/users/logout',
 	      method: 'POST'
 	    }).done(function () {
 	      self.setCurrentUser(null);
@@ -5315,10 +5318,9 @@
 	  initSession: function initSession(callback) {
 	    var self = this;
 	    _jquery2.default.ajax({
-	      url: _config2.default.apiEndpoint + '/user/current'
+	      url: _config2.default.apiEndpoint + '/users/current'
 	    }).done(function (response) {
-	      var currentUser = response.user;
-	      self._currentUser = currentUser;
+	      self.setCurrentUser(response.user);
 
 	      callback.apply(self);
 	    });
@@ -5380,7 +5382,8 @@
 	    'first-steps/photo': 'firstStepsPhoto',
 	    forum: 'forum',
 	    'thread/:threadId': 'thread',
-	    'profile/:profileId': 'profile'
+	    'profile/:profileId': 'profile',
+	    'forum/edit': 'forumEdit'
 	  },
 
 	  pages: _pages2.default,
@@ -5452,6 +5455,9 @@
 	  },
 	  profile: function profile(profileId) {
 	    this.changePage('profile', { userId: profileId });
+	  },
+	  forumEdit: function forumEdit() {
+	    this.changePage('forumEdit');
 	  }
 	});
 
@@ -5499,6 +5505,10 @@
 
 	var _profile2 = _interopRequireDefault(_profile);
 
+	var _edit = __webpack_require__(39);
+
+	var _edit2 = _interopRequireDefault(_edit);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.default = {
@@ -5544,6 +5554,11 @@
 	  },
 	  profile: {
 	    View: _profile2.default,
+	    authenticated: true,
+	    wrapped: true
+	  },
+	  forumEdit: {
+	    View: _edit2.default,
 	    authenticated: true,
 	    wrapped: true
 	  }
@@ -5611,7 +5626,7 @@
 	    var password = $form.find('.js-password').val();
 
 	    _jquery2.default.ajax({
-	      url: _config2.default.apiEndpoint + '/user/register',
+	      url: _config2.default.apiEndpoint + '/users/register',
 	      method: 'POST',
 	      data: {
 	        email: email,
@@ -5833,7 +5848,7 @@
 	        var token = _this.token;
 
 	        _jquery2.default.ajax({
-	          url: _config2.default.apiEndpoint + '/user/verify',
+	          url: _config2.default.apiEndpoint + '/users/verify',
 	          method: 'POST',
 	          data: {
 	            username: username,
@@ -5967,7 +5982,7 @@
 	    _dropzone2.default.autoDiscover = false;
 
 	    this.dropzone = new _dropzone2.default($dropzoneDontainer.get(0), {
-	      url: '/api/user/upload-photo',
+	      url: '/api/users/upload-photo',
 	      createImageThumbnails: false,
 	      previewTemplate: '<div></div>'
 	    });
@@ -7888,13 +7903,9 @@
 
 	var _forum2 = _interopRequireDefault(_forum);
 
-	var _forum3 = __webpack_require__(24);
+	var _categories = __webpack_require__(42);
 
-	var _forum4 = _interopRequireDefault(_forum3);
-
-	var _thread = __webpack_require__(25);
-
-	var _thread2 = _interopRequireDefault(_thread);
+	var _categories2 = _interopRequireDefault(_categories);
 
 	var _config = __webpack_require__(6);
 
@@ -7906,6 +7917,8 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+	// import Thread from 'models/thread';
+
 	exports.default = _backbone2.default.View.extend({
 	  tagName: 'div',
 
@@ -7915,18 +7928,19 @@
 	    'click .js-new-thread-button': 'showNewThreadModal',
 	    'click .js-new-thread-cancel': 'hideNewThreadModal',
 	    'click .js-new-thread-submit': 'postNewThread',
-	    'click .js-navigate-to-thread': 'openThread'
+	    'click .js-navigate-to-thread': 'openThread',
+	    'click .js-forum-edit': 'transitionToEditForum'
 	  },
 
 	  template: _forum2.default,
 
 	  initialize: function initialize() {
-	    _forum4.default.fetch();
-	    this.listenTo(_forum4.default, 'change reset add remove', this.render);
+	    _categories2.default.fetch();
+	    this.listenTo(_categories2.default, 'change reset add remove', this.render);
 	  },
 	  render: function render() {
 	    this.$el.html(_underscore2.default.template(this.template({
-	      threads: _forum4.default
+	      threads: _categories2.default
 	    })));
 
 	    return this;
@@ -7955,14 +7969,16 @@
 	        content: content
 	      }
 	    }).done(function (response) {
-	      console.log(response);
 	      self.hideNewThreadModal();
-	      _forum4.default.add(new _thread2.default(response.thread));
+	      // Forum.add(new Thread(response.thread));
 	    });
 	  },
 	  openThread: function openThread(event) {
 	    var threadId = event.target.dataset.threadId;
 	    _router2.default.navigate('thread/' + threadId, true);
+	  },
+	  transitionToEditForum: function transitionToEditForum() {
+	    _router2.default.navigate('forum/edit', true);
 	  }
 	});
 
@@ -7974,9 +7990,9 @@
 	module.exports = function(obj){
 	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
 	with(obj||{}){
-	__p+='<div class="forum">\n  <div class="category">\n    <div class="category__title">\n\n    </div>\n    <div class="category__threads">\n      ';
+	__p+='<div class="forum">\n  <div class="forum__heading">\n    <div class="forum__title">\n      FORUM\n    </div>\n    <div class="forum__actions">\n      <img class="forum__action js-forum-edit" src="/public/images/edit-icon-white.svg" alt="Edit" />\n    </div>\n  </div>\n  <div class="card-list">\n    <div class="card-list__title">\n      <!-- TODO: ADD CATEGORY NAME -->\n    </div>\n    <div class="card-list__items">\n      ';
 	 threads.each(function(thread) { 
-	__p+='\n        <div class="category__thread js-navigate-to-thread" data-thread-id="'+
+	__p+='\n        <div class="js-navigate-to-thread" data-thread-id="'+
 	((__t=( thread.get('id') ))==null?'':__t)+
 	'">\n          '+
 	((__t=( thread.get('title') ))==null?'':__t)+
@@ -8002,9 +8018,9 @@
 
 	var _backbone2 = _interopRequireDefault(_backbone);
 
-	var _thread = __webpack_require__(25);
+	var _category = __webpack_require__(41);
 
-	var _thread2 = _interopRequireDefault(_thread);
+	var _category2 = _interopRequireDefault(_category);
 
 	var _config = __webpack_require__(6);
 
@@ -8013,8 +8029,8 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var Forum = _backbone2.default.Collection.extend({
-	  model: _thread2.default,
-	  url: _config2.default.apiEndpoint + '/thread'
+	  model: _category2.default,
+	  url: _config2.default.apiEndpoint + '/forum'
 	});
 
 	exports.default = new Forum();
@@ -8339,7 +8355,7 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.default = _backbone2.default.Model.extend({
-	  urlRoot: _config2.default.apiEndpoint + '/user'
+	  urlRoot: _config2.default.apiEndpoint + '/users'
 	});
 
 /***/ },
@@ -8457,7 +8473,7 @@
 	var content = __webpack_require__(36);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(38)(content, {});
+	var update = __webpack_require__(37)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -8477,74 +8493,18 @@
 /* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(37)();
+	exports = module.exports = __webpack_require__(38)();
 	// imports
 	exports.push([module.id, "@import url(https://fonts.googleapis.com/css?family=Roboto&subset=latin,latin-ext);", ""]);
 
 	// module
-	exports.push([module.id, ".align-right {\n  text-align: right; }\n\nhtml {\n  height: 100%; }\n\n.body {\n  font-family: 'Roboto', sans-serif;\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  margin: 0;\n  background-color: #FAFAFA;\n  color: #212121; }\n  .body.is-scrolling-disabled {\n    overflow: hidden; }\n\n.page-content {\n  position: relative;\n  flex: 1; }\n\n.header,\n.footer {\n  height: 50px;\n  background-color: #F5F5F5;\n  z-index: 1; }\n\n.card {\n  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3);\n  background-color: #FFFFFF;\n  border-radius: 2px; }\n  .card__content {\n    padding: 24px 24px 16px; }\n  .card__actions {\n    padding: 8px; }\n\n.input-box {\n  padding: 16px 0 8px; }\n  .input-box__label {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n  .input-box__input {\n    font-size: 16px;\n    line-height: 16px;\n    min-width: 250px;\n    display: block;\n    padding: 0 0 7px;\n    border-top: 0;\n    border-right: 0;\n    border-bottom: 1px solid #424242;\n    border-left: 0;\n    margin: 8px 0;\n    outline: 0; }\n    .input-box__input:focus {\n      border-bottom: 1px solid red; }\n  .input-box__message {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n    .input-box__message.is-error {\n      color: #F44336; }\n\n.button {\n  display: inline-block;\n  text-align: center;\n  text-transform: uppercase;\n  cursor: pointer;\n  font-size: 14px;\n  border-radius: 2px;\n  border: 0;\n  line-height: 14px;\n  padding: 10px 16px;\n  background-color: transparent; }\n  .button.button--dialog {\n    min-width: 64px;\n    padding: 10px 8px;\n    margin: 0 8px; }\n  .button.button--raised {\n    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n  .button.is-hidden {\n    display: none; }\n\n.navigation {\n  margin-top: 50px;\n  padding-left: 20px; }\n  .navigation__header {\n    font-weight: bold;\n    font-size: 20px;\n    color: #757575;\n    margin-top: 40px; }\n  .navigation__items {\n    margin-top: 10px; }\n  .navigation__item {\n    padding: 5px;\n    color: #212121; }\n\n.sidebar {\n  position: absolute;\n  top: 0;\n  right: auto;\n  bottom: 0;\n  left: 0;\n  background-color: #F5F5F5;\n  width: 250px;\n  box-shadow: 2px 0 16px 0 rgba(0, 0, 0, 0.1); }\n\n.fab {\n  height: 50px;\n  width: 50px;\n  border-radius: 25px;\n  font-size: 20px;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.modal-container {\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  background-color: rgba(0, 0, 0, 0.3);\n  display: none;\n  align-items: center;\n  justify-content: center; }\n  .modal-container.is-shown {\n    display: flex; }\n\n.modal {\n  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3);\n  background-color: #FFFFFF;\n  border-radius: 2px; }\n  .modal__content {\n    padding: 24px 24px 16px; }\n  .modal__actions {\n    text-align: right;\n    padding: 8px; }\n\n.header {\n  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n\n.register-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.login-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.verify-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.first-steps-photo-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n  .first-steps-photo-page .select-photo-container {\n    display: flex;\n    min-height: 250px; }\n    .first-steps-photo-page .select-photo-container .image-preview-container {\n      display: none; }\n    .first-steps-photo-page .select-photo-container.has-photo .dropzone-container {\n      display: none; }\n    .first-steps-photo-page .select-photo-container.has-photo .image-preview-container {\n      display: block; }\n  .first-steps-photo-page .dropzone-container {\n    border: 5px dashed black;\n    width: 250px; }\n  .first-steps-photo-page .image-preview-container {\n    width: 250px; }\n    .first-steps-photo-page .image-preview-container .image-preview {\n      height: 100%;\n      background-repeat: no-repeat;\n      background-position: center center;\n      background-size: cover; }\n\n.content-wrapper {\n  height: 100%; }\n\n.wrapped-page-content {\n  position: absolute;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 250px;\n  overflow: auto; }\n\n.forum-page {\n  height: 100%; }\n\n.new-thread-button {\n  position: absolute;\n  bottom: 20px;\n  right: 20px;\n  background-color: #757575;\n  color: #FFFFFF; }\n\n.thread-page {\n  height: 100%; }\n  .thread-page .thread__header {\n    background-color: #757575;\n    color: #FFFFFF; }\n  .thread-page .thread__title {\n    font-size: 40px;\n    padding: 20px 20px 30px; }\n  .thread-page .thread__content {\n    padding: 20px; }\n  .thread-page .thread__additional-info {\n    display: flex;\n    align-items: center;\n    padding: 20px 20px 30px; }\n  .thread-page .thread__owner-photo {\n    display: inline-block;\n    width: 50px;\n    height: 50px;\n    border-radius: 25px;\n    margin-right: 10px;\n    background-repeat: no-repeat;\n    background-position: center center;\n    background-size: cover; }\n  .thread-page .thread__owner-info {\n    display: inline-block;\n    line-height: 25px; }\n  .thread-page .thread__owner-username {\n    display: inline-block; }\n  .thread-page .thread__date {\n    font-size: 14px; }\n  .thread-page .thread__new-comment-container {\n    padding: 20px;\n    margin-top: 10px; }\n  .thread-page .comment {\n    position: relative;\n    margin: 30px 30px 0; }\n    .thread-page .comment::before {\n      position: absolute;\n      top: -30px;\n      bottom: 0px;\n      left: 25px;\n      right: auto;\n      content: '';\n      width: 1px;\n      background-color: rgba(0, 0, 0, 0.1); }\n    .thread-page .comment:last-child::before {\n      bottom: auto;\n      height: 50px; }\n    .thread-page .comment__image {\n      position: absolute;\n      top: 0;\n      left: 0;\n      width: 50px;\n      height: 50px;\n      border-radius: 25px;\n      margin-right: 10px;\n      background-repeat: no-repeat;\n      background-position: center center;\n      background-size: cover; }\n    .thread-page .comment__card {\n      background-color: #FFFFFF;\n      padding: 20px 30px;\n      margin-left: 78px;\n      box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3); }\n    .thread-page .comment__info {\n      font-size: 14px; }\n    .thread-page .comment__content {\n      margin-top: 10px; }\n\n.loading {\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  background-color: rgba(0, 0, 0, 0.3);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000; }\n  .loading__icon {\n    width: 50px;\n    height: 50px;\n    background-image: url(\"/public/images/loader.svg\");\n    background-repeat: no-repeat;\n    background-position: center;\n    background-size: contain; }\n", ""]);
+	exports.push([module.id, ".align-right {\n  text-align: right; }\n\nhtml {\n  height: 100%; }\n\n.body {\n  font-family: 'Roboto', sans-serif;\n  height: 100%;\n  display: flex;\n  flex-direction: column;\n  margin: 0;\n  background-color: #FAFAFA;\n  color: #212121; }\n  .body.is-scrolling-disabled {\n    overflow: hidden; }\n\n.page-content {\n  position: relative;\n  flex: 1; }\n\n.header,\n.footer {\n  height: 50px;\n  background-color: #F5F5F5;\n  z-index: 1; }\n\n.card {\n  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3);\n  background-color: #FFFFFF;\n  border-radius: 2px; }\n  .card .card__content {\n    padding: 24px 24px 16px; }\n  .card .card__actions {\n    padding: 8px; }\n\n.input-box {\n  padding: 16px 0 8px; }\n  .input-box .input-box__label {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n  .input-box .input-box__input {\n    font-size: 16px;\n    line-height: 16px;\n    min-width: 250px;\n    display: block;\n    padding: 0 0 7px;\n    border-top: 0;\n    border-right: 0;\n    border-bottom: 1px solid #424242;\n    border-left: 0;\n    margin: 8px 0;\n    outline: 0; }\n    .input-box .input-box__input:focus {\n      border-bottom: 1px solid #F44336; }\n  .input-box .input-box__message {\n    font-size: 12px;\n    line-height: 16px;\n    color: #757575; }\n    .input-box .input-box__message.is-error {\n      color: #F44336; }\n\n.button {\n  display: inline-block;\n  text-align: center;\n  text-transform: uppercase;\n  cursor: pointer;\n  font-size: 14px;\n  border-radius: 2px;\n  border: 0;\n  line-height: 14px;\n  padding: 10px 16px;\n  background-color: transparent; }\n  .button.button--dialog {\n    min-width: 64px;\n    padding: 10px 8px;\n    margin: 0 8px; }\n  .button.button--raised {\n    box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n  .button.is-hidden {\n    display: none; }\n\n.navigation {\n  margin-top: 50px;\n  padding-left: 20px; }\n  .navigation .navigation__header {\n    font-weight: bold;\n    font-size: 20px;\n    color: #757575;\n    margin-top: 40px; }\n  .navigation .navigation__items {\n    margin-top: 10px; }\n  .navigation .navigation__item {\n    padding: 5px;\n    color: #212121; }\n\n.sidebar {\n  position: absolute;\n  top: 0;\n  right: auto;\n  bottom: 0;\n  left: 0;\n  background-color: #F5F5F5;\n  width: 250px;\n  box-shadow: 2px 0 16px 0 rgba(0, 0, 0, 0.1); }\n\n.fab {\n  height: 50px;\n  width: 50px;\n  border-radius: 25px;\n  font-size: 20px;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.modal-container {\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  background-color: rgba(0, 0, 0, 0.3);\n  display: none;\n  align-items: center;\n  justify-content: center; }\n  .modal-container.is-shown {\n    display: flex; }\n\n.modal {\n  box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3);\n  background-color: #FFFFFF;\n  border-radius: 2px; }\n  .modal .modal__content {\n    padding: 24px 24px 16px; }\n  .modal .modal__actions {\n    text-align: right;\n    padding: 8px; }\n\n.header {\n  box-shadow: 0px 2px 4px 0px rgba(0, 0, 0, 0.3); }\n\n.register-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.login-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.verify-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n\n.first-steps-photo-page {\n  height: 100%;\n  display: flex;\n  justify-content: center;\n  align-items: center; }\n  .first-steps-photo-page .select-photo-container {\n    display: flex;\n    min-height: 250px; }\n    .first-steps-photo-page .select-photo-container .image-preview-container {\n      display: none; }\n    .first-steps-photo-page .select-photo-container.has-photo .dropzone-container {\n      display: none; }\n    .first-steps-photo-page .select-photo-container.has-photo .image-preview-container {\n      display: block; }\n  .first-steps-photo-page .dropzone-container {\n    border: 5px dashed black;\n    width: 250px; }\n  .first-steps-photo-page .image-preview-container {\n    width: 250px; }\n    .first-steps-photo-page .image-preview-container .image-preview {\n      height: 100%;\n      background-repeat: no-repeat;\n      background-position: center center;\n      background-size: cover; }\n\n.content-wrapper {\n  height: 100%; }\n\n.wrapped-page-content {\n  position: absolute;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 250px;\n  overflow: auto; }\n\n.forum-page {\n  height: 100%; }\n\n.new-thread-button {\n  position: absolute;\n  bottom: 20px;\n  right: 20px;\n  background-color: #757575;\n  color: #FFFFFF; }\n\n.forum .forum__heading {\n  min-height: 64px;\n  display: flex;\n  justify-content: space-between;\n  align-items: center; }\n  .theme-0 .forum .forum__heading {\n    background-color: #2196F3;\n    color: #FFFFFF; }\n  .theme-0 .forum .forum__heading {\n    background-color: #2196F3;\n    color: #FFFFFF; }\n\n.forum .forum__title {\n  font-size: 24px;\n  padding: 0 16px;\n  color: #FFFFFF; }\n\n.forum .forum__actions {\n  padding: 0 16px; }\n\n.forum .forum__action {\n  cursor: pointer; }\n\n.thread-page {\n  height: 100%; }\n  .thread-page .thread .thread-page .thread__header {\n    background-color: #757575;\n    color: #FFFFFF; }\n  .thread-page .thread .thread-page .thread__title {\n    font-size: 40px;\n    padding: 20px 20px 30px; }\n  .thread-page .thread .thread-page .thread__content {\n    padding: 20px; }\n  .thread-page .thread .thread-page .thread__additional-info {\n    display: flex;\n    align-items: center;\n    padding: 20px 20px 30px; }\n  .thread-page .thread .thread-page .thread__owner-photo {\n    display: inline-block;\n    width: 50px;\n    height: 50px;\n    border-radius: 25px;\n    margin-right: 10px;\n    background-repeat: no-repeat;\n    background-position: center center;\n    background-size: cover; }\n  .thread-page .thread .thread-page .thread__owner-info {\n    display: inline-block;\n    line-height: 25px; }\n  .thread-page .thread .thread-page .thread__owner-username {\n    display: inline-block; }\n  .thread-page .thread .thread-page .thread__date {\n    font-size: 14px; }\n  .thread-page .thread .thread-page .thread__new-comment-container {\n    padding: 20px;\n    margin-top: 10px; }\n  .thread-page .comment {\n    position: relative;\n    margin: 30px 30px 0; }\n    .thread-page .comment::before {\n      position: absolute;\n      top: -30px;\n      bottom: 0px;\n      left: 25px;\n      right: auto;\n      content: '';\n      width: 1px;\n      background-color: rgba(0, 0, 0, 0.1); }\n    .thread-page .comment:last-child::before {\n      bottom: auto;\n      height: 50px; }\n    .thread-page .comment .thread-page .comment__image {\n      position: absolute;\n      top: 0;\n      left: 0;\n      width: 50px;\n      height: 50px;\n      border-radius: 25px;\n      margin-right: 10px;\n      background-repeat: no-repeat;\n      background-position: center center;\n      background-size: cover; }\n    .thread-page .comment .thread-page .comment__card {\n      background-color: #FFFFFF;\n      padding: 20px 30px;\n      margin-left: 78px;\n      box-shadow: 0px 2px 2px 0px rgba(0, 0, 0, 0.3); }\n    .thread-page .comment .thread-page .comment__info {\n      font-size: 14px; }\n    .thread-page .comment .thread-page .comment__content {\n      margin-top: 10px; }\n\n.loading {\n  position: fixed;\n  top: 0;\n  right: 0;\n  bottom: 0;\n  left: 0;\n  background-color: rgba(0, 0, 0, 0.3);\n  display: flex;\n  align-items: center;\n  justify-content: center;\n  z-index: 1000; }\n  .loading .loading__icon {\n    width: 50px;\n    height: 50px;\n    background-image: url(\"/public/images/loader.svg\");\n    background-repeat: no-repeat;\n    background-position: center;\n    background-size: contain; }\n", ""]);
 
 	// exports
 
 
 /***/ },
 /* 37 */
-/***/ function(module, exports) {
-
-	/*
-		MIT License http://www.opensource.org/licenses/mit-license.php
-		Author Tobias Koppers @sokra
-	*/
-	// css base code, injected by the css-loader
-	module.exports = function() {
-		var list = [];
-
-		// return the list of modules as css string
-		list.toString = function toString() {
-			var result = [];
-			for(var i = 0; i < this.length; i++) {
-				var item = this[i];
-				if(item[2]) {
-					result.push("@media " + item[2] + "{" + item[1] + "}");
-				} else {
-					result.push(item[1]);
-				}
-			}
-			return result.join("");
-		};
-
-		// import a list of modules into the list
-		list.i = function(modules, mediaQuery) {
-			if(typeof modules === "string")
-				modules = [[null, modules, ""]];
-			var alreadyImportedModules = {};
-			for(var i = 0; i < this.length; i++) {
-				var id = this[i][0];
-				if(typeof id === "number")
-					alreadyImportedModules[id] = true;
-			}
-			for(i = 0; i < modules.length; i++) {
-				var item = modules[i];
-				// skip already imported module
-				// this implementation is not 100% perfect for weird media query combinations
-				//  when a module is imported multiple times with different media queries.
-				//  I hope this will never occur (Hey this way we have smaller bundles)
-				if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
-					if(mediaQuery && !item[2]) {
-						item[2] = mediaQuery;
-					} else if(mediaQuery) {
-						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
-					}
-					list.push(item);
-				}
-			}
-		};
-		return list;
-	};
-
-
-/***/ },
-/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -8794,6 +8754,182 @@
 			URL.revokeObjectURL(oldSrc);
 	}
 
+
+/***/ },
+/* 38 */
+/***/ function(module, exports) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	// css base code, injected by the css-loader
+	module.exports = function() {
+		var list = [];
+
+		// return the list of modules as css string
+		list.toString = function toString() {
+			var result = [];
+			for(var i = 0; i < this.length; i++) {
+				var item = this[i];
+				if(item[2]) {
+					result.push("@media " + item[2] + "{" + item[1] + "}");
+				} else {
+					result.push(item[1]);
+				}
+			}
+			return result.join("");
+		};
+
+		// import a list of modules into the list
+		list.i = function(modules, mediaQuery) {
+			if(typeof modules === "string")
+				modules = [[null, modules, ""]];
+			var alreadyImportedModules = {};
+			for(var i = 0; i < this.length; i++) {
+				var id = this[i][0];
+				if(typeof id === "number")
+					alreadyImportedModules[id] = true;
+			}
+			for(i = 0; i < modules.length; i++) {
+				var item = modules[i];
+				// skip already imported module
+				// this implementation is not 100% perfect for weird media query combinations
+				//  when a module is imported multiple times with different media queries.
+				//  I hope this will never occur (Hey this way we have smaller bundles)
+				if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+					if(mediaQuery && !item[2]) {
+						item[2] = mediaQuery;
+					} else if(mediaQuery) {
+						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+					}
+					list.push(item);
+				}
+			}
+		};
+		return list;
+	};
+
+
+/***/ },
+/* 39 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(1);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _underscore = __webpack_require__(2);
+
+	var _underscore2 = _interopRequireDefault(_underscore);
+
+	var _edit = __webpack_require__(40);
+
+	var _edit2 = _interopRequireDefault(_edit);
+
+	var _forum = __webpack_require__(24);
+
+	var _forum2 = _interopRequireDefault(_forum);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+	  tagName: 'div',
+
+	  className: 'page forum-edit-page',
+
+	  events: {},
+
+	  template: _edit2.default,
+
+	  initialize: function initialize() {
+	    _forum2.default.fetch();
+	    this.listenTo(_forum2.default, 'change reset add remove', this.render);
+	  },
+	  render: function render() {
+	    this.$el.html(_underscore2.default.template(this.template()));
+
+	    return this;
+	  },
+	  close: function close() {
+	    this.remove();
+	  }
+	});
+
+/***/ },
+/* 40 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _ = __webpack_require__(2);
+	module.exports = function(obj){
+	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+	with(obj||{}){
+	__p+='<div class="forum">\n  <div class="forum__heading">\n    <div class="forum__title">\n      FORUM CONFIG\n    </div>\n    <div class="forum__actions">\n      <img class="forum__action js-forum-edit" src="/public/images/edit-icon-white.svg" alt="Edit" />\n    </div>\n  </div>\n  <div class="card-list">\n    <div class="card-list__title">\n\n    </div>\n    <div class="card-list__items">\n      \n    </div>\n  </div>\n</div>\n';
+	}
+	return __p;
+	};
+
+
+/***/ },
+/* 41 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(1);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _config = __webpack_require__(6);
+
+	var _config2 = _interopRequireDefault(_config);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.Model.extend({
+	  urlRoot: _config2.default.apiEndpoint + '/categories'
+	});
+
+/***/ },
+/* 42 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(1);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _category = __webpack_require__(41);
+
+	var _category2 = _interopRequireDefault(_category);
+
+	var _config = __webpack_require__(6);
+
+	var _config2 = _interopRequireDefault(_config);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Forum = _backbone2.default.Collection.extend({
+	  model: _category2.default,
+	  url: _config2.default.apiEndpoint + '/categories'
+	});
+
+	exports.default = new Forum();
 
 /***/ }
 /******/ ]);
