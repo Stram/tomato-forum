@@ -2,28 +2,28 @@
   height: 100%;
 
   .thread {
-    &__header {
+    & &__header {
       background-color: $color-bg-grey-600;
       color: $color-text-white;
     }
 
-    &__title {
+    & &__title {
       font-size: 40px;
       padding: 20px 20px 30px;
     }
 
-    &__content {
+    & &__content {
       padding: 20px;
     }
 
-    &__additional-info {
+    & &__additional-info {
       display: flex;
       align-items: center;
 
       padding: 20px 20px 30px;
     }
 
-    &__owner-photo {
+    & &__owner-photo {
       $photo-size: 50px;
 
       display: inline-block;
@@ -40,26 +40,26 @@
       }
     }
 
-    &__owner-info {
+    & &__owner-info {
       display: inline-block;
       line-height: 25px;
     }
 
-    &__owner-username {
+    & &__owner-username {
       display: inline-block;
     }
 
-    &__date {
+    & &__date {
       font-size: 14px;
     }
 
-    &__new-comment-container {
+    & &__new-comment-container {
       // background-color: $color-bg-grey-600;
       padding: 20px;
       margin-top: 10px;
     }
 
-    &__new-comment {
+    & &__new-comment {
 
     }
   }
@@ -86,7 +86,7 @@
       }
     }
 
-    &__image {
+    & &__image {
       $photo-size: 50px;
 
       position: absolute;
@@ -105,18 +105,18 @@
       }
     }
 
-    &__card {
+    & &__card {
       background-color: #FFFFFF;
       padding: 20px 30px;
       margin-left: 78px;
       box-shadow: 0px 2px 2px 0px $color-shadow;
     }
 
-    &__info {
+    & &__info {
       font-size: 14px;
     }
 
-    &__content {
+    & &__content {
       margin-top: 10px;
     }
   }

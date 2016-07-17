@@ -1,11 +1,11 @@
 import Backbone from 'backbone';
-import Thread from 'models/thread';
+import Category from 'models/category';
 
 import config from 'config';
 
 const Forum = Backbone.Collection.extend({
-  model: Thread,
-  url: `${config.apiEndpoint}/thread`
+  model: Category,
+  url: `${config.apiEndpoint}/forum`
 });
 
 export default new Forum();

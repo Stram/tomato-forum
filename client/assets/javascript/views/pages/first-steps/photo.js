@@ -45,7 +45,7 @@ export default Backbone.View.extend({
     Dropzone.autoDiscover = false;
 
     this.dropzone = new Dropzone($dropzoneDontainer.get(0), {
-      url: '/api/user/upload-photo',
+      url: '/api/users/upload-photo',
       createImageThumbnails: false,
       previewTemplate: '<div></div>'
     });

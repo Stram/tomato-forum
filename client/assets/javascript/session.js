@@ -8,6 +8,9 @@ export default {
 
   setCurrentUser(user) {
     this._currentUser = user;
+    if (user) {
+      $('body').addClass(`theme-${user.background}`);
+    }
   },
 
   getCurrentUser() {
@@ -22,7 +25,7 @@ export default {
     const self = this;
     return new Promise((resolve, reject) => {
       $.ajax({
-        url: `${config.apiEndpoint}/user/login`,
+        url: `${config.apiEndpoint}/users/login`,
         method: 'POST',
         data: {
           identification,
@@ -44,7 +47,7 @@ export default {
     const self = this;
 
     $.ajax({
-      url: `${config.apiEndpoint}/user/logout`,
+      url: `${config.apiEndpoint}/users/logout`,
       method: 'POST'
     }).done(() => {
       self.setCurrentUser(null);
@@ -55,10 +58,9 @@ export default {
   initSession(callback) {
     const self = this;
     $.ajax({
-      url: `${config.apiEndpoint}/user/current`
+      url: `${config.apiEndpoint}/users/current`
     }).done((response) => {
-      const currentUser = response.user;
-      self._currentUser = currentUser;
+      self.setCurrentUser(response.user);
 
       callback.apply(self);
     });

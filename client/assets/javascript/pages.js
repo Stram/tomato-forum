@@ -6,6 +6,7 @@ import DashboardPageView from 'views/pages/dashboard';
 import ForumPageView from 'views/pages/forum';
 import ThreadPageView from 'views/pages/thread';
 import ProfilePageView from 'views/pages/profile';
+import ForumEditPageView from 'views/pages/forum/edit';
 
 export default {
   landing: {
@@ -50,6 +51,11 @@ export default {
   },
   profile: {
     View: ProfilePageView,
+    authenticated: true,
+    wrapped: true
+  },
+  forumEdit: {
+    View: ForumEditPageView,
     authenticated: true,
     wrapped: true
   }

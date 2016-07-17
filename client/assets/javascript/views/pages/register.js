@@ -35,7 +35,7 @@ export default Backbone.View.extend({
     const password = $form.find('.js-password').val();
 
     $.ajax({
-      url: `${config.apiEndpoint}/user/register`,
+      url: `${config.apiEndpoint}/users/register`,
       method: 'POST',
       data: {
         email,

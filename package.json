@@ -6,13 +6,16 @@
   "repository": "git@bitbucket.org:stjepan_petrusa/express-forum.git",
   "scripts": {
     "start": "nodemon server/server.js --watch server --exec babel-node --presets es2015,stage-2",
-    "test": "echo \"Error: no test specified\" && exit 1",
     "webpackDev": "webpack --progress --colors --watch",
     "build": "webpack",
-    "production": "node dist/server.js"
+    "docs": "apidoc -i server/"
   },
   "author": "Stjepan Petrusa",
   "license": "ISC",
+  "apidoc": {
+    "title": "Express api doc",
+    "version": "0.1.0"
+  },
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.15.2",

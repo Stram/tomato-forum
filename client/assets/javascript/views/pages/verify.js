@@ -68,7 +68,7 @@ export default Backbone.View.extend({
       const token = this.token;
 
       $.ajax({
-        url: `${config.apiEndpoint}/user/verify`,
+        url: `${config.apiEndpoint}/users/verify`,
         method: 'POST',
         data: {
           username,

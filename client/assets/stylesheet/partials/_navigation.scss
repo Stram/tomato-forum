@@ -2,18 +2,18 @@
   margin-top: 50px;
   padding-left: 20px;
 
-  &__header {
+  & &__header {
     font-weight: bold;
     font-size: 20px;
     color: $color-text-grey-600;
     margin-top: 40px;
   }
 
-  &__items {
+  & &__items {
     margin-top: 10px;
   }
 
-  &__item {
+  & &__item {
     padding: 5px;
     color: $color-text-grey-900;
   }

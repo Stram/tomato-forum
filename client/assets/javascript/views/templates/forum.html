@@ -1,11 +1,19 @@
 <div class="forum">
-  <div class="category">
-    <div class="category__title">
-
+  <div class="forum__heading">
+    <div class="forum__title">
+      FORUM
     </div>
-    <div class="category__threads">
+    <div class="forum__actions">
+      <img class="forum__action js-forum-edit" src="/public/images/edit-icon-white.svg" alt="Edit" />
+    </div>
+  </div>
+  <div class="card-list">
+    <div class="card-list__title">
+      <!-- TODO: ADD CATEGORY NAME -->
+    </div>
+    <div class="card-list__items">
       <% threads.each(function(thread) { %>
-        <div class="category__thread js-navigate-to-thread" data-thread-id="<%= thread.get('id') %>">
+        <div class="js-navigate-to-thread" data-thread-id="<%= thread.get('id') %>">
           <%= thread.get('title') %>
         </div>
       <% }); %>

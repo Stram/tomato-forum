@@ -1,13 +1,13 @@
 .input-box {
   padding: 16px 0 8px;
 
-  &__label {
+  & &__label {
     font-size: 12px;
     line-height: 16px;
     color: $color-text-grey-600;
   }
 
-  &__input {
+  & &__input {
     font-size: 16px;
     line-height: 16px;
     min-width: 250px;
@@ -29,7 +29,7 @@
     }
   }
 
-  &__message {
+  & &__message {
     font-size: 12px;
     line-height: 16px;
     color: $color-text-grey-600;

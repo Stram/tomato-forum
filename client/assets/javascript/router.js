@@ -17,7 +17,8 @@ const Router = Backbone.Router.extend({
     'first-steps/photo': 'firstStepsPhoto',
     forum: 'forum',
     'thread/:threadId': 'thread',
-    'profile/:profileId': 'profile'
+    'profile/:profileId': 'profile',
+    'forum/edit': 'forumEdit'
   },
 
   pages,
@@ -100,6 +101,10 @@ const Router = Backbone.Router.extend({
 
   profile(profileId) {
     this.changePage('profile', {userId: profileId});
+  },
+
+  forumEdit() {
+    this.changePage('forumEdit');
   }
 
 });

@@ -3,11 +3,11 @@
   background-color: $color-bg-white;
   border-radius: 2px;
 
-  &__content {
+  & &__content {
     padding: 24px 24px 16px;
   }
 
-  &__actions {
+  & &__actions {
     padding: 8px;
   }
 }
