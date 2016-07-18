@@ -5,6 +5,7 @@ import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
 import morgan from 'morgan';
 import session from 'express-session';
+import connectMongo from 'connect-mongo';
 import passport from 'passport';
 import fileUpload from 'express-fileupload';
 import fs from 'fs';
@@ -19,6 +20,8 @@ const app = express();
 
 mongoose.connect(databaseConfig.url);
 
+const MongoStore = connectMongo(session);
+
 app.use('/public', express.static(path.resolve('public')));
 app.use('/doc', express.static(path.resolve('doc')));
 
@@ -27,7 +30,13 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
-app.use(session({secret: 'asdfagalvneiv3u4kj34j'}));
+app.use(session({
+  secret: 'myUserSuperSecret',
+  cookie: {
+    maxAge: 2628000000
+  },
+  store: new MongoStore({ mongooseConnection: mongoose.connection })
+}));
 
 app.use(passport.initialize());
 app.use(passport.session());
@@ -36,9 +45,18 @@ app.use(fileUpload());
 
 passportConfig(passport);
 
+app.use('*', (req, res, next) => {
+  console.log(req.session);
+  next();
+});
+
 app.use('/api', api);
 
-app.get(/^(?!\/public|\/api|\/uploads|\/docs).*$/, function(req, res) {
+app.get('favicon.ico', (req, res) => {
+  res.sendFile(path.resolve('public/favicon.ico'));
+});
+
+app.get(/^(?!\/public|\/api|\/uploads|\/doc|\/favicon).*$/, function(req, res) {
   res.sendFile(path.resolve('client/index.html'));
 });
 

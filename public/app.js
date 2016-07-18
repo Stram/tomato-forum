@@ -60,7 +60,7 @@
 
 	__webpack_require__(7);
 
-	__webpack_require__(35);
+	__webpack_require__(39);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5366,7 +5366,7 @@
 
 	var _pages2 = _interopRequireDefault(_pages);
 
-	var _contentWrapper = __webpack_require__(33);
+	var _contentWrapper = __webpack_require__(37);
 
 	var _contentWrapper2 = _interopRequireDefault(_contentWrapper);
 
@@ -5501,11 +5501,11 @@
 
 	var _thread2 = _interopRequireDefault(_thread);
 
-	var _profile = __webpack_require__(30);
+	var _profile = __webpack_require__(31);
 
 	var _profile2 = _interopRequireDefault(_profile);
 
-	var _edit = __webpack_require__(39);
+	var _edit = __webpack_require__(34);
 
 	var _edit2 = _interopRequireDefault(_edit);
 
@@ -7903,7 +7903,7 @@
 
 	var _forum2 = _interopRequireDefault(_forum);
 
-	var _categories = __webpack_require__(42);
+	var _categories = __webpack_require__(24);
 
 	var _categories2 = _interopRequireDefault(_categories);
 
@@ -8018,7 +8018,7 @@
 
 	var _backbone2 = _interopRequireDefault(_backbone);
 
-	var _category = __webpack_require__(41);
+	var _category = __webpack_require__(25);
 
 	var _category2 = _interopRequireDefault(_category);
 
@@ -8030,7 +8030,7 @@
 
 	var Forum = _backbone2.default.Collection.extend({
 	  model: _category2.default,
-	  url: _config2.default.apiEndpoint + '/forum'
+	  url: _config2.default.apiEndpoint + '/categories'
 	});
 
 	exports.default = new Forum();
@@ -8056,7 +8056,7 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.default = _backbone2.default.Model.extend({
-	  urlRoot: _config2.default.apiEndpoint + '/thread'
+	  urlRoot: _config2.default.apiEndpoint + '/categories'
 	});
 
 /***/ },
@@ -8093,11 +8093,11 @@
 
 	var _session2 = _interopRequireDefault(_session);
 
-	var _thread3 = __webpack_require__(25);
+	var _thread3 = __webpack_require__(29);
 
 	var _thread4 = _interopRequireDefault(_thread3);
 
-	var _comment = __webpack_require__(29);
+	var _comment = __webpack_require__(30);
 
 	var _comment2 = _interopRequireDefault(_comment);
 
@@ -8234,7 +8234,7 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.default = _backbone2.default.Model.extend({
-	  urlRoot: _config2.default.apiEndpoint + '/comment'
+	  urlRoot: _config2.default.apiEndpoint + '/thread'
 	});
 
 /***/ },
@@ -8251,11 +8251,35 @@
 
 	var _backbone2 = _interopRequireDefault(_backbone);
 
+	var _config = __webpack_require__(6);
+
+	var _config2 = _interopRequireDefault(_config);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.Model.extend({
+	  urlRoot: _config2.default.apiEndpoint + '/comment'
+	});
+
+/***/ },
+/* 31 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(1);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
 	var _underscore = __webpack_require__(2);
 
 	var _underscore2 = _interopRequireDefault(_underscore);
 
-	var _profile = __webpack_require__(31);
+	var _profile = __webpack_require__(32);
 
 	var _profile2 = _interopRequireDefault(_profile);
 
@@ -8267,7 +8291,7 @@
 
 	var _session2 = _interopRequireDefault(_session);
 
-	var _user = __webpack_require__(32);
+	var _user = __webpack_require__(33);
 
 	var _user2 = _interopRequireDefault(_user);
 
@@ -8315,7 +8339,7 @@
 	});
 
 /***/ },
-/* 31 */
+/* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var _ = __webpack_require__(2);
@@ -8335,7 +8359,7 @@
 
 
 /***/ },
-/* 32 */
+/* 33 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -8359,7 +8383,103 @@
 	});
 
 /***/ },
-/* 33 */
+/* 34 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(1);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _underscore = __webpack_require__(2);
+
+	var _underscore2 = _interopRequireDefault(_underscore);
+
+	var _edit = __webpack_require__(35);
+
+	var _edit2 = _interopRequireDefault(_edit);
+
+	var _forum = __webpack_require__(36);
+
+	var _forum2 = _interopRequireDefault(_forum);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+	  tagName: 'div',
+
+	  className: 'page forum-edit-page',
+
+	  events: {},
+
+	  template: _edit2.default,
+
+	  initialize: function initialize() {
+	    _forum2.default.fetch();
+	    this.listenTo(_forum2.default, 'change reset add remove', this.render);
+	  },
+	  render: function render() {
+	    this.$el.html(_underscore2.default.template(this.template()));
+
+	    return this;
+	  },
+	  close: function close() {
+	    this.remove();
+	  }
+	});
+
+/***/ },
+/* 35 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _ = __webpack_require__(2);
+	module.exports = function(obj){
+	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+	with(obj||{}){
+	__p+='<div class="forum">\n  <div class="forum__heading">\n    <div class="forum__title">\n      FORUM CONFIG\n    </div>\n    <div class="forum__actions">\n      <img class="forum__action js-forum-edit" src="/public/images/edit-icon-white.svg" alt="Edit" />\n    </div>\n  </div>\n  <div class="card-list">\n    <div class="card-list__title">\n\n    </div>\n    <div class="card-list__items">\n      \n    </div>\n  </div>\n</div>\n';
+	}
+	return __p;
+	};
+
+
+/***/ },
+/* 36 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(1);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _category = __webpack_require__(25);
+
+	var _category2 = _interopRequireDefault(_category);
+
+	var _config = __webpack_require__(6);
+
+	var _config2 = _interopRequireDefault(_config);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Forum = _backbone2.default.Collection.extend({
+	  model: _category2.default,
+	  url: _config2.default.apiEndpoint + '/forum'
+	});
+
+	exports.default = new Forum();
+
+/***/ },
+/* 37 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -8380,7 +8500,7 @@
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
-	var _contentWrapper = __webpack_require__(34);
+	var _contentWrapper = __webpack_require__(38);
 
 	var _contentWrapper2 = _interopRequireDefault(_contentWrapper);
 
@@ -8446,7 +8566,7 @@
 	});
 
 /***/ },
-/* 34 */
+/* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var _ = __webpack_require__(2);
@@ -8464,16 +8584,16 @@
 
 
 /***/ },
-/* 35 */
+/* 39 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// style-loader: Adds some css to the DOM by adding a <style> tag
 
 	// load the styles
-	var content = __webpack_require__(36);
+	var content = __webpack_require__(40);
 	if(typeof content === 'string') content = [[module.id, content, '']];
 	// add the styles to the DOM
-	var update = __webpack_require__(37)(content, {});
+	var update = __webpack_require__(42)(content, {});
 	if(content.locals) module.exports = content.locals;
 	// Hot Module Replacement
 	if(false) {
@@ -8490,10 +8610,10 @@
 	}
 
 /***/ },
-/* 36 */
+/* 40 */
 /***/ function(module, exports, __webpack_require__) {
 
-	exports = module.exports = __webpack_require__(38)();
+	exports = module.exports = __webpack_require__(41)();
 	// imports
 	exports.push([module.id, "@import url(https://fonts.googleapis.com/css?family=Roboto&subset=latin,latin-ext);", ""]);
 
@@ -8504,7 +8624,63 @@
 
 
 /***/ },
-/* 37 */
+/* 41 */
+/***/ function(module, exports) {
+
+	/*
+		MIT License http://www.opensource.org/licenses/mit-license.php
+		Author Tobias Koppers @sokra
+	*/
+	// css base code, injected by the css-loader
+	module.exports = function() {
+		var list = [];
+
+		// return the list of modules as css string
+		list.toString = function toString() {
+			var result = [];
+			for(var i = 0; i < this.length; i++) {
+				var item = this[i];
+				if(item[2]) {
+					result.push("@media " + item[2] + "{" + item[1] + "}");
+				} else {
+					result.push(item[1]);
+				}
+			}
+			return result.join("");
+		};
+
+		// import a list of modules into the list
+		list.i = function(modules, mediaQuery) {
+			if(typeof modules === "string")
+				modules = [[null, modules, ""]];
+			var alreadyImportedModules = {};
+			for(var i = 0; i < this.length; i++) {
+				var id = this[i][0];
+				if(typeof id === "number")
+					alreadyImportedModules[id] = true;
+			}
+			for(i = 0; i < modules.length; i++) {
+				var item = modules[i];
+				// skip already imported module
+				// this implementation is not 100% perfect for weird media query combinations
+				//  when a module is imported multiple times with different media queries.
+				//  I hope this will never occur (Hey this way we have smaller bundles)
+				if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
+					if(mediaQuery && !item[2]) {
+						item[2] = mediaQuery;
+					} else if(mediaQuery) {
+						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
+					}
+					list.push(item);
+				}
+			}
+		};
+		return list;
+	};
+
+
+/***/ },
+/* 42 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/*
@@ -8754,182 +8930,6 @@
 			URL.revokeObjectURL(oldSrc);
 	}
 
-
-/***/ },
-/* 38 */
-/***/ function(module, exports) {
-
-	/*
-		MIT License http://www.opensource.org/licenses/mit-license.php
-		Author Tobias Koppers @sokra
-	*/
-	// css base code, injected by the css-loader
-	module.exports = function() {
-		var list = [];
-
-		// return the list of modules as css string
-		list.toString = function toString() {
-			var result = [];
-			for(var i = 0; i < this.length; i++) {
-				var item = this[i];
-				if(item[2]) {
-					result.push("@media " + item[2] + "{" + item[1] + "}");
-				} else {
-					result.push(item[1]);
-				}
-			}
-			return result.join("");
-		};
-
-		// import a list of modules into the list
-		list.i = function(modules, mediaQuery) {
-			if(typeof modules === "string")
-				modules = [[null, modules, ""]];
-			var alreadyImportedModules = {};
-			for(var i = 0; i < this.length; i++) {
-				var id = this[i][0];
-				if(typeof id === "number")
-					alreadyImportedModules[id] = true;
-			}
-			for(i = 0; i < modules.length; i++) {
-				var item = modules[i];
-				// skip already imported module
-				// this implementation is not 100% perfect for weird media query combinations
-				//  when a module is imported multiple times with different media queries.
-				//  I hope this will never occur (Hey this way we have smaller bundles)
-				if(typeof item[0] !== "number" || !alreadyImportedModules[item[0]]) {
-					if(mediaQuery && !item[2]) {
-						item[2] = mediaQuery;
-					} else if(mediaQuery) {
-						item[2] = "(" + item[2] + ") and (" + mediaQuery + ")";
-					}
-					list.push(item);
-				}
-			}
-		};
-		return list;
-	};
-
-
-/***/ },
-/* 39 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _backbone = __webpack_require__(1);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _underscore = __webpack_require__(2);
-
-	var _underscore2 = _interopRequireDefault(_underscore);
-
-	var _edit = __webpack_require__(40);
-
-	var _edit2 = _interopRequireDefault(_edit);
-
-	var _forum = __webpack_require__(24);
-
-	var _forum2 = _interopRequireDefault(_forum);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _backbone2.default.View.extend({
-	  tagName: 'div',
-
-	  className: 'page forum-edit-page',
-
-	  events: {},
-
-	  template: _edit2.default,
-
-	  initialize: function initialize() {
-	    _forum2.default.fetch();
-	    this.listenTo(_forum2.default, 'change reset add remove', this.render);
-	  },
-	  render: function render() {
-	    this.$el.html(_underscore2.default.template(this.template()));
-
-	    return this;
-	  },
-	  close: function close() {
-	    this.remove();
-	  }
-	});
-
-/***/ },
-/* 40 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _ = __webpack_require__(2);
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='<div class="forum">\n  <div class="forum__heading">\n    <div class="forum__title">\n      FORUM CONFIG\n    </div>\n    <div class="forum__actions">\n      <img class="forum__action js-forum-edit" src="/public/images/edit-icon-white.svg" alt="Edit" />\n    </div>\n  </div>\n  <div class="card-list">\n    <div class="card-list__title">\n\n    </div>\n    <div class="card-list__items">\n      \n    </div>\n  </div>\n</div>\n';
-	}
-	return __p;
-	};
-
-
-/***/ },
-/* 41 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _backbone = __webpack_require__(1);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _config = __webpack_require__(6);
-
-	var _config2 = _interopRequireDefault(_config);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _backbone2.default.Model.extend({
-	  urlRoot: _config2.default.apiEndpoint + '/categories'
-	});
-
-/***/ },
-/* 42 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _backbone = __webpack_require__(1);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _category = __webpack_require__(41);
-
-	var _category2 = _interopRequireDefault(_category);
-
-	var _config = __webpack_require__(6);
-
-	var _config2 = _interopRequireDefault(_config);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var Forum = _backbone2.default.Collection.extend({
-	  model: _category2.default,
-	  url: _config2.default.apiEndpoint + '/categories'
-	});
-
-	exports.default = new Forum();
 
 /***/ }
 /******/ ]);
