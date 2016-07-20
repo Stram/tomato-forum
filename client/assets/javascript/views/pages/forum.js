@@ -4,7 +4,7 @@ import $ from 'jquery';
 
 import template from 'views/templates/forum.html';
 
-import Categories from 'collections/categories';
+import categories from 'collections/categories';
 // import Thread from 'models/thread';
 
 import config from 'config';
@@ -26,15 +26,15 @@ export default Backbone.View.extend({
   template,
 
   initialize() {
-    Categories.fetch();
-    this.listenTo(Categories, 'change reset add remove', this.render);
+    categories.fetch();
+    this.listenTo(categories, 'change reset add remove', this.render);
   },
 
   render() {
     this.$el.html(
       _.template(
         this.template({
-          threads: Categories
+          categories
         })
       )
     );

@@ -3,6 +3,7 @@
   background-color: $color-bg-white;
   border-radius: 2px;
   margin: 24px 24px 0;
+  overflow: hidden;
 
   & &__title {
     @include theme-style();
