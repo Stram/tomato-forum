@@ -9,8 +9,15 @@
   </div>
   <% categories.each(function(category) { %>
     <div class="card-list">
-      <div class="card-list__title">
-        <%= category.get('name') %>
+      <div class="card-list__header">
+        <div class="card-list__title">
+          <%= category.get('name') %>
+        </div>
+        <div class="card-list__header-actions">
+          <div class="card-list__header-icon-action js-create-new-thread" data-category-id="<%= category.get('id') %>">
+            <img src="/public/images/add-icon-white.svg" alt="addNewThread" />
+          </div>
+        </div>
       </div>
       <div class="card-list__items">
         <% if (category.threads) { %>
@@ -31,6 +38,10 @@
 
 <div class="fab new-thread-button js-new-thread-button">
 +
+</div>
+
+<div class="js-new-thread-modal">
+
 </div>
 
 <div class="new-thread-modal modal-container js-new-thread-modal">
