@@ -1,6 +1,7 @@
 import express from 'express';
 
 import Thread from '../models/thread';
+import Category from '../models/category';
 
 import handleError from '../services/handle-error';
 import permissions from '../services/permissions';
@@ -19,21 +20,46 @@ const router = new express.Router();
  * @apiParam {ObjectId} owner Threads owner.
  */
 router.post('/', (req, res) => {
-  const newThread = new Thread({
-    title: req.body.title,
-    content: req.body.content,
-    owner: req.user.id,
-    createdAt: new Date()
-  });
-
-  newThread.save((error) => {
-    if (error) {
-      handleError(error, res);
+  Category.findById(req.body.categoryId, (categoryError, category) => {
+    if (categoryError) {
+      handleError(categoryError, res);
       return;
     }
-    res.status(201);
-    res.json({
-      thread: newThread.toObject()
+
+    if (!category) {
+      res.status(400);
+      res.json({
+        error: 'Nema category'
+      });
+      return;
+    }
+
+    const newThread = new Thread({
+      category,
+      title: req.body.title,
+      content: req.body.content,
+      owner: req.user.id,
+      createdAt: new Date()
+    });
+
+    newThread.save((newThreadError) => {
+      if (newThreadError) {
+        handleError(newThreadError, res);
+        return;
+      }
+
+      category.threads.push(newThread);
+      category.save((updatedCategoryError) => {
+        if (updatedCategoryError) {
+          handleError(updatedCategoryError, res);
+          return;
+        }
+        
+        res.status(201);
+        res.json({
+          thread: newThread.toObject()
+        });
+      });
     });
   });
 });

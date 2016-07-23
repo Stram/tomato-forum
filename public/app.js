@@ -8204,7 +8204,7 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.default = _backbone2.default.Model.extend({
-	  urlRoot: _config2.default.apiEndpoint + '/thread'
+	  urlRoot: _config2.default.apiEndpoint + '/threads'
 	});
 
 /***/ },
