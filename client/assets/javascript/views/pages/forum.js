@@ -3,9 +3,9 @@ import _ from 'underscore';
 
 import template from 'views/templates/forum.html';
 import ModalDialog from 'views/components/modal-dialog';
+import NewThreadForm from 'views/components/forms/new-thread-form.js';
 
 import categories from 'collections/categories';
-import Thread from 'models/thread';
 
 import router from 'router';
 
@@ -40,38 +40,45 @@ export default Backbone.View.extend({
 
   close() {
     this.remove();
+
     if (this.newThreadModalDialog) {
       this.newThreadModalDialog.close();
+    }
+
+    if (this.newThreadForm) {
+      this.newThreadForm.close();
     }
   },
 
   showNewThreadModal(event) {
+    this.newThreadForm = new NewThreadForm({
+      categoryId: event.currentTarget.dataset.categoryId
+    });
+
+    this.newThreadForm.render();
+
+    this.newThreadForm.on('submit', this.closeNewThreadModalDialog);
+
     this.newThreadModalDialog = new ModalDialog({
       title: 'Create new thread',
-      content: '<div>LALALAL</div>',
+      content: this.newThreadForm.el.outerHTML,
       cancelLabel: 'cancel',
       cancelAction: this.closeNewThreadModalDialog.bind(this),
       confirmLabel: 'create',
       confirmAction: this.createNewThread.bind(this)
     });
-    this.newThreadCategoryId = event.currentTarget.dataset.categoryId;
 
     this.newThreadModalDialog.render();
   },
 
   closeNewThreadModalDialog() {
+    this.newThreadForm.off();
     this.newThreadModalDialog.close();
     this.newThreadModalDialog = null;
   },
 
   createNewThread() {
-    const newThread = new Thread({
-      category: this.newThreadCategoryId
-      // Add other params
-    });
-
-    newThread.save();
-
+    this.newThreadForm.submit();
     this.closeNewThreadModalDialog();
   },
 

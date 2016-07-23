@@ -3,11 +3,11 @@
 $base-white: #FFFFFF;
 $base-black: #000000;
 
-$base-gray-opaque: rgba(0,0,0,0.30);
-$base-gray-light-opaque: rgba(0,0,0,0.10);
+$base-grey-opaque: rgba(0,0,0,0.30);
+$base-grey-light-opaque: rgba(0,0,0,0.10);
 
-$color-shadow: $base-gray-opaque;
-$color-light-shadow: $base-gray-light-opaque;
+$color-shadow: $base-grey-opaque;
+$color-light-shadow: $base-grey-light-opaque;
 
 
 // BACKGROUND
@@ -29,5 +29,6 @@ $color-text-error: $base-red-500;
 
 // BORDER
 
-$color-border-gray: $base-grey-800;
+$color-border-light-grey: $base-grey-300;
+$color-border-grey: $base-grey-800;
 $color-border-primary: $base-red-500;

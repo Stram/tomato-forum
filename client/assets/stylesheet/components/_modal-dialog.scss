@@ -5,7 +5,7 @@
   bottom: 0;
   left: 0;
 
-  background-color: $base-gray-opaque;
+  background-color: $base-grey-opaque;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -17,7 +17,7 @@
   border-radius: 2px;
 
   & &__header {
-
+    padding: 24px 24px 20px;
   }
 
   & &__content {
