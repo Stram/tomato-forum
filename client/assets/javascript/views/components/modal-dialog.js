@@ -10,6 +10,7 @@ export default Backbone.View.extend({
   className: 'modal-dialog-container',
 
   events: {
+    'click': 'onDismissClick',
     'click .js-modal-dialog-confirm-action': 'onConfirmClick',
     'click .js-modal-dialog-cancel-action': 'onCancelClick'
   },
@@ -33,6 +34,12 @@ export default Backbone.View.extend({
 
   onCancelClick() {
     this.cancelAction();
+  },
+
+  onDismissClick(event) {
+    if (event.target.classList.contains('modal-dialog-container')) {
+      this.onCancelClick();
+    }
   },
 
   render() {

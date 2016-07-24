@@ -61,7 +61,7 @@ export default Backbone.View.extend({
 
     this.newThreadModalDialog = new ModalDialog({
       title: 'Create new thread',
-      content: this.newThreadForm.el.outerHTML,
+      content: this.newThreadForm.el.innerHTML,
       cancelLabel: 'cancel',
       cancelAction: this.closeNewThreadModalDialog.bind(this),
       confirmLabel: 'create',
@@ -83,6 +83,6 @@ export default Backbone.View.extend({
   },
 
   transitionToEditForum() {
-    // router.navigateTo('/')
+    router.navigate('forum/edit', true);
   }
 });

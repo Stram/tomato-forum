@@ -20,10 +20,10 @@
         </div>
       </div>
       <div class="card-list__items">
-        <% if (category.threads) { %>
-          <% category.threads.each(function(thread) { %>
-            <div class="js-navigate-to-thread" data-thread-id="<%= thread.get('id') %>">
-              <%= thread.get('title') %>
+        <% if (category.get('threads')) { %>
+          <% _.each(category.get('threads'), function(thread) { %>
+            <div class="js-navigate-to-thread" data-thread-id="<%= thread.id %>">
+              <%= thread.title %>
             </div>
           <% }); %>
         <% } else { %>

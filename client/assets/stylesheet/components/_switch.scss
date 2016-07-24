@@ -1,0 +1,66 @@
+$grid-step: 4px;
+
+$size: $grid-step * 10;
+$height: $grid-step * 4;
+$padding: $grid-step;
+$border-radius: $grid-step / 2;
+$label: $height + ($padding * 2);
+
+$animation-timing: cubic-bezier(0.4, 0, 0.2, 1);;
+$animation: .28s $animation-timing;
+$animation-slow: .56s $animation-timing;
+
+$color-swatch: #009688;
+$color-dark-swatch: #80CBC4;
+
+$color-thumb-off: #fafafa;
+$color-dark-thumb-off: #bdbdbd;
+
+$color-track-off: rgba(black, 26%);
+$color-dark-track-off: rgba(white, 30%);
+
+$color-track-on: rgba($color-swatch, 50%);
+$color-dark-track-on: rgba($color-dark-swatch, 50%);
+
+
+.switch {
+  display: inline-block;
+  position: relative;
+  width: $size;
+  height: $height;
+  border-radius: $height / 2;
+  background: $color-track-off;
+  transition: background $animation;
+  vertical-align: middle;
+  cursor: pointer;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -$padding;
+    left: -$padding;
+    width: $label;
+    height: $label;
+    background: $color-thumb-off;
+    box-shadow: 0 $grid-step $height / 2 rgba(0, 0, 0, 0.28);
+    border-radius: 50%;
+    transition: left $animation, background $animation, box-shadow $animation;
+  }
+
+  &:active::before {
+    box-shadow: 0 $grid-step $height / 2 rgba(black, 0.28), 0 0 0 $size / 2 rgba(#808080, 0.1);
+  }
+}
+
+input:checked + .switch {
+  background: $color-track-on;
+
+  &::before {
+    left: $size - $label + $padding;
+    background: $color-swatch;
+  }
+
+  &:active::before {
+    box-shadow: 0 $grid-step $height / 2 rgba(black, .28), 0 0 0 $size / 2 rgba($color-swatch, 0.2);
+  }
+}

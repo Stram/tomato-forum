@@ -8,10 +8,15 @@ import template from 'views/templates/partials/new-thread-form.html';
 // models
 import Thread from 'models/thread';
 
+// collections
+import categories from 'collections/categories';
+
 export default Backbone.View.extend({
 
   initialize(args) {
-    this.categoryId = args.categoryId;
+    this.category = categories.findWhere({
+      id: args.categoryId
+    });
   },
 
   events: {
@@ -43,7 +48,7 @@ export default Backbone.View.extend({
   getUserData() {
     const title = $('.js-new-thread-title').val();
     const content = $('.js-new-thread-content').val();
-    const categoryId = this.categoryId;
+    const categoryId = this.category.get('id');
 
     return {title, content, categoryId};
   },

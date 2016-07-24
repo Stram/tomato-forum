@@ -8,11 +8,22 @@
     </div>
   </div>
   <div class="card-list">
-    <div class="card-list__title">
-
+    <div class="card-list__header">
+      <div class="card-list__title">
+        Categories
+      </div>
+      <div class="card-list__header-actions">
+        <div class="card-list__header-icon-action js-create-new-category">
+          <img src="/public/images/add-icon-white.svg" alt="addNewCategory" />
+        </div>
+      </div>
     </div>
     <div class="card-list__items">
-      
+      <% categories.each(function(category) { %>
+        <div class="js-navigate-to-category" data-category-id="<%= category.id %>">
+          <%= category.get('name') %>
+        </div>
+      <% }); %>
     </div>
   </div>
 </div>
