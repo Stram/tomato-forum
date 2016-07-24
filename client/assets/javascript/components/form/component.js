@@ -15,8 +15,6 @@ export default Backbone.View.extend({
   },
 
   render() {
-    this.$el.html();
-
     _.each(this.propertyViews, (view) => {
       view.render();
       this.$el.append(view.$el);

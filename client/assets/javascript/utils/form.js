@@ -1,5 +1,6 @@
 import InputTextView from 'components/form-property/input-text/component';
 import SwitchView from 'components/form-property/switch/component';
+import TrixView from 'components/form-property/trix/component';
 
 export default {
   createFormPropertyObject(propertyName, propertyOptions) {
@@ -15,9 +16,13 @@ export default {
         name: propertyName,
         value: propertyOptions.value
       });
+    case 'trix':
+      return new TrixView({
+        name: propertyName,
+        value: propertyOptions.value
+      });
     default:
-      console.warn('unknown form property type');
-      return null;
+      throw new Error('unknown form property type');
     }
   }
 };

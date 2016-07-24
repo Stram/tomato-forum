@@ -7901,17 +7901,21 @@
 
 	var _forum2 = _interopRequireDefault(_forum);
 
-	var _modalDialog = __webpack_require__(24);
+	var _component = __webpack_require__(62);
 
-	var _modalDialog2 = _interopRequireDefault(_modalDialog);
+	var _component2 = _interopRequireDefault(_component);
 
-	var _newThreadForm = __webpack_require__(26);
+	var _thread = __webpack_require__(59);
 
-	var _newThreadForm2 = _interopRequireDefault(_newThreadForm);
+	var _thread2 = _interopRequireDefault(_thread);
 
 	var _categories = __webpack_require__(29);
 
 	var _categories2 = _interopRequireDefault(_categories);
+
+	var _thread3 = __webpack_require__(28);
+
+	var _thread4 = _interopRequireDefault(_thread3);
 
 	var _router = __webpack_require__(7);
 
@@ -7949,22 +7953,25 @@
 	      this.newThreadModalDialog.close();
 	    }
 
-	    if (this.newThreadForm) {
-	      this.newThreadForm.close();
+	    if (this.newThreadFormObject) {
+	      this.newThreadFormObject.close();
 	    }
 	  },
 	  showNewThreadModal: function showNewThreadModal(event) {
-	    this.newThreadForm = new _newThreadForm2.default({
-	      categoryId: event.currentTarget.dataset.categoryId
+	    this.newThreadFormObject = new _thread2.default({
+	      model: new _thread4.default({
+	        categoryId: event.currentTarget.dataset.categoryId
+	      })
 	    });
 
+	    this.newThreadForm = this.newThreadFormObject.getForm();
 	    this.newThreadForm.render();
 
 	    this.newThreadForm.on('submit', this.closeNewThreadModalDialog);
 
-	    this.newThreadModalDialog = new _modalDialog2.default({
+	    this.newThreadModalDialog = new _component2.default({
 	      title: 'Create new thread',
-	      content: this.newThreadForm.el.innerHTML,
+	      content: this.newThreadForm.el.outerHTML,
 	      cancelLabel: 'cancel',
 	      cancelAction: this.closeNewThreadModalDialog.bind(this),
 	      confirmLabel: 'create',
@@ -7979,7 +7986,7 @@
 	    this.newThreadModalDialog = null;
 	  },
 	  createNewThread: function createNewThread() {
-	    this.newThreadForm.submit();
+	    this.newThreadFormObject.submit();
 	    this.closeNewThreadModalDialog();
 	  },
 	  transitionToEditForum: function transitionToEditForum() {
@@ -8024,215 +8031,10 @@
 
 
 /***/ },
-/* 24 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _backbone = __webpack_require__(1);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _underscore = __webpack_require__(2);
-
-	var _underscore2 = _interopRequireDefault(_underscore);
-
-	var _jquery = __webpack_require__(3);
-
-	var _jquery2 = _interopRequireDefault(_jquery);
-
-	var _modalDialog = __webpack_require__(25);
-
-	var _modalDialog2 = _interopRequireDefault(_modalDialog);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _backbone2.default.View.extend({
-	  tagName: 'div',
-
-	  className: 'modal-dialog-container',
-
-	  events: {
-	    'click': 'onDismissClick',
-	    'click .js-modal-dialog-confirm-action': 'onConfirmClick',
-	    'click .js-modal-dialog-cancel-action': 'onCancelClick'
-	  },
-
-	  template: _modalDialog2.default,
-
-	  initialize: function initialize(args) {
-	    this.title = args.title;
-	    this.content = args.content;
-
-	    this.confirmLabel = args.confirmLabel;
-	    this.confirmAction = args.confirmAction;
-
-	    this.cancelLabel = args.cancelLabel;
-	    this.cancelAction = args.cancelAction;
-	  },
-	  onConfirmClick: function onConfirmClick() {
-	    this.confirmAction();
-	  },
-	  onCancelClick: function onCancelClick() {
-	    this.cancelAction();
-	  },
-	  onDismissClick: function onDismissClick(event) {
-	    if (event.target.classList.contains('modal-dialog-container')) {
-	      this.onCancelClick();
-	    }
-	  },
-	  render: function render() {
-	    this.$el.html(_underscore2.default.template(this.template({
-	      title: this.title,
-	      content: this.content,
-	      confirmLabel: this.confirmLabel,
-	      cancelLabel: this.cancelLabel
-	    })));
-
-	    (0, _jquery2.default)('body').append(this.$el);
-	    (0, _jquery2.default)('body').addClass('is-scrolling-disabled');
-
-	    return this;
-	  },
-	  close: function close() {
-	    this.remove();
-	    (0, _jquery2.default)('body').removeClass('is-scrolling-disabled');
-	  }
-	});
-
-/***/ },
-/* 25 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _ = __webpack_require__(2);
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='<div class="modal-dialog">\n  <div class="modal-dialog__header">\n    '+
-	((__t=( title ))==null?'':__t)+
-	'\n  </div>\n\n  <div class="modal-dialog__content">\n    '+
-	((__t=( content ))==null?'':__t)+
-	'\n  </div>\n\n  <div class="modal-dialog__actions">\n    ';
-	 if (cancelLabel) { 
-	__p+='\n      <div class="button button--dialog js-modal-dialog-cancel-action">\n        '+
-	((__t=( cancelLabel ))==null?'':__t)+
-	'\n      </div>\n    ';
-	 } 
-	__p+='\n\n    ';
-	 if (confirmLabel) { 
-	__p+='\n      <div class="button button--dialog js-modal-dialog-confirm-action">\n        '+
-	((__t=( confirmLabel ))==null?'':__t)+
-	'\n      </div>\n    ';
-	 } 
-	__p+='\n  </div>\n</div>\n';
-	}
-	return __p;
-	};
-
-
-/***/ },
-/* 26 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _backbone = __webpack_require__(1);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _underscore = __webpack_require__(2);
-
-	var _underscore2 = _interopRequireDefault(_underscore);
-
-	var _jquery = __webpack_require__(3);
-
-	var _jquery2 = _interopRequireDefault(_jquery);
-
-	var _newThreadForm = __webpack_require__(27);
-
-	var _newThreadForm2 = _interopRequireDefault(_newThreadForm);
-
-	var _thread = __webpack_require__(28);
-
-	var _thread2 = _interopRequireDefault(_thread);
-
-	var _categories = __webpack_require__(29);
-
-	var _categories2 = _interopRequireDefault(_categories);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	// models
-	exports.default = _backbone2.default.View.extend({
-	  initialize: function initialize(args) {
-	    this.category = _categories2.default.findWhere({
-	      id: args.categoryId
-	    });
-	  },
-
-
-	  events: {
-	    'submit .js-new-thread-form': 'formSubmit'
-	  },
-
-	  template: _newThreadForm2.default,
-
-	  render: function render() {
-	    this.$el.html(_underscore2.default.template(this.template()));
-
-	    return this;
-	  },
-	  close: function close() {
-	    this.remove();
-	  },
-	  formSubmit: function formSubmit(event) {
-	    event.preventDefault();
-	    this.trigger('submit');
-	    this.submit();
-	  },
-	  getUserData: function getUserData() {
-	    var title = (0, _jquery2.default)('.js-new-thread-title').val();
-	    var content = (0, _jquery2.default)('.js-new-thread-content').val();
-	    var categoryId = this.category.get('id');
-
-	    return { title: title, content: content, categoryId: categoryId };
-	  },
-	  submit: function submit() {
-	    var userData = this.getUserData();
-	    var newThread = new _thread2.default(userData);
-
-	    newThread.save();
-	  }
-	});
-
-	// collections
-
-
-	// templates
-
-/***/ },
-/* 27 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _ = __webpack_require__(2);
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='<form class="js-new-thread-form">\n  <div class="input-box">\n    <label for="new-thread-title" class="input-box__label">Title</label>\n    <input type="text" class="input-box__input js-new-thread-title" id="new-thread-title" required/>\n    <span class="input-box__message is-error js-error-title"></span>\n  </div>\n\n  <trix-editor class="js-new-thread-content" value=""></trix-editor>\n</form>\n';
-	}
-	return __p;
-	};
-
-
-/***/ },
+/* 24 */,
+/* 25 */,
+/* 26 */,
+/* 27 */,
 /* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -8632,9 +8434,9 @@
 
 	var _edit2 = _interopRequireDefault(_edit);
 
-	var _modalDialog = __webpack_require__(24);
+	var _component = __webpack_require__(62);
 
-	var _modalDialog2 = _interopRequireDefault(_modalDialog);
+	var _component2 = _interopRequireDefault(_component);
 
 	var _category = __webpack_require__(40);
 
@@ -8683,9 +8485,7 @@
 	  },
 	  showNewCategoryModal: function showNewCategoryModal() {
 	    this.newCategoryFormObject = new _category2.default({
-	      model: new _category4.default({
-	        name: 'LALL'
-	      })
+	      model: new _category4.default()
 	    });
 
 	    this.newCategoryForm = this.newCategoryFormObject.getForm();
@@ -8693,9 +8493,9 @@
 
 	    this.newCategoryForm.on('submit', this.closeNewCategoryModalDialog);
 
-	    this.newCategoryModalDialog = new _modalDialog2.default({
+	    this.newCategoryModalDialog = new _component2.default({
 	      title: 'Create new category',
-	      content: this.newCategoryForm.el.innerHTML,
+	      content: this.newCategoryForm.el.outerHTML,
 	      cancelLabel: 'cancel',
 	      cancelAction: this.closeNewCategoryModalDialog.bind(this),
 	      confirmLabel: 'create',
@@ -8929,8 +8729,6 @@
 	  render: function render() {
 	    var _this = this;
 
-	    this.$el.html();
-
 	    _underscore2.default.each(this.propertyViews, function (view) {
 	      view.render();
 	      _this.$el.append(view.$el);
@@ -8965,6 +8763,10 @@
 
 	var _component4 = _interopRequireDefault(_component3);
 
+	var _component5 = __webpack_require__(60);
+
+	var _component6 = _interopRequireDefault(_component5);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.default = {
@@ -8981,9 +8783,13 @@
 	          name: propertyName,
 	          value: propertyOptions.value
 	        });
+	      case 'trix':
+	        return new _component6.default({
+	          name: propertyName,
+	          value: propertyOptions.value
+	        });
 	      default:
-	        console.warn('unknown form property type');
-	        return null;
+	        throw new Error('unknown form property type');
 	    }
 	  }
 	};
@@ -9884,6 +9690,241 @@
 			}
 		};
 		return list;
+	};
+
+
+/***/ },
+/* 59 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _baseForm = __webpack_require__(41);
+
+	var _baseForm2 = _interopRequireDefault(_baseForm);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var CategoryForm = function (_BaseForm) {
+	  _inherits(CategoryForm, _BaseForm);
+
+	  function CategoryForm() {
+	    _classCallCheck(this, CategoryForm);
+
+	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(CategoryForm).apply(this, arguments));
+
+	    _this.modelName = 'thread';
+
+	    _this.properties = {
+	      title: {
+	        type: 'text'
+	      },
+
+	      content: {
+	        type: 'trix'
+	      }
+	    };
+	    return _this;
+	  }
+
+	  return CategoryForm;
+	}(_baseForm2.default);
+
+	exports.default = CategoryForm;
+
+/***/ },
+/* 60 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(1);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _underscore = __webpack_require__(2);
+
+	var _underscore2 = _interopRequireDefault(_underscore);
+
+	var _jquery = __webpack_require__(3);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _template = __webpack_require__(61);
+
+	var _template2 = _interopRequireDefault(_template);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+	  tagName: 'div',
+
+	  className: 'trix-container',
+
+	  initialize: function initialize(args) {
+	    this.name = args.name;
+	    this.inputId = _underscore2.default.uniqueId();
+	  },
+
+
+	  template: _template2.default,
+
+	  render: function render() {
+	    this.$el.html(_underscore2.default.template(this.template({
+	      inputId: this.inputId
+	    })));
+
+	    return this;
+	  },
+	  close: function close() {
+	    this.remove();
+	  },
+	  getValue: function getValue() {
+	    var value = (0, _jquery2.default)('#' + this.inputId).val();
+	    return value;
+	  }
+	});
+
+	// templates
+
+/***/ },
+/* 61 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _ = __webpack_require__(2);
+	module.exports = function(obj){
+	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+	with(obj||{}){
+	__p+='<trix-editor id="'+
+	((__t=( inputId ))==null?'':__t)+
+	'"></trix-editor>\n';
+	}
+	return __p;
+	};
+
+
+/***/ },
+/* 62 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(1);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _underscore = __webpack_require__(2);
+
+	var _underscore2 = _interopRequireDefault(_underscore);
+
+	var _jquery = __webpack_require__(3);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _template = __webpack_require__(63);
+
+	var _template2 = _interopRequireDefault(_template);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+	  tagName: 'div',
+
+	  className: 'modal-dialog-container',
+
+	  events: {
+	    click: 'onDismissClick',
+	    'click .js-modal-dialog-confirm-action': 'onConfirmClick',
+	    'click .js-modal-dialog-cancel-action': 'onCancelClick'
+	  },
+
+	  template: _template2.default,
+
+	  initialize: function initialize(args) {
+	    this.title = args.title;
+	    this.content = args.content;
+
+	    this.confirmLabel = args.confirmLabel;
+	    this.confirmAction = args.confirmAction;
+
+	    this.cancelLabel = args.cancelLabel;
+	    this.cancelAction = args.cancelAction;
+	  },
+	  onConfirmClick: function onConfirmClick() {
+	    this.confirmAction();
+	  },
+	  onCancelClick: function onCancelClick() {
+	    this.cancelAction();
+	  },
+	  onDismissClick: function onDismissClick(event) {
+	    if ((0, _jquery2.default)(event.target).hasClass('modal-dialog-container')) {
+	      this.onCancelClick();
+	    }
+	  },
+	  render: function render() {
+	    this.$el.html(_underscore2.default.template(this.template({
+	      title: this.title,
+	      content: this.content,
+	      confirmLabel: this.confirmLabel,
+	      cancelLabel: this.cancelLabel
+	    })));
+
+	    (0, _jquery2.default)('body').append(this.$el);
+	    (0, _jquery2.default)('body').addClass('is-scrolling-disabled');
+
+	    return this;
+	  },
+	  close: function close() {
+	    this.remove();
+	    (0, _jquery2.default)('body').removeClass('is-scrolling-disabled');
+	  }
+	});
+
+/***/ },
+/* 63 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var _ = __webpack_require__(2);
+	module.exports = function(obj){
+	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
+	with(obj||{}){
+	__p+='<div class="modal-dialog">\n  <div class="modal-dialog__header">\n    '+
+	((__t=( title ))==null?'':__t)+
+	'\n  </div>\n\n  <div class="modal-dialog__content">\n    '+
+	((__t=( content ))==null?'':__t)+
+	'\n  </div>\n\n  <div class="modal-dialog__actions">\n    ';
+	 if (cancelLabel) { 
+	__p+='\n      <div class="button button--dialog js-modal-dialog-cancel-action">\n        '+
+	((__t=( cancelLabel ))==null?'':__t)+
+	'\n      </div>\n    ';
+	 } 
+	__p+='\n\n    ';
+	 if (confirmLabel) { 
+	__p+='\n      <div class="button button--dialog js-modal-dialog-confirm-action">\n        '+
+	((__t=( confirmLabel ))==null?'':__t)+
+	'\n      </div>\n    ';
+	 } 
+	__p+='\n  </div>\n</div>\n';
+	}
+	return __p;
 	};
 
 

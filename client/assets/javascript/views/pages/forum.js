@@ -2,10 +2,12 @@ import Backbone from 'backbone';
 import _ from 'underscore';
 
 import template from 'views/templates/forum.html';
-import ModalDialog from 'views/components/modal-dialog';
-import NewThreadForm from 'views/components/forms/new-thread-form.js';
+import ModalDialog from 'components/modal-dialog/component';
+import NewThreadForm from 'forms/thread';
 
 import categories from 'collections/categories';
+
+import Thread from 'models/thread';
 
 import router from 'router';
 
@@ -45,23 +47,26 @@ export default Backbone.View.extend({
       this.newThreadModalDialog.close();
     }
 
-    if (this.newThreadForm) {
-      this.newThreadForm.close();
+    if (this.newThreadFormObject) {
+      this.newThreadFormObject.close();
     }
   },
 
   showNewThreadModal(event) {
-    this.newThreadForm = new NewThreadForm({
-      categoryId: event.currentTarget.dataset.categoryId
+    this.newThreadFormObject = new NewThreadForm({
+      model: new Thread({
+        categoryId: event.currentTarget.dataset.categoryId
+      })
     });
 
+    this.newThreadForm = this.newThreadFormObject.getForm();
     this.newThreadForm.render();
 
     this.newThreadForm.on('submit', this.closeNewThreadModalDialog);
 
     this.newThreadModalDialog = new ModalDialog({
       title: 'Create new thread',
-      content: this.newThreadForm.el.innerHTML,
+      content: this.newThreadForm.el.outerHTML,
       cancelLabel: 'cancel',
       cancelAction: this.closeNewThreadModalDialog.bind(this),
       confirmLabel: 'create',
@@ -78,7 +83,7 @@ export default Backbone.View.extend({
   },
 
   createNewThread() {
-    this.newThreadForm.submit();
+    this.newThreadFormObject.submit();
     this.closeNewThreadModalDialog();
   },
 

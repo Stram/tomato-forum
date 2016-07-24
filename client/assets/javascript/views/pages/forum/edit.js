@@ -2,7 +2,7 @@ import Backbone from 'backbone';
 import _ from 'underscore';
 
 import template from 'views/templates/forum/edit.html';
-import ModalDialog from 'views/components/modal-dialog';
+import ModalDialog from 'components/modal-dialog/component';
 
 import NewCategoryForm from 'forms/category';
 
@@ -49,9 +49,7 @@ export default Backbone.View.extend({
 
   showNewCategoryModal() {
     this.newCategoryFormObject = new NewCategoryForm({
-      model: new Category({
-        name: 'LALL'
-      })
+      model: new Category()
     });
 
     this.newCategoryForm = this.newCategoryFormObject.getForm();
@@ -61,7 +59,7 @@ export default Backbone.View.extend({
 
     this.newCategoryModalDialog = new ModalDialog({
       title: 'Create new category',
-      content: this.newCategoryForm.el.innerHTML,
+      content: this.newCategoryForm.el.outerHTML,
       cancelLabel: 'cancel',
       cancelAction: this.closeNewCategoryModalDialog.bind(this),
       confirmLabel: 'create',

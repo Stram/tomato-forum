@@ -2,7 +2,7 @@ import Backbone from 'backbone';
 import _ from 'underscore';
 import $ from 'jquery';
 
-import template from 'views/templates/components/modal-dialog.html';
+import template from './template.html';
 
 export default Backbone.View.extend({
   tagName: 'div',
@@ -10,7 +10,7 @@ export default Backbone.View.extend({
   className: 'modal-dialog-container',
 
   events: {
-    'click': 'onDismissClick',
+    click: 'onDismissClick',
     'click .js-modal-dialog-confirm-action': 'onConfirmClick',
     'click .js-modal-dialog-cancel-action': 'onCancelClick'
   },
@@ -37,7 +37,7 @@ export default Backbone.View.extend({
   },
 
   onDismissClick(event) {
-    if (event.target.classList.contains('modal-dialog-container')) {
+    if ($(event.target).hasClass('modal-dialog-container')) {
       this.onCancelClick();
     }
   },
