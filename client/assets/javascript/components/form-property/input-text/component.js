@@ -2,7 +2,7 @@ import Backbone from 'backbone';
 import _ from 'underscore';
 import $ from 'jquery';
 
-// templates
+// template
 import template from './template.html';
 
 export default Backbone.View.extend({
