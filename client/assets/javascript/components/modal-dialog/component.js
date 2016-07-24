@@ -26,6 +26,8 @@ export default Backbone.View.extend({
 
     this.cancelLabel = args.cancelLabel;
     this.cancelAction = args.cancelAction;
+
+    this.headerColor = args.headerColor;
   },
 
   onConfirmClick() {
@@ -49,7 +51,8 @@ export default Backbone.View.extend({
           title: this.title,
           content: this.content,
           confirmLabel: this.confirmLabel,
-          cancelLabel: this.cancelLabel
+          cancelLabel: this.cancelLabel,
+          headerColor: this.headerColor
         })
       )
     );

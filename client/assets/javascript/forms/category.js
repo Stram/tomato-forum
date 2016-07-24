@@ -1,8 +1,4 @@
-import _ from 'underscore';
-
 import BaseForm from 'forms/base-form';
-
-import colorsEnum from 'enum/colors';
 
 export default class CategoryForm extends BaseForm {
   constructor() {
@@ -19,8 +15,7 @@ export default class CategoryForm extends BaseForm {
       },
 
       color: {
-        type: 'text',
-        options: _.values(colorsEnum)
+        type: 'color-select'
       }
     };
   }
