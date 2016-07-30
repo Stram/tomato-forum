@@ -9,7 +9,7 @@ import categories from 'collections/categories';
 
 import Thread from 'models/thread';
 
-import {router} from 'router/main';
+import router from 'router/main';
 
 export default Backbone.View.extend({
   tagName: 'div',

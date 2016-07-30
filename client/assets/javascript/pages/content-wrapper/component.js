@@ -1,7 +1,7 @@
 import Marionette from 'backbone.marionette';
 
 import template from './template.hbs';
-import {router} from 'router/main';
+import router from 'router/main';
 import session from 'session';
 
 import SidebarView from 'components/sidebar/component';

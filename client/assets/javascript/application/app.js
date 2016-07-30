@@ -2,17 +2,21 @@ import Backbone from 'backbone';
 import Marionette from 'backbone.marionette';
 import ApplicationView from 'pages/application/component';
 
-import {startRouter} from 'router/main';
-
 const Application = Marionette.Application.extend({
   region: '#body',
 
-  onStart() {
+  initialize() {
     this.applicationView = new ApplicationView();
     this.showView(this.applicationView, {replaceElement: true});
+  },
 
-    startRouter();
-    
+  updateTheme(currentUser) {
+    if (currentUser) {
+      this.applicationView.updateTheme(currentUser.background);
+    }
+  },
+
+  onStart() {
     Backbone.history.start({pushState: true});
   },
 

@@ -1,7 +1,7 @@
 import Marionette from 'backbone.marionette';
 
 import template from './template.hbs';
-import {router} from 'router/main';
+import router from 'router/main';
 import session from 'session';
 
 export default Marionette.View.extend({

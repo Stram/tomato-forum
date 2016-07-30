@@ -11,9 +11,8 @@ import DashboardView from 'pages/dashboard/component';
 
 const Router = Backbone.Router.extend({
 
-  initialize(options) {
-    this.app = options.app;
-    this.baseView = this.app.getBaseView();
+  initialize() {
+    this.baseView = app.getBaseView();
   },
 
   routes: {
@@ -45,7 +44,8 @@ const Router = Backbone.Router.extend({
   landing() {
     const forumView = new ForumView();
     this.changePage(forumView, {
-      authenticated: true
+      authenticated: true,
+      wrapped: true
     });
   },
 
@@ -76,9 +76,4 @@ const Router = Backbone.Router.extend({
   }
 });
 
-let router;
-
-export {router};
-export function startRouter() {
-  router = new Router({app});
-}
+export default new Router();

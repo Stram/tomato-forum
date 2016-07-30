@@ -1,4 +1,3 @@
-// import Handlebars from 'handlebars';
 import Marionette from 'backbone.marionette';
 
 import template from './template.hbs';
@@ -19,6 +18,10 @@ export default Marionette.View.extend({
     header: '#header',
     main: '#main',
     footer: '#footer'
+  },
+
+  updateTheme(theme) {
+    this.$el.addClass(`theme-${theme}`);
   }
 
 });
