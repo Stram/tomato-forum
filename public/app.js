@@ -84,8 +84,6 @@
 
 	var _main = __webpack_require__(4);
 
-	var _main2 = _interopRequireDefault(_main);
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.default = {
@@ -132,7 +130,7 @@
 	      method: 'POST'
 	    }).done(function () {
 	      self.setCurrentUser(null);
-	      _main2.default.navigate('login', true);
+	      _main.router.navigate('login', true);
 	    });
 	  },
 	  initSession: function initSession() {
@@ -10269,21 +10267,25 @@
 
 	var _session2 = _interopRequireDefault(_session);
 
-	var _component = __webpack_require__(14);
+	var _component = __webpack_require__(48);
 
 	var _component2 = _interopRequireDefault(_component);
 
-	var _component3 = __webpack_require__(16);
+	var _component3 = __webpack_require__(14);
 
 	var _component4 = _interopRequireDefault(_component3);
 
-	var _component5 = __webpack_require__(18);
+	var _component5 = __webpack_require__(16);
 
 	var _component6 = _interopRequireDefault(_component5);
 
-	var _component7 = __webpack_require__(38);
+	var _component7 = __webpack_require__(18);
 
 	var _component8 = _interopRequireDefault(_component7);
+
+	var _component9 = __webpack_require__(38);
+
+	var _component10 = _interopRequireDefault(_component9);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10302,6 +10304,11 @@
 	    forum: 'forum'
 	  },
 
+	  showContentWrappedPage: function showContentWrappedPage(page) {
+	    this.contentView = this.contentView || new _component2.default();
+	    this.baseView.showChildView('main', this.contentView);
+	    this.contentView.showChildView('content', page);
+	  },
 	  changePage: function changePage(page) {
 	    var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 
@@ -10309,32 +10316,38 @@
 	      this.navigate('login', true);
 	      return;
 	    }
-	    this.baseView.showChildView('main', page);
+	    if (options.wrapped) {
+	      this.showContentWrappedPage(page);
+	    } else {
+	      this.baseView.showChildView('main', page);
+	    }
 	  },
 	  landing: function landing() {
-	    var forumView = new _component6.default();
+	    var forumView = new _component8.default();
 	    this.changePage(forumView, {
 	      authenticated: true
 	    });
 	  },
 	  login: function login() {
-	    var loginView = new _component2.default();
+	    var loginView = new _component4.default();
 	    this.changePage(loginView);
 	  },
 	  register: function register() {
-	    var registerView = new _component4.default();
+	    var registerView = new _component6.default();
 	    this.changePage(registerView);
 	  },
 	  dashboard: function dashboard() {
-	    var dashboardView = new _component8.default();
+	    var dashboardView = new _component10.default();
 	    this.changePage(dashboardView, {
-	      authenticated: true
+	      authenticated: true,
+	      wrapped: true
 	    });
 	  },
 	  forum: function forum() {
-	    var forumView = new _component6.default();
+	    var forumView = new _component8.default();
 	    this.changePage(forumView, {
-	      authenticated: true
+	      authenticated: true,
+	      wrapped: true
 	    });
 	  }
 	});
@@ -19027,7 +19040,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	// import router from 'router/main';
+	// import {router} from 'router/main';
 
 	exports.default = _backbone4.default.View.extend({
 	  tagName: 'article',
@@ -20617,6 +20630,175 @@
 			URL.revokeObjectURL(oldSrc);
 	}
 
+
+/***/ },
+/* 48 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(8);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _template = __webpack_require__(49);
+
+	var _template2 = _interopRequireDefault(_template);
+
+	var _main = __webpack_require__(4);
+
+	var _session = __webpack_require__(1);
+
+	var _session2 = _interopRequireDefault(_session);
+
+	var _component = __webpack_require__(50);
+
+	var _component2 = _interopRequireDefault(_component);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+
+	  template: _template2.default,
+
+	  tagName: 'article',
+
+	  className: 'content-wrapper',
+
+	  regions: {
+	    sidebar: {
+	      el: '#sidebar',
+	      replaceEl: true
+	    },
+	    content: {
+	      el: '#page-content'
+	    }
+	  },
+
+	  onBeforeAttach: function onBeforeAttach() {
+	    this.showChildView('sidebar', new _component2.default());
+	  },
+	  navigate: function navigate(event) {
+	    var page = event.target.dataset.page;
+	    _main.router.navigate(page, true);
+	  },
+	  logout: function logout() {
+	    _session2.default.logout();
+	  }
+	});
+
+/***/ },
+/* 49 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Handlebars = __webpack_require__(13);
+	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+	    return "<aside id=\"sidebar\">\n\n</aside>\n\n<article class=\"wrapped-page-content\" id=\"page-content\">\n\n</article>\n";
+	},"useData":true});
+
+/***/ },
+/* 50 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(8);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _template = __webpack_require__(51);
+
+	var _template2 = _interopRequireDefault(_template);
+
+	var _main = __webpack_require__(4);
+
+	var _session = __webpack_require__(1);
+
+	var _session2 = _interopRequireDefault(_session);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+
+	  template: _template2.default,
+
+	  tagName: 'aside',
+
+	  className: 'sidebar',
+
+	  attributes: {
+	    id: 'sidebar'
+	  },
+
+	  ui: {
+	    logoutButton: '.js-logout'
+	  },
+
+	  events: {
+	    'click @ui.logoutButton': 'logout',
+	    'click .js-navigate': 'navigate'
+	  },
+
+	  templateContext: function templateContext() {
+	    return {
+	      sidebarItems: [{
+	        label: this.currentUser.username,
+	        link: 'profile/' + this.currentUser.id
+	      }, {
+	        label: 'dashboard',
+	        link: 'dashboard'
+	      }, {
+	        label: 'forum',
+	        link: 'forum'
+	      }]
+	    };
+	  },
+	  initialize: function initialize() {
+	    this.currentUser = _session2.default.getCurrentUser();
+	  },
+	  navigate: function navigate(event) {
+	    var page = event.target.dataset.page;
+	    _main.router.navigate(page, true);
+	  },
+	  logout: function logout() {
+	    _session2.default.logout();
+	  }
+	});
+
+/***/ },
+/* 51 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Handlebars = __webpack_require__(13);
+	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+	module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
+	    var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+	  return "    <div class=\"navigation__header js-navigate\" data-page=\""
+	    + alias4(((helper = (helper = helpers.link || (depth0 != null ? depth0.link : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"link","hash":{},"data":data}) : helper)))
+	    + "\">\n      "
+	    + alias4(((helper = (helper = helpers.label || (depth0 != null ? depth0.label : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"label","hash":{},"data":data}) : helper)))
+	    + "\n    </div>\n";
+	},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+	    var stack1, alias1=container.lambda, alias2=container.escapeExpression;
+
+	  return "<section class=\"navigation\">\n"
+	    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.sidebarItems : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+	    + "  <!-- <div class=\"navigation__header js-navigate\" data-page=\"profile/"
+	    + alias2(alias1(((stack1 = (depth0 != null ? depth0.currentUser : depth0)) != null ? stack1.id : stack1), depth0))
+	    + "\">\n    "
+	    + alias2(alias1(((stack1 = (depth0 != null ? depth0.currentUser : depth0)) != null ? stack1.username : stack1), depth0))
+	    + "\n  </div>\n  <div class=\"navigation__header js-navigate\" data-page=\"dashboard\">\n    DASHBOARD\n  </div>\n  <div class=\"navigation__header js-navigate\" data-page=\"forum\">\n    FORUM\n  </div>\n  <div class=\"navigation__items\">\n    <div class=\"navigation__item\">\n      Aktualno\n    </div>\n    <div class=\"navigation__item\">\n      Moje teme\n    </div>\n    <div class=\"navigation__item\">\n      Jos nesto\n    </div>\n  </div> -->\n  <div class=\"navigation__header js-logout\">\n    LOGOUT\n  </div>\n</section>\n";
+	},"useData":true});
 
 /***/ }
 /******/ ]);

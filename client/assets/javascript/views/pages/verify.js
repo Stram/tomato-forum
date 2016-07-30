@@ -3,7 +3,7 @@ import _ from 'underscore';
 import $ from 'jquery';
 
 import config from 'config';
-import router from 'router/main';
+import {router} from 'router/main';
 
 import template from 'views/templates/verify.html';
 import termsTemplate from 'views/templates/verify/terms.html';

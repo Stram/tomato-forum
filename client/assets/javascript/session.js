@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import config from 'config';
 
-import router from 'router/main';
+import {router} from 'router/main';
 
 export default {
   _currentUser: null,

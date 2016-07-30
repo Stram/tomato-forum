@@ -2,6 +2,8 @@ import Backbone from 'backbone';
 import app from 'application/app';
 import session from 'session';
 
+import ContentWrapperView from 'pages/content-wrapper/component';
+
 import LoginView from 'pages/login/component';
 import RegisterView from 'pages/register/component';
 import ForumView from 'pages/forum/component';
@@ -22,12 +24,22 @@ const Router = Backbone.Router.extend({
     forum: 'forum'
   },
 
+  showContentWrappedPage(page) {
+    this.contentView = this.contentView || new ContentWrapperView();
+    this.baseView.showChildView('main', this.contentView);
+    this.contentView.showChildView('content', page);
+  },
+
   changePage(page, options = {}) {
     if (options.authenticated && !session.isAuthenticated()) {
       this.navigate('login', true);
       return;
     }
-    this.baseView.showChildView('main', page);
+    if (options.wrapped) {
+      this.showContentWrappedPage(page);
+    } else {
+      this.baseView.showChildView('main', page);
+    }
   },
 
   landing() {
@@ -50,14 +62,16 @@ const Router = Backbone.Router.extend({
   dashboard() {
     const dashboardView = new DashboardView();
     this.changePage(dashboardView, {
-      authenticated: true
+      authenticated: true,
+      wrapped: true
     });
   },
 
   forum() {
     const forumView = new ForumView();
     this.changePage(forumView, {
-      authenticated: true
+      authenticated: true,
+      wrapped: true
     });
   }
 });

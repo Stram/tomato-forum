@@ -4,7 +4,7 @@ import $ from 'jquery';
 
 import template from 'views/templates/content-wrapper.html';
 
-import router from 'router/main';
+import {router} from 'router/main';
 import session from 'session';
 
 export default Backbone.View.extend({
