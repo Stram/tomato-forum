@@ -1,28 +1,23 @@
-import Backbone from 'backbone';
+import Marionette from 'backbone.marionette';
 import _ from 'underscore';
 import $ from 'jquery';
 import config from 'config';
-import template from 'views/templates/register.html';
-import router from 'router/main';
+import template from './template.hbs';
 
-export default Backbone.View.extend({
-  tagName: 'div',
+export default Marionette.View.extend({
+  tagName: 'article',
 
   className: 'page register-page',
 
+  ui: {
+    form: '.js-form'
+  },
+
   events: {
-    'submit .js-form': 'submit'
+    'submit @ui.form': 'submit'
   },
 
-  template: _.template(template()),
-
-  render() {
-    this.$el.html(
-      this.template()
-    );
-
-    return this;
-  },
+  template,
 
   close() {
     this.remove();
@@ -30,7 +25,7 @@ export default Backbone.View.extend({
 
   submit(event) {
     event.preventDefault();
-    const $form = this.$('.js-form');
+    const $form = this.getUI('form');
     const email = $form.find('.js-email').val();
     const password = $form.find('.js-password').val();
 
@@ -42,6 +37,7 @@ export default Backbone.View.extend({
         password
       }
     }).done(() => {
+      // TODO: Handle successful registration
 
     }).fail((jqXHR) => {
       if (jqXHR.status >= 400) {

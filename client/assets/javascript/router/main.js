@@ -2,8 +2,10 @@ import Backbone from 'backbone';
 import app from 'application/app';
 import session from 'session';
 
-import ForumView from 'pages/forum/component';
 import LoginView from 'pages/login/component';
+import RegisterView from 'pages/register/component';
+import ForumView from 'pages/forum/component';
+import DashboardView from 'pages/dashboard/component';
 
 const Router = Backbone.Router.extend({
 
@@ -15,6 +17,8 @@ const Router = Backbone.Router.extend({
   routes: {
     '': 'landing',
     login: 'login',
+    register: 'register',
+    dashboard: 'dashboard',
     forum: 'forum'
   },
 
@@ -38,18 +42,29 @@ const Router = Backbone.Router.extend({
     this.changePage(loginView);
   },
 
+  register() {
+    const registerView = new RegisterView();
+    this.changePage(registerView);
+  },
+
+  dashboard() {
+    const dashboardView = new DashboardView();
+    this.changePage(dashboardView, {
+      authenticated: true
+    });
+  },
+
   forum() {
     const forumView = new ForumView();
     this.changePage(forumView, {
       authenticated: true
     });
   }
-
 });
 
 let router;
 
-export default router;
+export {router};
 export function startRouter() {
   router = new Router({app});
 }

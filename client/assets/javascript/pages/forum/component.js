@@ -21,21 +21,20 @@ export default Marionette.View.extend({
 
   templateContext: {
     categories
-  }
+  },
+
+  initialize() {
+    categories.fetch();
+  },
 
 });
 
 // export default Backbone.View.extend({
-//   tagName: 'div',
-//
-//   className: 'page forum-page',
 //
 //   events: {
 //     'click .js-create-new-thread': 'showNewThreadModal',
 //     'click .js-forum-edit': 'transitionToEditForum'
 //   },
-//
-//   template: Handlebars.compile(template),
 //
 //   initialize() {
 //     categories.fetch();

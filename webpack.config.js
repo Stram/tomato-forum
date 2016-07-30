@@ -15,10 +15,7 @@ module.exports = {
     ],
     modulesDirectories: [
       'node_modules'
-    ],
-    alias: {
-      handlebars: 'handlebars/dist/handlebars.min.js'
-    }
+    ]
   },
 
   module: {
@@ -43,7 +40,10 @@ module.exports = {
       }
     }, {
       test: /\.hbs$/,
-      loader: 'handlebars-loader'
+      loader: 'handlebars-loader/index.js',
+      query: {
+        runtime: 'handlebars/dist/handlebars.runtime.js'
+      }
     }]
   },
 
