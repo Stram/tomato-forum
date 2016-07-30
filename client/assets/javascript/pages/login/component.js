@@ -1,28 +1,27 @@
-import Backbone from 'backbone';
+import Marionette from 'backbone.marionette';
 import _ from 'underscore';
-import template from 'views/templates/login.html';
+
 import router from 'router/main';
 import session from 'session';
 
-export default Backbone.View.extend({
-  tagName: 'div',
+import template from './template.hbs';
+
+export default Marionette.View.extend({
+  tagName: 'article',
 
   className: 'page login-page',
 
+  ui: {
+    form: '.js-form',
+    registerButton: '.js-register'
+  },
+
   events: {
-    'submit .js-form': 'submit',
-    'click .js-register': 'toRegister'
+    'submit @ui.form': 'submit',
+    'click @ui.registerButton': 'toRegister'
   },
 
-  template: _.template(template()),
-
-  render() {
-    this.$el.html(
-      this.template()
-    );
-
-    return this;
-  },
+  template,
 
   close() {
     this.remove();
@@ -30,12 +29,11 @@ export default Backbone.View.extend({
 
   submit(event) {
     event.preventDefault();
-    const $form = this.$('.js-form');
+    const $form = this.getUI('form');
     const identification = $form.find('.js-identification').val();
     const password = $form.find('.js-password').val();
 
     session.login(identification, password).then((user) => {
-      console.log(user);
       if (user.photos.length) {
         router.navigate('dashboard', true);
       } else {

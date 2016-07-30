@@ -11,12 +11,14 @@ module.exports = {
 
   resolve: {
     root: [
-      path.join(__dirname, 'client/assets/javascript/vendor'),
       path.join(__dirname, 'client/assets/javascript')
     ],
     modulesDirectories: [
       'node_modules'
-    ]
+    ],
+    alias: {
+      handlebars: 'handlebars/dist/handlebars.min.js'
+    }
   },
 
   module: {
@@ -39,6 +41,9 @@ module.exports = {
       query: {
         engine: 'underscore'
       }
+    }, {
+      test: /\.hbs$/,
+      loader: 'handlebars-loader'
     }]
   },
 

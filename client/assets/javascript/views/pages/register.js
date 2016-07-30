@@ -3,7 +3,7 @@ import _ from 'underscore';
 import $ from 'jquery';
 import config from 'config';
 import template from 'views/templates/register.html';
-import router from 'router';
+import router from 'router/main';
 
 export default Backbone.View.extend({
   tagName: 'div',

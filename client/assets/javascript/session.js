@@ -1,7 +1,7 @@
 import $ from 'jquery';
 import config from 'config';
 
-import router from 'router';
+import router from 'router/main';
 
 export default {
   _currentUser: null,
@@ -55,14 +55,17 @@ export default {
     });
   },
 
-  initSession(callback) {
-    const self = this;
-    $.ajax({
-      url: `${config.apiEndpoint}/users/current`
-    }).done((response) => {
-      self.setCurrentUser(response.user);
-
-      callback.apply(self);
+  initSession() {
+    return new Promise((resolve, reject) => {
+      const self = this;
+      $.ajax({
+        url: `${config.apiEndpoint}/users/current`
+      }).done((response) => {
+        self.setCurrentUser(response.user);
+        resolve(response);
+      }).fail((error) => {
+        reject(error);
+      });
     });
   }
 };

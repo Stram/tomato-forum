@@ -26,17 +26,17 @@ const Router = Backbone.Router.extend({
   $pageElement: $('.page-content'),
 
   changeView(view) {
-    if (this.currentView) {
-      this.currentView.close();
-    }
-
-    if (!this.$pageElement.length) {
-      this.$pageElement = $('.page-content');
-    }
-
-    this.currentView = view;
-    view.render();
-    this.$pageElement.html(view.el);
+    // if (this.currentView) {
+    //   this.currentView.close();
+    // }
+    //
+    // if (!this.$pageElement.length) {
+    //   this.$pageElement = $('.page-content');
+    // }
+    //
+    // this.currentView = view;
+    // view.render();
+    // this.$pageElement.html(view.el);
 
     console.log(`changing view to ${view.className}`);
   },
