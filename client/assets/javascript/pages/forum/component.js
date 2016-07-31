@@ -6,11 +6,11 @@ import template from './template.hbs';
 import ModalDialog from 'components/modal-dialog/component';
 import NewThreadForm from 'forms/thread';
 
+import CategoriesView from 'collection-views/categories/component';
+
 import categories from 'collections/categories';
 
 import Thread from 'models/thread';
-
-// import router from 'router/main';
 
 export default Marionette.View.extend({
   tagName: 'article',
@@ -19,13 +19,19 @@ export default Marionette.View.extend({
 
   template,
 
-  templateContext: {
-    categories
+  regions: {
+    forumCategories: '#forum-categories'
   },
 
   initialize() {
     categories.fetch();
   },
+
+  onBeforeAttach() {
+    this.showChildView('forumCategories', new CategoriesView({
+      collection: categories
+    }));
+  }
 
 });
 

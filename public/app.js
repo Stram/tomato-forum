@@ -19209,6 +19209,10 @@
 
 	var _thread2 = _interopRequireDefault(_thread);
 
+	var _component3 = __webpack_require__(52);
+
+	var _component4 = _interopRequireDefault(_component3);
+
 	var _categories = __webpack_require__(39);
 
 	var _categories2 = _interopRequireDefault(_categories);
@@ -19219,8 +19223,6 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	// import router from 'router/main';
-
 	exports.default = _backbone4.default.View.extend({
 	  tagName: 'article',
 
@@ -19228,12 +19230,17 @@
 
 	  template: _template2.default,
 
-	  templateContext: {
-	    categories: _categories2.default
+	  regions: {
+	    forumCategories: '#forum-categories'
 	  },
 
 	  initialize: function initialize() {
 	    _categories2.default.fetch();
+	  },
+	  onBeforeAttach: function onBeforeAttach() {
+	    this.showChildView('forumCategories', new _component4.default({
+	      collection: _categories2.default
+	    }));
 	  }
 	});
 
@@ -19321,7 +19328,7 @@
 	var Handlebars = __webpack_require__(13);
 	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
 	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-	    return "<div class=\"forum\">\n  <div class=\"forum__heading\">\n    <div class=\"forum__title\">\n      FORUM\n    </div>\n    <div class=\"forum__actions\">\n      <img class=\"forum__action js-forum-edit\" src=\"/public/images/edit-icon-white.svg\" alt=\"Edit\" />\n    </div>\n  </div>\n  <!-- <% categories.each(function(category) { %>\n    <div class=\"card-list\">\n      <div class=\"card-list__header\">\n        <div class=\"card-list__title\">\n          <%= category.get('name') %>\n        </div>\n        <div class=\"card-list__header-actions\">\n          <div class=\"card-list__header-icon-action js-create-new-thread\" data-category-id=\"<%= category.get('id') %>\">\n            <img src=\"/public/images/add-icon-white.svg\" alt=\"addNewThread\" />\n          </div>\n        </div>\n      </div>\n      <div class=\"card-list__items\">\n        <% if (category.get('threads')) { %>\n          <% _.each(category.get('threads'), function(thread) { %>\n            <div class=\"js-navigate-to-thread\" data-thread-id=\"<%= thread.id %>\">\n              <%= thread.title %>\n            </div>\n          <% }); %>\n        <% } else { %>\n          <div>\n            No threads in this category\n          </div>\n        <% } %>\n      </div>\n    </div>\n  <% }); %> -->\n</div>\n";
+	    return "<div class=\"forum\">\n  <div class=\"forum__heading\">\n    <div class=\"forum__title\">\n      FORUM\n    </div>\n    <div class=\"forum__actions\">\n      <img class=\"forum__action js-forum-edit\" src=\"/public/images/edit-icon-white.svg\" alt=\"Edit\" />\n    </div>\n  </div>\n  <div class=\"forum__categories\" id=\"forum-categories\">\n\n  </div>\n</div>\n";
 	},"useData":true});
 
 /***/ },
@@ -20809,6 +20816,84 @@
 			URL.revokeObjectURL(oldSrc);
 	}
 
+
+/***/ },
+/* 52 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(8);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _component = __webpack_require__(53);
+
+	var _component2 = _interopRequireDefault(_component);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.CollectionView.extend({
+	  childView: _component2.default
+	});
+
+/***/ },
+/* 53 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(8);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _template = __webpack_require__(54);
+
+	var _template2 = _interopRequireDefault(_template);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+	  template: _template2.default,
+
+	  tagName: 'div',
+
+	  className: 'card-list'
+	});
+
+/***/ },
+/* 54 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Handlebars = __webpack_require__(13);
+	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+	module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
+	    var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+	  return "    <div class=\"js-navigate-to-thread\" data-thread-id=\""
+	    + alias4(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"id","hash":{},"data":data}) : helper)))
+	    + "\">\n      "
+	    + alias4(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"title","hash":{},"data":data}) : helper)))
+	    + "\n    </div>\n";
+	},"3":function(container,depth0,helpers,partials,data) {
+	    return "    <div>\n      No threads in this category\n    </div>\n";
+	},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+	    var stack1, helper, alias1=depth0 != null ? depth0 : {};
+
+	  return "<div class=\"card-list__header\">\n  <div class=\"card-list__title\">\n    "
+	    + container.escapeExpression(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
+	    + "\n  </div>\n  <div class=\"card-list__header-actions\">\n    <div class=\"card-list__header-icon-action js-create-new-thread\" data-category-id=\"<%= category.get('id') %>\">\n      <img src=\"/public/images/add-icon-white.svg\" alt=\"addNewThread\" />\n    </div>\n  </div>\n</div>\n<div class=\"card-list__items\">\n"
+	    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.threads : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(3, data, 0),"data":data})) != null ? stack1 : "")
+	    + "</div>\n";
+	},"useData":true});
 
 /***/ }
 /******/ ]);
