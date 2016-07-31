@@ -13862,10 +13862,24 @@
 
 	var _component2 = _interopRequireDefault(_component);
 
+	var _component3 = __webpack_require__(24);
+
+	var _component4 = _interopRequireDefault(_component3);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var Application = _backbone4.default.Application.extend({
 	  region: '#body',
+
+	  channelName: 'application',
+
+	  radioRequests: {
+	    'modal:show': 'showModal'
+	  },
+
+	  radioEvents: {
+	    'modal:hide': 'hideModal'
+	  },
 
 	  initialize: function initialize() {
 	    this.applicationView = new _component2.default();
@@ -13873,14 +13887,28 @@
 	  },
 	  updateTheme: function updateTheme(currentUser) {
 	    if (currentUser) {
-	      this.applicationView.updateTheme(currentUser.background);
+	      this.getView().updateTheme(currentUser.background);
 	    }
 	  },
 	  onStart: function onStart() {
 	    _backbone2.default.history.start({ pushState: true });
 	  },
 	  getBaseView: function getBaseView() {
-	    return this.applicationView;
+	    return this.getView();
+	  },
+	  showModal: function showModal(options) {
+	    var modalOptions = options || {};
+	    var modalView = new _component4.default(modalOptions);
+	    var applicationView = this.getView();
+
+	    applicationView.showChildView('modal', modalView);
+	    applicationView.$el.addClass('is-scrolling-disabled');
+
+	    return modalView;
+	  },
+	  hideModal: function hideModal() {
+	    this.$el.removeClass('is-scrolling-disabled');
+	    // this.getView().removeChildView('modal');
 	  }
 	});
 
@@ -17567,7 +17595,8 @@
 	  regions: {
 	    header: '#header',
 	    main: '#main',
-	    footer: '#footer'
+	    footer: '#footer',
+	    modal: '#modal'
 	  },
 
 	  updateTheme: function updateTheme(theme) {
@@ -17582,7 +17611,7 @@
 	var Handlebars = __webpack_require__(13);
 	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
 	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-	    return "<header class=\"header\" id=\"header\"></header>\n<main class=\"page-content\" id=\"main\"></main>\n<footer class=\"footer\" id=\"footer\"></footer>\n";
+	    return "<header class=\"header\" id=\"header\"></header>\n<main class=\"page-content\" id=\"main\"></main>\n<footer class=\"footer\" id=\"footer\"></footer>\n<section class=\"modal\" id=\"modal\"></section>\n";
 	},"useData":true});
 
 /***/ },
@@ -19185,45 +19214,29 @@
 	  value: true
 	});
 
-	var _backbone = __webpack_require__(5);
+	var _backbone = __webpack_require__(8);
 
 	var _backbone2 = _interopRequireDefault(_backbone);
 
-	var _backbone3 = __webpack_require__(8);
+	var _main = __webpack_require__(4);
 
-	var _backbone4 = _interopRequireDefault(_backbone3);
-
-	var _underscore = __webpack_require__(6);
-
-	var _underscore2 = _interopRequireDefault(_underscore);
+	var _main2 = _interopRequireDefault(_main);
 
 	var _template = __webpack_require__(23);
 
 	var _template2 = _interopRequireDefault(_template);
 
-	var _component = __webpack_require__(24);
+	var _component = __webpack_require__(52);
 
 	var _component2 = _interopRequireDefault(_component);
-
-	var _thread = __webpack_require__(26);
-
-	var _thread2 = _interopRequireDefault(_thread);
-
-	var _component3 = __webpack_require__(52);
-
-	var _component4 = _interopRequireDefault(_component3);
 
 	var _categories = __webpack_require__(39);
 
 	var _categories2 = _interopRequireDefault(_categories);
 
-	var _thread3 = __webpack_require__(41);
-
-	var _thread4 = _interopRequireDefault(_thread3);
-
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	exports.default = _backbone4.default.View.extend({
+	exports.default = _backbone2.default.View.extend({
 	  tagName: 'article',
 
 	  className: 'page forum-page',
@@ -19234,92 +19247,26 @@
 	    forumCategories: '#forum-categories'
 	  },
 
+	  ui: {
+	    toForumEdit: '.js-forum-edit'
+	  },
+
+	  events: {
+	    'click @ui.toForumEdit': 'transitionToEditForum'
+	  },
+
 	  initialize: function initialize() {
 	    _categories2.default.fetch();
 	  },
 	  onBeforeAttach: function onBeforeAttach() {
-	    this.showChildView('forumCategories', new _component4.default({
+	    this.showChildView('forumCategories', new _component2.default({
 	      collection: _categories2.default
 	    }));
+	  },
+	  transitionToEditForum: function transitionToEditForum() {
+	    _main2.default.navigate('forum/edit', true);
 	  }
 	});
-
-	// export default Backbone.View.extend({
-	//
-	//   events: {
-	//     'click .js-create-new-thread': 'showNewThreadModal',
-	//     'click .js-forum-edit': 'transitionToEditForum'
-	//   },
-	//
-	//   initialize() {
-	//     categories.fetch();
-	//     this.listenTo(categories, 'change reset add remove', this.render);
-	//   },
-	//
-	//   render() {
-	//     this.$el.html(
-	//
-	//       _.template(
-	//         this.template({
-	//           categories
-	//         })
-	//       )
-	//     );
-	//
-	//     return this;
-	//   },
-	//
-	//   close() {
-	//     this.remove();
-	//
-	//     if (this.newThreadModalDialog) {
-	//       this.newThreadModalDialog.close();
-	//     }
-	//
-	//     if (this.newThreadFormObject) {
-	//       this.newThreadFormObject.close();
-	//     }
-	//   },
-	//
-	//   showNewThreadModal(event) {
-	//     this.newThreadFormObject = new NewThreadForm({
-	//       model: new Thread({
-	//         categoryId: event.currentTarget.dataset.categoryId
-	//       })
-	//     });
-	//
-	//     this.newThreadForm = this.newThreadFormObject.getForm();
-	//     this.newThreadForm.render();
-	//
-	//     this.newThreadForm.on('submit', this.closeNewThreadModalDialog);
-	//
-	//     this.newThreadModalDialog = new ModalDialog({
-	//       title: 'Create new thread',
-	//       content: this.newThreadForm.el.outerHTML,
-	//       cancelLabel: 'cancel',
-	//       cancelAction: this.closeNewThreadModalDialog.bind(this),
-	//       confirmLabel: 'create',
-	//       confirmAction: this.createNewThread.bind(this)
-	//     });
-	//
-	//     this.newThreadModalDialog.render();
-	//   },
-	//
-	//   closeNewThreadModalDialog() {
-	//     this.newThreadForm.off();
-	//     this.newThreadModalDialog.close();
-	//     this.newThreadModalDialog = null;
-	//   },
-	//
-	//   createNewThread() {
-	//     this.newThreadFormObject.submit();
-	//     this.closeNewThreadModalDialog();
-	//   },
-	//
-	//   transitionToEditForum() {
-	//     router.navigate('forum/edit', true);
-	//   }
-	// });
 
 /***/ },
 /* 23 */
@@ -19341,19 +19288,15 @@
 	  value: true
 	});
 
-	var _backbone = __webpack_require__(5);
+	var _backbone = __webpack_require__(8);
 
 	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _underscore = __webpack_require__(6);
-
-	var _underscore2 = _interopRequireDefault(_underscore);
 
 	var _jquery = __webpack_require__(2);
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
-	var _template = __webpack_require__(25);
+	var _template = __webpack_require__(56);
 
 	var _template2 = _interopRequireDefault(_template);
 
@@ -19364,17 +19307,26 @@
 
 	  className: 'modal-dialog-container',
 
-	  events: {
-	    click: 'onDismissClick',
-	    'click .js-modal-dialog-confirm-action': 'onConfirmClick',
-	    'click .js-modal-dialog-cancel-action': 'onCancelClick'
+	  template: _template2.default,
+
+	  ui: {
+	    confirm: '.js-modal-dialog-confirm-action',
+	    cancel: '.js-modal-dialog-cancel-action'
 	  },
 
-	  template: _template2.default,
+	  events: {
+	    click: 'onDismissClick',
+	    'click @ui.confirm': 'onConfirmClick',
+	    'click @ui.cancel': 'onCancelClick'
+	  },
+
+	  regions: {
+	    content: '.js-modal-content'
+	  },
 
 	  initialize: function initialize(args) {
 	    this.title = args.title;
-	    this.content = args.content;
+	    this.contentView = args.contentView;
 
 	    this.confirmLabel = args.confirmLabel;
 	    this.confirmAction = args.confirmAction;
@@ -19383,6 +19335,17 @@
 	    this.cancelAction = args.cancelAction;
 
 	    this.headerColor = args.headerColor;
+	  },
+	  templateContext: function templateContext() {
+	    return {
+	      title: this.title,
+	      confirmLabel: this.confirmLabel,
+	      cancelLabel: this.cancelLabel,
+	      headerColor: this.headerColor
+	    };
+	  },
+	  onBeforeAttach: function onBeforeAttach() {
+	    this.showChildView('content', this.contentView);
 	  },
 	  onConfirmClick: function onConfirmClick() {
 	    this.confirmAction();
@@ -19394,64 +19357,11 @@
 	    if ((0, _jquery2.default)(event.target).hasClass('modal-dialog-container')) {
 	      this.onCancelClick();
 	    }
-	  },
-	  render: function render() {
-	    this.$el.html(_underscore2.default.template(this.template({
-	      title: this.title,
-	      content: this.content,
-	      confirmLabel: this.confirmLabel,
-	      cancelLabel: this.cancelLabel,
-	      headerColor: this.headerColor
-	    })));
-
-	    (0, _jquery2.default)('body').append(this.$el);
-	    (0, _jquery2.default)('body').addClass('is-scrolling-disabled');
-
-	    return this;
-	  },
-	  close: function close() {
-	    this.remove();
-	    (0, _jquery2.default)('body').removeClass('is-scrolling-disabled');
 	  }
 	});
 
 /***/ },
-/* 25 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _ = __webpack_require__(6);
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='<div class="modal-dialog">\n  <div class="modal-dialog__header" ';
-	 if (headerColor) { 
-	__p+=' style="background-color: '+
-	((__t=( headerColor ))==null?'':__t)+
-	'"';
-	 } 
-	__p+='>\n    '+
-	((__t=( title ))==null?'':__t)+
-	'\n  </div>\n\n  <div class="modal-dialog__content">\n    '+
-	((__t=( content ))==null?'':__t)+
-	'\n  </div>\n\n  <div class="modal-dialog__actions">\n    ';
-	 if (cancelLabel) { 
-	__p+='\n      <div class="button button--dialog js-modal-dialog-cancel-action">\n        '+
-	((__t=( cancelLabel ))==null?'':__t)+
-	'\n      </div>\n    ';
-	 } 
-	__p+='\n\n    ';
-	 if (confirmLabel) { 
-	__p+='\n      <div class="button button--dialog js-modal-dialog-confirm-action">\n        '+
-	((__t=( confirmLabel ))==null?'':__t)+
-	'\n      </div>\n    ';
-	 } 
-	__p+='\n  </div>\n</div>\n';
-	}
-	return __p;
-	};
-
-
-/***/ },
+/* 25 */,
 /* 26 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -19485,10 +19395,12 @@
 
 	    _this.properties = {
 	      title: {
+	        name: 'title',
 	        type: 'text'
 	      },
 
 	      content: {
+	        name: 'content',
 	        type: 'trix'
 	      }
 	    };
@@ -19510,25 +19422,22 @@
 	  value: true
 	});
 
-	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); // import _ from 'underscore';
 
-	var _underscore = __webpack_require__(6);
+	// import FormView from 'components/form/component';
 
-	var _underscore2 = _interopRequireDefault(_underscore);
 
-	var _component = __webpack_require__(28);
+	var _component = __webpack_require__(55);
 
 	var _component2 = _interopRequireDefault(_component);
-
-	var _form = __webpack_require__(29);
-
-	var _form2 = _interopRequireDefault(_form);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-	var createFormPropertyObject = _form2.default.createFormPropertyObject;
+	// import formUtils from 'utils/form';
+
+	// const createFormPropertyObject = formUtils.createFormPropertyObject;
 
 	var BaseForm = function () {
 	  function BaseForm(attributes) {
@@ -19549,44 +19458,44 @@
 	  }, {
 	    key: 'submit',
 	    value: function submit() {
-	      var _this = this;
-
-	      var propertyViews = this.form.propertyViews;
-	      _underscore2.default.each(propertyViews, function (view) {
-	        _this.model.set(view.name, view.getValue());
-	      });
-
-	      this.model.save();
+	      // const propertyViews = this.form.propertyViews;
+	      // _.each(propertyViews, (view) => {
+	      //   this.model.set(view.name, view.getValue());
+	      // });
+	      //
+	      // this.model.save();
 	    }
 	  }, {
 	    key: 'close',
 	    value: function close() {
-	      if (this.form) {
-	        this.form.close();
-	      }
+	      // if (this.form) {
+	      //   this.form.close();
+	      // }
 	    }
 	  }, {
 	    key: '_setupFormView',
 	    value: function _setupFormView() {
-	      var _this2 = this;
+	      // const propertyViews = [];
 
-	      var propertyViews = [];
-
-	      var properties = _underscore2.default.keys(this.properties);
-	      _underscore2.default.each(properties, function (propertyName) {
-	        var propertyOptions = _this2.properties[propertyName];
-	        propertyOptions.value = propertyOptions.value || _this2.model.get(propertyName);
-	        var propertyView = createFormPropertyObject(propertyName, propertyOptions);
-	        propertyViews.push(propertyView);
-	      });
+	      // const properties = _.keys(this.properties);
+	      // _.each(properties, (propertyName) => {
+	      //   const propertyOptions = this.properties[propertyName];
+	      //   propertyOptions.value = propertyOptions.value || this.model.get(propertyName);
+	      //   const propertyView = createFormPropertyObject(propertyName, propertyOptions);
+	      //   propertyViews.push(propertyView);
+	      // });
 
 	      this.form = new _component2.default({
-	        propertyViews: propertyViews
+	        collection: this.properties
 	      });
 
-	      this.form.on('submit', this.submit);
+	      // this.form = new FormView({
+	      //   propertyViews
+	      // });
 
-	      this.form.render();
+	      // this.form.on('submit', this.submit);
+
+	      // this.form.render();
 	    }
 	  }]);
 
@@ -19596,115 +19505,8 @@
 	exports.default = BaseForm;
 
 /***/ },
-/* 28 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _backbone = __webpack_require__(5);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _underscore = __webpack_require__(6);
-
-	var _underscore2 = _interopRequireDefault(_underscore);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _backbone2.default.View.extend({
-	  tagName: 'form',
-
-	  className: '',
-
-	  events: {
-	    'click .js-form': 'onSubmit'
-	  },
-
-	  initialize: function initialize(args) {
-	    this.propertyViews = args.propertyViews;
-	  },
-	  render: function render() {
-	    var _this = this;
-
-	    _underscore2.default.each(this.propertyViews, function (view) {
-	      view.render();
-	      _this.$el.append(view.$el);
-	    });
-
-	    return this;
-	  },
-	  close: function close() {
-	    this.remove();
-	  },
-	  onSubmit: function onSubmit(event) {
-	    event.preventDefault();
-	    this.trigger('submit');
-	  }
-	});
-
-/***/ },
-/* 29 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _component = __webpack_require__(30);
-
-	var _component2 = _interopRequireDefault(_component);
-
-	var _component3 = __webpack_require__(32);
-
-	var _component4 = _interopRequireDefault(_component3);
-
-	var _component5 = __webpack_require__(34);
-
-	var _component6 = _interopRequireDefault(_component5);
-
-	var _component7 = __webpack_require__(36);
-
-	var _component8 = _interopRequireDefault(_component7);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = {
-	  createFormPropertyObject: function createFormPropertyObject(propertyName, propertyOptions) {
-	    switch (propertyOptions.type) {
-	      case 'text':
-	        return new _component2.default({
-	          name: propertyName,
-	          value: propertyOptions.value,
-	          required: propertyOptions.required
-	        });
-	      case 'switch':
-	        return new _component4.default({
-	          name: propertyName,
-	          value: propertyOptions.value
-	        });
-	      case 'trix':
-	        return new _component6.default({
-	          name: propertyName,
-	          value: propertyOptions.value
-	        });
-	      case 'color-select':
-	        return new _component8.default({
-	          name: propertyName,
-	          value: propertyOptions.value
-	        });
-	      default:
-	        throw new Error('unknown form property type');
-	    }
-	  }
-	};
-
-/***/ },
+/* 28 */,
+/* 29 */,
 /* 30 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -20855,18 +20657,71 @@
 
 	var _backbone2 = _interopRequireDefault(_backbone);
 
+	var _backbone3 = __webpack_require__(9);
+
+	var _backbone4 = _interopRequireDefault(_backbone3);
+
 	var _template = __webpack_require__(54);
 
 	var _template2 = _interopRequireDefault(_template);
 
+	var _thread = __webpack_require__(26);
+
+	var _thread2 = _interopRequireDefault(_thread);
+
+	var _thread3 = __webpack_require__(41);
+
+	var _thread4 = _interopRequireDefault(_thread3);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var applicationChannel = _backbone4.default.channel('application');
 
 	exports.default = _backbone2.default.View.extend({
 	  template: _template2.default,
 
 	  tagName: 'div',
 
-	  className: 'card-list'
+	  className: 'card-list',
+
+	  ui: {
+	    createNewThreadButton: '.js-create-new-thread'
+	  },
+
+	  events: {
+	    'click @ui.createNewThreadButton': 'showNewThreadModal'
+	  },
+
+	  showNewThreadModal: function showNewThreadModal(event) {
+	    this.newThreadFormObject = new _thread2.default({
+	      model: new _thread4.default({
+	        categoryId: event.currentTarget.dataset.categoryId
+	      })
+	    });
+
+	    this.newThreadForm = this.newThreadFormObject.getForm();
+
+	    var modalOptions = {
+	      title: 'Create new thread',
+	      contentView: this.newThreadForm,
+	      cancelLabel: 'cancel',
+	      cancelAction: this.closeNewThreadModalDialog.bind(this),
+	      confirmLabel: 'create',
+	      confirmAction: this.createNewThread.bind(this)
+	    };
+
+	    var modalView = applicationChannel.request('modal:show', modalOptions);
+
+	    // this.newThreadForm.on('submit', this.closeNewThreadModalDialog);
+	  },
+	  closeNewThreadModalDialog: function closeNewThreadModalDialog() {
+	    // this.newThreadForm.off();
+	    applicationChannel.trigger('modal:hide');
+	  },
+	  createNewThread: function createNewThread() {
+	    // this.newThreadFormObject.submit();
+	    this.closeNewThreadModalDialog();
+	  }
 	});
 
 /***/ },
@@ -20893,6 +20748,106 @@
 	    + "\n  </div>\n  <div class=\"card-list__header-actions\">\n    <div class=\"card-list__header-icon-action js-create-new-thread\" data-category-id=\"<%= category.get('id') %>\">\n      <img src=\"/public/images/add-icon-white.svg\" alt=\"addNewThread\" />\n    </div>\n  </div>\n</div>\n<div class=\"card-list__items\">\n"
 	    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.threads : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(3, data, 0),"data":data})) != null ? stack1 : "")
 	    + "</div>\n";
+	},"useData":true});
+
+/***/ },
+/* 55 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(8);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _component = __webpack_require__(30);
+
+	var _component2 = _interopRequireDefault(_component);
+
+	var _component3 = __webpack_require__(32);
+
+	var _component4 = _interopRequireDefault(_component3);
+
+	var _component5 = __webpack_require__(34);
+
+	var _component6 = _interopRequireDefault(_component5);
+
+	var _component7 = __webpack_require__(36);
+
+	var _component8 = _interopRequireDefault(_component7);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.CollectionView.extend({
+	  childView: function childView(item) {
+	    switch (item.type) {
+	      case 'text':
+	        return new _component2.default({
+	          name: item.name,
+	          value: item.value,
+	          required: item.required
+	        });
+	      case 'switch':
+	        return new _component4.default({
+	          name: item.name,
+	          value: item.value
+	        });
+	      case 'trix':
+	        return new _component6.default({
+	          name: item.name,
+	          value: item.value
+	        });
+	      case 'color-select':
+	        return new _component8.default({
+	          name: item.name,
+	          value: item.value
+	        });
+	      default:
+	        throw new Error('unknown form property type');
+	    }
+	  }
+	});
+
+/***/ },
+/* 56 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Handlebars = __webpack_require__(13);
+	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+	module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
+	    var helper;
+
+	  return " style=\"background-color: "
+	    + container.escapeExpression(((helper = (helper = helpers.headerColor || (depth0 != null ? depth0.headerColor : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"headerColor","hash":{},"data":data}) : helper)))
+	    + "\" ";
+	},"3":function(container,depth0,helpers,partials,data) {
+	    var helper;
+
+	  return "      <div class=\"button button--dialog js-modal-dialog-cancel-action\">\n        "
+	    + container.escapeExpression(((helper = (helper = helpers.cancelLabel || (depth0 != null ? depth0.cancelLabel : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"cancelLabel","hash":{},"data":data}) : helper)))
+	    + "\n      </div>\n";
+	},"5":function(container,depth0,helpers,partials,data) {
+	    var helper;
+
+	  return "      <div class=\"button button--dialog js-modal-dialog-confirm-action\">\n        "
+	    + container.escapeExpression(((helper = (helper = helpers.confirmLabel || (depth0 != null ? depth0.confirmLabel : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"confirmLabel","hash":{},"data":data}) : helper)))
+	    + "\n      </div>\n";
+	},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+	    var stack1, helper, alias1=depth0 != null ? depth0 : {};
+
+	  return "<div class=\"modal-dialog\">\n  <div class=\"modal-dialog__header\" "
+	    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.headerColor : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+	    + ">\n    "
+	    + container.escapeExpression(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"title","hash":{},"data":data}) : helper)))
+	    + "\n  </div>\n\n  <div class=\"modal-dialog__content js-modal-content\"></div>\n\n  <div class=\"modal-dialog__actions\">\n"
+	    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.cancelLabel : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+	    + "\n"
+	    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.confirmLabel : depth0),{"name":"if","hash":{},"fn":container.program(5, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+	    + "  </div>\n</div>\n";
 	},"useData":true});
 
 /***/ }

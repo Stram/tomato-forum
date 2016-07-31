@@ -17,7 +17,8 @@ export default Marionette.View.extend({
   regions: {
     header: '#header',
     main: '#main',
-    footer: '#footer'
+    footer: '#footer',
+    modal: '#modal'
   },
 
   updateTheme(theme) {

@@ -1,16 +1,10 @@
-import Backbone from 'backbone';
 import Marionette from 'backbone.marionette';
-import _ from 'underscore';
+import router from 'router/main';
 
 import template from './template.hbs';
-import ModalDialog from 'components/modal-dialog/component';
-import NewThreadForm from 'forms/thread';
-
 import CategoriesView from 'collection-views/categories/component';
 
 import categories from 'collections/categories';
-
-import Thread from 'models/thread';
 
 export default Marionette.View.extend({
   tagName: 'article',
@@ -23,6 +17,14 @@ export default Marionette.View.extend({
     forumCategories: '#forum-categories'
   },
 
+  ui: {
+    toForumEdit: '.js-forum-edit'
+  },
+
+  events: {
+    'click @ui.toForumEdit': 'transitionToEditForum'
+  },
+
   initialize() {
     categories.fetch();
   },
@@ -31,83 +33,9 @@ export default Marionette.View.extend({
     this.showChildView('forumCategories', new CategoriesView({
       collection: categories
     }));
+  },
+
+  transitionToEditForum() {
+    router.navigate('forum/edit', true);
   }
-
 });
-
-// export default Backbone.View.extend({
-//
-//   events: {
-//     'click .js-create-new-thread': 'showNewThreadModal',
-//     'click .js-forum-edit': 'transitionToEditForum'
-//   },
-//
-//   initialize() {
-//     categories.fetch();
-//     this.listenTo(categories, 'change reset add remove', this.render);
-//   },
-//
-//   render() {
-//     this.$el.html(
-//
-//       _.template(
-//         this.template({
-//           categories
-//         })
-//       )
-//     );
-//
-//     return this;
-//   },
-//
-//   close() {
-//     this.remove();
-//
-//     if (this.newThreadModalDialog) {
-//       this.newThreadModalDialog.close();
-//     }
-//
-//     if (this.newThreadFormObject) {
-//       this.newThreadFormObject.close();
-//     }
-//   },
-//
-//   showNewThreadModal(event) {
-//     this.newThreadFormObject = new NewThreadForm({
-//       model: new Thread({
-//         categoryId: event.currentTarget.dataset.categoryId
-//       })
-//     });
-//
-//     this.newThreadForm = this.newThreadFormObject.getForm();
-//     this.newThreadForm.render();
-//
-//     this.newThreadForm.on('submit', this.closeNewThreadModalDialog);
-//
-//     this.newThreadModalDialog = new ModalDialog({
-//       title: 'Create new thread',
-//       content: this.newThreadForm.el.outerHTML,
-//       cancelLabel: 'cancel',
-//       cancelAction: this.closeNewThreadModalDialog.bind(this),
-//       confirmLabel: 'create',
-//       confirmAction: this.createNewThread.bind(this)
-//     });
-//
-//     this.newThreadModalDialog.render();
-//   },
-//
-//   closeNewThreadModalDialog() {
-//     this.newThreadForm.off();
-//     this.newThreadModalDialog.close();
-//     this.newThreadModalDialog = null;
-//   },
-//
-//   createNewThread() {
-//     this.newThreadFormObject.submit();
-//     this.closeNewThreadModalDialog();
-//   },
-//
-//   transitionToEditForum() {
-//     router.navigate('forum/edit', true);
-//   }
-// });

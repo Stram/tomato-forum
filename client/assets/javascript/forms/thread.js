@@ -7,10 +7,12 @@ export default class CategoryForm extends BaseForm {
 
     this.properties = {
       title: {
+        name: 'title',
         type: 'text'
       },
 
       content: {
+        name: 'content',
         type: 'trix'
       }
     };

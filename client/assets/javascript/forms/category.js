@@ -7,14 +7,17 @@ export default class CategoryForm extends BaseForm {
 
     this.properties = {
       name: {
+        name: 'name',
         type: 'text'
       },
 
       allowNewThreads: {
+        name: 'allowNewThreads',
         type: 'switch'
       },
 
       color: {
+        name: 'color',
         type: 'color-select'
       }
     };

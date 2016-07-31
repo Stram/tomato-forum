@@ -1,9 +1,20 @@
 import Backbone from 'backbone';
 import Marionette from 'backbone.marionette';
 import ApplicationView from 'pages/application/component';
+import ModalView from 'components/modal-dialog/component';
 
 const Application = Marionette.Application.extend({
   region: '#body',
+
+  channelName: 'application',
+
+  radioRequests: {
+    'modal:show': 'showModal'
+  },
+
+  radioEvents: {
+    'modal:hide': 'hideModal'
+  },
 
   initialize() {
     this.applicationView = new ApplicationView();
@@ -12,7 +23,7 @@ const Application = Marionette.Application.extend({
 
   updateTheme(currentUser) {
     if (currentUser) {
-      this.applicationView.updateTheme(currentUser.background);
+      this.getView().updateTheme(currentUser.background);
     }
   },
 
@@ -21,7 +32,23 @@ const Application = Marionette.Application.extend({
   },
 
   getBaseView() {
-    return this.applicationView;
+    return this.getView();
+  },
+
+  showModal(options) {
+    const modalOptions = options || {};
+    const modalView = new ModalView(modalOptions);
+    const applicationView = this.getView();
+
+    applicationView.showChildView('modal', modalView);
+    applicationView.$el.addClass('is-scrolling-disabled');
+
+    return modalView;
+  },
+
+  hideModal() {
+    this.$el.removeClass('is-scrolling-disabled');
+    // this.getView().removeChildView('modal');
   }
 });
 
