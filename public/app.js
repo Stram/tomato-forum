@@ -18926,6 +18926,10 @@
 
 	var _component10 = _interopRequireDefault(_component9);
 
+	var _component11 = __webpack_require__(58);
+
+	var _component12 = _interopRequireDefault(_component11);
+
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var Router = _backbone2.default.Router.extend({
@@ -18939,7 +18943,8 @@
 	    login: 'login',
 	    register: 'register',
 	    dashboard: 'dashboard',
-	    forum: 'forum'
+	    forum: 'forum',
+	    'thread/:threadId': 'thread'
 	  },
 
 	  showContentWrappedPage: function showContentWrappedPage(page) {
@@ -18985,6 +18990,13 @@
 	  forum: function forum() {
 	    var forumView = new _component8.default();
 	    this.changePage(forumView, {
+	      authenticated: true,
+	      wrapped: true
+	    });
+	  },
+	  thread: function thread(threadId) {
+	    var threadView = new _component12.default({ threadId: threadId });
+	    this.changePage(threadView, {
 	      authenticated: true,
 	      wrapped: true
 	    });
@@ -20832,6 +20844,155 @@
 	    + "\n</div>\n"
 	    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.colors : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "");
 	},"useData":true,"useDepths":true});
+
+/***/ },
+/* 58 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(7);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _jquery = __webpack_require__(2);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _template2 = __webpack_require__(59);
+
+	var _template3 = _interopRequireDefault(_template2);
+
+	var _loading = __webpack_require__(61);
+
+	var _loading2 = _interopRequireDefault(_loading);
+
+	var _session = __webpack_require__(1);
+
+	var _session2 = _interopRequireDefault(_session);
+
+	var _thread = __webpack_require__(41);
+
+	var _thread2 = _interopRequireDefault(_thread);
+
+	var _comment = __webpack_require__(60);
+
+	var _comment2 = _interopRequireDefault(_comment);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+	  tagName: 'div',
+
+	  className: 'page thread-page',
+
+	  ui: {
+	    newCommentButton: '.js-new-comment'
+	  },
+
+	  events: {
+	    'click @ui.newCommentButton': 'postNewComment'
+	  },
+
+	  template: function template(data) {
+	    return false ? _loading2.default : (0, _template3.default)(data);
+	  },
+	  initialize: function initialize(args) {
+	    var self = this;
+	    this.loading = true;
+	    this.model = new _thread2.default({ id: args.threadId });
+
+	    this.model.fetch().then(function () {
+	      self.loading = false;
+	      self.render();
+	    });
+	  },
+	  postNewComment: function postNewComment() {
+	    var self = this;
+
+	    var commentContent = (0, _jquery2.default)('.js-new-comment-content').val();
+	    var newComment = new _comment2.default({
+	      content: commentContent,
+	      user: _session2.default.getCurrentUser().id,
+	      thread: this.model
+	    });
+
+	    newComment.save({}, {
+	      success: function success(model, response) {
+	        var comments = self.thread.get('comments');
+	        comments.push(response);
+	      }
+	    });
+	  }
+	});
+
+/***/ },
+/* 59 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Handlebars = __webpack_require__(12);
+	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+	module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
+	    var stack1;
+
+	  return "      <div class=\"comment\">\n        <div class=\"comment__image\" style=\"background-image: url('"
+	    + container.escapeExpression(container.lambda(((stack1 = ((stack1 = ((stack1 = (depth0 != null ? depth0.comment : depth0)) != null ? stack1.user : stack1)) != null ? stack1.profilePhoto : stack1)) != null ? stack1.url : stack1), depth0))
+	    + "')\">\n\n        </div>\n        <div class=\"comment__card\">\n          <div class=\"comment__info\">\n            <%= comment.user.username %> u <%= comment.createdAt %>\n          </div>\n          <div class=\"comment__content\">\n            <%= comment.content %>\n          </div>\n        </div>\n      </div>\n";
+	},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+	    var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=container.escapeExpression, alias3=helpers.helperMissing, alias4="function";
+
+	  return "<div class=\"thread\">\n  <div class=\"thread__header\">\n    <div class=\"thread__title\">\n      "
+	    + alias2(helpers.log.call(alias1,depth0,{"name":"log","hash":{},"data":data}))
+	    + "\n      "
+	    + alias2(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias1,{"name":"title","hash":{},"data":data}) : helper)))
+	    + "\n    </div>\n    <div class=\"thread__content\">\n      "
+	    + alias2(((helper = (helper = helpers.content || (depth0 != null ? depth0.content : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias1,{"name":"content","hash":{},"data":data}) : helper)))
+	    + "\n    </div>\n    <div class=\"thread__additional-info\">\n      <div class=\"thread__owner-photo\" style=\"background-image: url('<%= thread.get('owner').profilePhoto.url %>')\">\n\n      </div>\n      <div class=\"thread__owner-info\">\n        <div class=\"thread__owner-username\">\n          "
+	    + alias2(container.lambda(((stack1 = (depth0 != null ? depth0.owner : depth0)) != null ? stack1.username : stack1), depth0))
+	    + "\n        </div>\n        <div class=\"thread__date\">\n          "
+	    + alias2(((helper = (helper = helpers.createdAt || (depth0 != null ? depth0.createdAt : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias1,{"name":"createdAt","hash":{},"data":data}) : helper)))
+	    + "\n        </div>\n      </div>\n    </div>\n  </div>\n  <div class=\"thread__comments\">\n"
+	    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.comments : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+	    + "  </div>\n  <div class=\"thread__new-comment-container\">\n    <div class=\"thread__new-comment\">\n      <div class=\"input-box\">\n        <label for=\"thread-new-comment\">Comment</label>\n        <textarea class=\"input-box__input js-new-comment-content\" id=\"thread-new-comment\"></textarea>\n      </div>\n      <div class=\"button button-raised js-new-comment\">\n        SUBMIT\n      </div>\n    </div>\n  </div>\n</div>\n";
+	},"useData":true});
+
+/***/ },
+/* 60 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(5);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _config = __webpack_require__(3);
+
+	var _config2 = _interopRequireDefault(_config);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.Model.extend({
+	  urlRoot: _config2.default.apiEndpoint + '/comment'
+	});
+
+/***/ },
+/* 61 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Handlebars = __webpack_require__(12);
+	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+	    return "<div class=\"loading\">\n  <div class=\"loading__icon\">\n\n  </div>\n</div>\n";
+	},"useData":true});
 
 /***/ }
 /******/ ]);

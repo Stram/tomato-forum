@@ -8,6 +8,7 @@ import LoginView from 'pages/login/component';
 import RegisterView from 'pages/register/component';
 import ForumView from 'pages/forum/component';
 import DashboardView from 'pages/dashboard/component';
+import ThreadView from 'pages/thread/component';
 
 const Router = Backbone.Router.extend({
 
@@ -20,7 +21,8 @@ const Router = Backbone.Router.extend({
     login: 'login',
     register: 'register',
     dashboard: 'dashboard',
-    forum: 'forum'
+    forum: 'forum',
+    'thread/:threadId': 'thread'
   },
 
   showContentWrappedPage(page) {
@@ -70,6 +72,14 @@ const Router = Backbone.Router.extend({
   forum() {
     const forumView = new ForumView();
     this.changePage(forumView, {
+      authenticated: true,
+      wrapped: true
+    });
+  },
+
+  thread(threadId) {
+    const threadView = new ThreadView({threadId});
+    this.changePage(threadView, {
       authenticated: true,
       wrapped: true
     });

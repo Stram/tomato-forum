@@ -54,7 +54,7 @@ router.post('/', (req, res) => {
           handleError(updatedCategoryError, res);
           return;
         }
-        
+
         res.status(201);
         res.json({
           thread: newThread.toObject()
@@ -74,7 +74,15 @@ router.get('/:threadId', (req, res) => {
   Thread.findById(req.params.threadId)
     .populate({path: 'owner', populate: {path: 'profilePhoto'}})
     .populate({path: 'comments', populate: {path: 'user', populate: {path: 'profilePhoto'}}})
-    .then((thread) => res.json(thread.toObject()));
+    .then((thread) => {
+      console.log(!!thread);
+      if (thread) {
+        res.json(thread.toObject());
+      } else {
+        res.status(404);
+        res.send();
+      }
+    });
 });
 
 module.exports = router;

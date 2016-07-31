@@ -45,10 +45,10 @@ app.use(fileUpload());
 
 passportConfig(passport);
 
-app.use('*', (req, res, next) => {
-  console.log(req.session);
-  next();
-});
+// app.use('*', (req, res, next) => {
+//   console.log(req.session);
+//   next();
+// });
 
 app.use('/api', api);
 
