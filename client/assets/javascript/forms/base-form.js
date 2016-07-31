@@ -26,27 +26,11 @@ export default class BaseForm {
     } else {
       throw new Error('Cannot get form view');
     }
-    
+
     this.model.save();
   }
 
-  close() {
-    // if (this.form) {
-    //   this.form.close();
-    // }
-  }
-
   _setupFormView() {
-    // const propertyViews = [];
-
-    // const properties = _.keys(this.properties);
-    // _.each(properties, (propertyName) => {
-    //   const propertyOptions = this.properties[propertyName];
-    //   propertyOptions.value = propertyOptions.value || this.model.get(propertyName);
-    //   const propertyView = createFormPropertyObject(propertyName, propertyOptions);
-    //   propertyViews.push(propertyView);
-    // });
-
     const PropertyModel = Backbone.Model.extend({
       idAttribute: 'cid'
     });
@@ -65,7 +49,5 @@ export default class BaseForm {
     });
 
     this.formView.on('submit', this.submit);
-
-    // this.form.render();
   }
 }

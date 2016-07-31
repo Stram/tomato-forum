@@ -41,13 +41,10 @@ export default Marionette.View.extend({
       confirmAction: this.createNewThread.bind(this)
     };
 
-    const modalView = applicationChannel.request('modal:show', modalOptions);
-
-    // this.newThreadForm.on('submit', this.closeNewThreadModalDialog);
+    applicationChannel.request('modal:show', modalOptions);
   },
 
   closeNewThreadModalDialog() {
-    // this.newThreadForm.off();
     applicationChannel.trigger('modal:hide');
   },
 

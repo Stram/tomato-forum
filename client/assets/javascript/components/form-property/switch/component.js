@@ -1,11 +1,10 @@
-import Backbone from 'backbone';
+import Marionette from 'backbone.marionette';
 import _ from 'underscore';
 import $ from 'jquery';
 
-// template
-import template from './template.html';
+import template from './template.hbs';
 
-export default Backbone.View.extend({
+export default Marionette.View.extend({
   tagName: 'div',
 
   className: 'input-box',
@@ -19,23 +18,13 @@ export default Backbone.View.extend({
 
   template,
 
-  render() {
-    this.$el.html(
-      _.template(
-        this.template({
-          label: this.name,
-          value: this.value,
-          inputId: this.inputId,
-          isRequired: this.isRequired
-        })
-      )
-    );
-
-    return this;
-  },
-
-  close() {
-    this.remove();
+  templateContext() {
+    return {
+      label: this.name,
+      value: this.value,
+      inputId: this.inputId,
+      isRequired: this.isRequired
+    };
   },
 
   getValue() {

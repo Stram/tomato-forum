@@ -18811,7 +18811,6 @@
 	    this.headerColor = args.headerColor;
 
 	    if (!this.contentView) {
-	      console.trace();
 	      throw new Error('contentView must be defined!');
 	    }
 	  },
@@ -18827,10 +18826,18 @@
 	    this.showChildView('content', this.contentView);
 	  },
 	  onConfirmClick: function onConfirmClick() {
-	    this.confirmAction();
+	    if (this.confirmAction) {
+	      this.confirmAction();
+	    } else {
+	      this.trigger('confirm');
+	    }
 	  },
 	  onCancelClick: function onCancelClick() {
-	    this.cancelAction();
+	    if (this.cancelAction) {
+	      this.cancelAction();
+	    } else {
+	      this.trigger('cancel');
+	    }
 	  },
 	  onDismissClick: function onDismissClick(event) {
 	    if ((0, _jquery2.default)(event.target).hasClass('modal-dialog-container')) {
@@ -19496,12 +19503,9 @@
 	      confirmAction: this.createNewThread.bind(this)
 	    };
 
-	    var modalView = applicationChannel.request('modal:show', modalOptions);
-
-	    // this.newThreadForm.on('submit', this.closeNewThreadModalDialog);
+	    applicationChannel.request('modal:show', modalOptions);
 	  },
 	  closeNewThreadModalDialog: function closeNewThreadModalDialog() {
-	    // this.newThreadForm.off();
 	    applicationChannel.trigger('modal:hide');
 	  },
 	  createNewThread: function createNewThread() {
@@ -19651,25 +19655,8 @@
 	      this.model.save();
 	    }
 	  }, {
-	    key: 'close',
-	    value: function close() {
-	      // if (this.form) {
-	      //   this.form.close();
-	      // }
-	    }
-	  }, {
 	    key: '_setupFormView',
 	    value: function _setupFormView() {
-	      // const propertyViews = [];
-
-	      // const properties = _.keys(this.properties);
-	      // _.each(properties, (propertyName) => {
-	      //   const propertyOptions = this.properties[propertyName];
-	      //   propertyOptions.value = propertyOptions.value || this.model.get(propertyName);
-	      //   const propertyView = createFormPropertyObject(propertyName, propertyOptions);
-	      //   propertyViews.push(propertyView);
-	      // });
-
 	      var PropertyModel = _backbone2.default.Model.extend({
 	        idAttribute: 'cid'
 	      });
@@ -19687,8 +19674,6 @@
 	      });
 
 	      this.formView.on('submit', this.submit);
-
-	      // this.form.render();
 	    }
 	  }]);
 
@@ -19730,6 +19715,14 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.default = _backbone2.default.CollectionView.extend({
+	  tagName: 'form',
+
+	  className: '',
+
+	  events: {
+	    submit: 'onSubmit'
+	  },
+
 	  childView: function childView(item) {
 	    switch (item.get('type')) {
 	      case 'text':
@@ -19746,6 +19739,10 @@
 	  },
 	  childViewOptions: function childViewOptions(model) {
 	    return model.toJSON();
+	  },
+	  onSubmit: function onSubmit(event) {
+	    event.preventDefault();
+	    this.trigger('submit');
 	  }
 	});
 
@@ -19817,7 +19814,7 @@
 	  value: true
 	});
 
-	var _backbone = __webpack_require__(5);
+	var _backbone = __webpack_require__(7);
 
 	var _backbone2 = _interopRequireDefault(_backbone);
 
@@ -19829,7 +19826,7 @@
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
-	var _template = __webpack_require__(35);
+	var _template = __webpack_require__(56);
 
 	var _template2 = _interopRequireDefault(_template);
 
@@ -19850,18 +19847,13 @@
 
 	  template: _template2.default,
 
-	  render: function render() {
-	    this.$el.html(_underscore2.default.template(this.template({
+	  templateContext: function templateContext() {
+	    return {
 	      label: this.name,
 	      value: this.value,
 	      inputId: this.inputId,
 	      isRequired: this.isRequired
-	    })));
-
-	    return this;
-	  },
-	  close: function close() {
-	    this.remove();
+	    };
 	  },
 	  getValue: function getValue() {
 	    var value = (0, _jquery2.default)('#' + this.inputId).val();
@@ -19869,33 +19861,8 @@
 	  }
 	});
 
-	// template
-
 /***/ },
-/* 35 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _ = __webpack_require__(6);
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='<div class="input-box__text">'+
-	((__t=( label ))==null?'':__t)+
-	'</div>\n<input class="input-box__switch-input" type="checkbox" id="'+
-	((__t=( inputId ))==null?'':__t)+
-	'" hidden="hidden" ';
-	 if (value) { 
-	__p+=' checked ';
-	 }; 
-	__p+='/>\n<label class="input-box__switch-label" for="'+
-	((__t=( inputId ))==null?'':__t)+
-	'"></label>\n<span class="input-box__message is-error"></span>\n';
-	}
-	return __p;
-	};
-
-
-/***/ },
+/* 35 */,
 /* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -19958,7 +19925,7 @@
 	  value: true
 	});
 
-	var _backbone = __webpack_require__(5);
+	var _backbone = __webpack_require__(7);
 
 	var _backbone2 = _interopRequireDefault(_backbone);
 
@@ -19970,7 +19937,7 @@
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
-	var _template = __webpack_require__(39);
+	var _template = __webpack_require__(57);
 
 	var _template2 = _interopRequireDefault(_template);
 
@@ -19986,6 +19953,8 @@
 	  className: 'color-select',
 
 	  initialize: function initialize(args) {
+	    var _this = this;
+
 	    this.inputId = _underscore2.default.uniqueId();
 	    this.name = args.name;
 	    this.value = args.value || '1';
@@ -19993,7 +19962,8 @@
 	    this.colors = _underscore2.default.pairs(_colors2.default).map(function (colorArray) {
 	      return {
 	        id: colorArray[0],
-	        hexValue: colorArray[1].hexColor
+	        hexValue: colorArray[1].hexColor,
+	        isSelected: colorArray[0] === _this.value
 	      };
 	    });
 	  },
@@ -20001,18 +19971,13 @@
 
 	  template: _template2.default,
 
-	  render: function render() {
-	    this.$el.html(_underscore2.default.template(this.template({
+	  templateContext: function templateContext() {
+	    return {
 	      label: this.name,
 	      value: this.value,
 	      inputId: this.inputId,
 	      colors: this.colors
-	    })));
-
-	    return this;
-	  },
-	  close: function close() {
-	    this.remove();
+	    };
 	  },
 	  getValue: function getValue() {
 	    var value = (0, _jquery2.default)('.js-color-select-' + this.inputId + ':checked').val();
@@ -20021,38 +19986,7 @@
 	});
 
 /***/ },
-/* 39 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _ = __webpack_require__(6);
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='<div class="color-select__label">\n'+
-	((__t=( label ))==null?'':__t)+
-	'\n</div>\n';
-	 _.each(colors, function(color) { 
-	__p+='\n  <input type="radio" name="'+
-	((__t=( inputId ))==null?'':__t)+
-	'" value="'+
-	((__t=( color.id ))==null?'':__t)+
-	'" class="color-select__item js-color-select-'+
-	((__t=( inputId ))==null?'':__t)+
-	'" style="background-color: '+
-	((__t=( color.hexValue ))==null?'':__t)+
-	'" ';
-	 if (value === color.id) { 
-	__p+=' checked ';
-	 }; 
-	__p+='/>\n';
-	 }); 
-	__p+='\n';
-	}
-	return __p;
-	};
-
-
-/***/ },
+/* 39 */,
 /* 40 */
 /***/ function(module, exports) {
 
@@ -20127,12 +20061,12 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var Forum = _backbone2.default.Collection.extend({
+	var Categories = _backbone2.default.Collection.extend({
 	  model: _category2.default,
 	  url: _config2.default.apiEndpoint + '/categories'
 	});
 
-	exports.default = new Forum();
+	exports.default = new Categories();
 
 /***/ },
 /* 43 */
@@ -20845,6 +20779,59 @@
 	    + container.escapeExpression(((helper = (helper = helpers.inputId || (depth0 != null ? depth0.inputId : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"inputId","hash":{},"data":data}) : helper)))
 	    + "\"></trix-editor>\n";
 	},"useData":true});
+
+/***/ },
+/* 56 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Handlebars = __webpack_require__(12);
+	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+	module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
+	    return " checked ";
+	},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+	    var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+	  return "<div class=\"input-box__text\">"
+	    + alias4(((helper = (helper = helpers.label || (depth0 != null ? depth0.label : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"label","hash":{},"data":data}) : helper)))
+	    + "</div>\n<input class=\"input-box__switch-input\" type=\"checkbox\" id=\""
+	    + alias4(((helper = (helper = helpers.inputId || (depth0 != null ? depth0.inputId : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"inputId","hash":{},"data":data}) : helper)))
+	    + "\" hidden=\"hidden\" "
+	    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.value : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+	    + " />\n<label class=\"input-box__switch-label\" for=\""
+	    + alias4(((helper = (helper = helpers.inputId || (depth0 != null ? depth0.inputId : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"inputId","hash":{},"data":data}) : helper)))
+	    + "\"></label>\n<span class=\"input-box__message is-error\"></span>\n";
+	},"useData":true});
+
+/***/ },
+/* 57 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Handlebars = __webpack_require__(12);
+	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+	module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data,blockParams,depths) {
+	    var stack1, helper, alias1=container.lambda, alias2=container.escapeExpression, alias3=depth0 != null ? depth0 : {}, alias4=helpers.helperMissing, alias5="function";
+
+	  return "  <input type=\"radio\" name=\""
+	    + alias2(alias1((depths[1] != null ? depths[1].inputId : depths[1]), depth0))
+	    + "\" value=\""
+	    + alias2(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias4),(typeof helper === alias5 ? helper.call(alias3,{"name":"id","hash":{},"data":data}) : helper)))
+	    + "\" class=\"color-select__item js-color-select-"
+	    + alias2(alias1((depths[1] != null ? depths[1].inputId : depths[1]), depth0))
+	    + "\" style=\"background-color: "
+	    + alias2(((helper = (helper = helpers.hexValue || (depth0 != null ? depth0.hexValue : depth0)) != null ? helper : alias4),(typeof helper === alias5 ? helper.call(alias3,{"name":"hexValue","hash":{},"data":data}) : helper)))
+	    + "\" "
+	    + ((stack1 = helpers["if"].call(alias3,(depth0 != null ? depth0.isSelected : depth0),{"name":"if","hash":{},"fn":container.program(2, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+	    + "/>\n";
+	},"2":function(container,depth0,helpers,partials,data) {
+	    return " checked ";
+	},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data,blockParams,depths) {
+	    var stack1, helper, alias1=depth0 != null ? depth0 : {};
+
+	  return "<div class=\"color-select__label\">\n  "
+	    + container.escapeExpression(((helper = (helper = helpers.label || (depth0 != null ? depth0.label : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"label","hash":{},"data":data}) : helper)))
+	    + "\n</div>\n"
+	    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.colors : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+	},"useData":true,"useDepths":true});
 
 /***/ }
 /******/ ]);

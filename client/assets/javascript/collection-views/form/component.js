@@ -7,6 +7,14 @@ import ColorSelectView from 'components/form-property/color-select/component';
 
 
 export default Marionette.CollectionView.extend({
+  tagName: 'form',
+
+  className: '',
+
+  events: {
+    submit: 'onSubmit'
+  },
+
   childView(item) {
     switch (item.get('type')) {
     case 'text':
@@ -24,5 +32,10 @@ export default Marionette.CollectionView.extend({
 
   childViewOptions(model) {
     return model.toJSON();
+  },
+
+  onSubmit(event) {
+    event.preventDefault();
+    this.trigger('submit');
   }
 });

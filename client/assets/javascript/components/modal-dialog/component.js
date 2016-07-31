@@ -38,7 +38,6 @@ export default Marionette.View.extend({
     this.headerColor = args.headerColor;
 
     if (!this.contentView) {
-      console.trace();
       throw new Error('contentView must be defined!');
     }
   },
@@ -57,11 +56,19 @@ export default Marionette.View.extend({
   },
 
   onConfirmClick() {
-    this.confirmAction();
+    if (this.confirmAction) {
+      this.confirmAction();
+    } else {
+      this.trigger('confirm');
+    }
   },
 
   onCancelClick() {
-    this.cancelAction();
+    if (this.cancelAction) {
+      this.cancelAction();
+    } else {
+      this.trigger('cancel');
+    }
   },
 
   onDismissClick(event) {
