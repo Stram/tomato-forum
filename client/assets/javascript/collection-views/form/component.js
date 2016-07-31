@@ -8,30 +8,21 @@ import ColorSelectView from 'components/form-property/color-select/component';
 
 export default Marionette.CollectionView.extend({
   childView(item) {
-    switch (item.type) {
+    switch (item.get('type')) {
     case 'text':
-      return new InputTextView({
-        name: item.name,
-        value: item.value,
-        required: item.required
-      });
+      return InputTextView;
     case 'switch':
-      return new SwitchView({
-        name: item.name,
-        value: item.value
-      });
+      return SwitchView;
     case 'trix':
-      return new TrixView({
-        name: item.name,
-        value: item.value
-      });
+      return TrixView;
     case 'color-select':
-      return new ColorSelectView({
-        name: item.name,
-        value: item.value
-      });
+      return ColorSelectView;
     default:
       throw new Error('unknown form property type');
     }
+  },
+
+  childViewOptions(model) {
+    return model.toJSON();
   }
 });

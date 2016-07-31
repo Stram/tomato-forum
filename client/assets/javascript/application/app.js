@@ -47,8 +47,10 @@ const Application = Marionette.Application.extend({
   },
 
   hideModal() {
-    this.$el.removeClass('is-scrolling-disabled');
-    // this.getView().removeChildView('modal');
+    const applicationView = this.getView();
+
+    applicationView.$el.removeClass('is-scrolling-disabled');
+    applicationView.getChildView('modal').destroy();
   }
 });
 

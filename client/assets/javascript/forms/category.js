@@ -22,5 +22,4 @@ export default class CategoryForm extends BaseForm {
       }
     };
   }
-
 }

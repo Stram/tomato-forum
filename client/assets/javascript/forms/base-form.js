@@ -1,14 +1,12 @@
-// import _ from 'underscore';
+import Backbone from 'backbone';
+import _ from 'underscore';
 
-// import FormView from 'components/form/component';
 import FormView from 'collection-views/form/component';
-// import formUtils from 'utils/form';
-
-// const createFormPropertyObject = formUtils.createFormPropertyObject;
 
 export default class BaseForm {
   constructor(attributes) {
     this.model = attributes.model;
+    this.propertyModel = Backbone.Model;
   }
 
   getForm() {
@@ -45,13 +43,22 @@ export default class BaseForm {
     //   propertyViews.push(propertyView);
     // });
 
-    this.form = new FormView({
-      collection: this.properties
+    const PropertyModel = Backbone.Model.extend({
+      idAttribute: 'cid'
     });
 
-    // this.form = new FormView({
-    //   propertyViews
-    // });
+    const PropertiesCollection = Backbone.Collection.extend({
+      model: PropertyModel
+    });
+
+
+    this.propertiesCollection = new PropertiesCollection(
+      _.values(this.properties).map((property) => new PropertyModel(property))
+    );
+
+    this.form = new FormView({
+      collection: this.propertiesCollection
+    });
 
     // this.form.on('submit', this.submit);
 
