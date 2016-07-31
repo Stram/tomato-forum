@@ -52,7 +52,7 @@ export default Marionette.View.extend({
   },
 
   createNewThread() {
-    // this.newThreadFormObject.submit();
+    this.newThreadFormObject.submit();
     this.closeNewThreadModalDialog();
   }
 });

@@ -36,6 +36,11 @@ export default Marionette.View.extend({
     this.cancelAction = args.cancelAction;
 
     this.headerColor = args.headerColor;
+
+    if (!this.contentView) {
+      console.trace();
+      throw new Error('contentView must be defined!');
+    }
   },
 
   templateContext() {

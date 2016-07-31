@@ -18809,6 +18809,11 @@
 	    this.cancelAction = args.cancelAction;
 
 	    this.headerColor = args.headerColor;
+
+	    if (!this.contentView) {
+	      console.trace();
+	      throw new Error('contentView must be defined!');
+	    }
 	  },
 	  templateContext: function templateContext() {
 	    return {
@@ -19500,7 +19505,7 @@
 	    applicationChannel.trigger('modal:hide');
 	  },
 	  createNewThread: function createNewThread() {
-	    // this.newThreadFormObject.submit();
+	    this.newThreadFormObject.submit();
 	    this.closeNewThreadModalDialog();
 	  }
 	});
@@ -19522,11 +19527,13 @@
 	},"3":function(container,depth0,helpers,partials,data) {
 	    return "    <div>\n      No threads in this category\n    </div>\n";
 	},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
-	    var stack1, helper, alias1=depth0 != null ? depth0 : {};
+	    var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
 
 	  return "<div class=\"card-list__header\">\n  <div class=\"card-list__title\">\n    "
-	    + container.escapeExpression(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
-	    + "\n  </div>\n  <div class=\"card-list__header-actions\">\n    <div class=\"card-list__header-icon-action js-create-new-thread\" data-category-id=\"<%= category.get('id') %>\">\n      <img src=\"/public/images/add-icon-white.svg\" alt=\"addNewThread\" />\n    </div>\n  </div>\n</div>\n<div class=\"card-list__items\">\n"
+	    + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
+	    + "\n  </div>\n  <div class=\"card-list__header-actions\">\n    <div class=\"card-list__header-icon-action js-create-new-thread\" data-category-id=\""
+	    + alias4(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"id","hash":{},"data":data}) : helper)))
+	    + "\">\n      <img src=\"/public/images/add-icon-white.svg\" alt=\"addNewThread\" />\n    </div>\n  </div>\n</div>\n<div class=\"card-list__items\">\n"
 	    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.threads : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(3, data, 0),"data":data})) != null ? stack1 : "")
 	    + "</div>\n";
 	},"useData":true});
@@ -19621,21 +19628,27 @@
 	  _createClass(BaseForm, [{
 	    key: 'getForm',
 	    value: function getForm() {
-	      if (!this.form) {
+	      if (!this.formView) {
 	        this._setupFormView();
 	      }
 
-	      return this.form;
+	      return this.formView;
 	    }
 	  }, {
 	    key: 'submit',
 	    value: function submit() {
-	      // const propertyViews = this.form.propertyViews;
-	      // _.each(propertyViews, (view) => {
-	      //   this.model.set(view.name, view.getValue());
-	      // });
-	      //
-	      // this.model.save();
+	      var _this = this;
+
+	      var formView = this.formView;
+	      if (formView) {
+	        formView.children.each(function (view) {
+	          _this.model.set(view.name, view.getValue());
+	        });
+	      } else {
+	        throw new Error('Cannot get form view');
+	      }
+
+	      this.model.save();
 	    }
 	  }, {
 	    key: 'close',
@@ -19669,11 +19682,11 @@
 	        return new PropertyModel(property);
 	      }));
 
-	      this.form = new _component2.default({
+	      this.formView = new _component2.default({
 	        collection: this.propertiesCollection
 	      });
 
-	      // this.form.on('submit', this.submit);
+	      this.formView.on('submit', this.submit);
 
 	      // this.form.render();
 	    }

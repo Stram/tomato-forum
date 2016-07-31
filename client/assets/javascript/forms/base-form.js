@@ -10,20 +10,24 @@ export default class BaseForm {
   }
 
   getForm() {
-    if (!this.form) {
+    if (!this.formView) {
       this._setupFormView();
     }
 
-    return this.form;
+    return this.formView;
   }
 
   submit() {
-    // const propertyViews = this.form.propertyViews;
-    // _.each(propertyViews, (view) => {
-    //   this.model.set(view.name, view.getValue());
-    // });
-    //
-    // this.model.save();
+    const formView = this.formView;
+    if (formView) {
+      formView.children.each((view) => {
+        this.model.set(view.name, view.getValue());
+      });
+    } else {
+      throw new Error('Cannot get form view');
+    }
+    
+    this.model.save();
   }
 
   close() {
@@ -56,11 +60,11 @@ export default class BaseForm {
       _.values(this.properties).map((property) => new PropertyModel(property))
     );
 
-    this.form = new FormView({
+    this.formView = new FormView({
       collection: this.propertiesCollection
     });
 
-    // this.form.on('submit', this.submit);
+    this.formView.on('submit', this.submit);
 
     // this.form.render();
   }
