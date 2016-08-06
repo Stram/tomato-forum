@@ -7,16 +7,19 @@ import permissions from '../services/permissions';
 
 const router = new express.Router();
 
-// router.use(permissions.checkAuthentification);
+router.use(permissions.checkAuthentification);
 
 /**
  * @api {post} /categories/ Create category
  * @apiName CreateCategory
  * @apiGroup Category
  *
- * @apiParam {String} name Categories unique name.
+ * @apiParam {String} name Category's unique name.
  *
  * @apiSuccess {String} name Name of the category.
+ * @apiSuccess {Date} createdAt Date of creation.
+ * @apiSuccess {Boolean} allowNewThreads if new threads are allowed to be added to this category.
+ * @apiSuccess {Object[]} threads Id's of threads belonging to selected category.
  */
 router.post('/', (req, res) => {
   const newCategory = new Category({
@@ -36,14 +39,13 @@ router.post('/', (req, res) => {
 });
 
 /**
- * @api {get} /categories/ Request all categories
+ * @api {get} /categories/ Get all categories
  * @apiName RequestCategory
  * @apiGroup Category
  *
  * @apiSuccess {String} name Name of the category.
  */
 router.get('/', (req, res) => {
-  console.log(req.user);
   Category.find().deepPopulate('threads.owner.profilePhoto').then((categories) => {
     res.json(categories.map((category) => category.toObject()));
   });
