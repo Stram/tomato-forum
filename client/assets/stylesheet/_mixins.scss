@@ -3,8 +3,11 @@
     $i: index($themes, $theme) - 1;
 
     .theme-#{$i} & {
-      background-color: map-get($theme, $type);
-      color: map-get($theme, $type + '-text');
+      $color: map-get($theme, $type + '-text');
+      $background-color: map-get($theme, $type);
+
+      color: $color;
+      background-color: $background-color;
     }
   }
 }
@@ -14,7 +17,9 @@
     $i: index($themes, $theme) - 1;
 
     .theme-#{$i} & {
-      background-color: map-get($theme, $type);
+      $background-color: map-get($theme, $type);
+
+      background-color: $background-color;
     }
   }
 }

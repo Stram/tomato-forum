@@ -22,5 +22,5 @@ $switch-padding: $switch-grid-step;
 $switch-border-radius: $switch-grid-step / 2;
 $switch-label: $switch-height + ($switch-padding * 2);
 
-$switch-animation-timing: cubic-bezier(0.4, 0, 0.2, 1);;
-$switch-animation: .28s $switch-animation-timing;
+$switch-animation-timing: cubic-bezier(0.4, 0, 0.2, 1);
+$switch-animation: 0.28s $switch-animation-timing;

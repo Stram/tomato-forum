@@ -1,24 +1,27 @@
 .button {
+  font-size: 14px;
+  line-height: 14px;
+
   display: inline-block;
+
+  padding: 10px 16px;
+
+  cursor: pointer;
   text-align: center;
   text-transform: uppercase;
-  cursor: pointer;
 
-  font-size: 14px;
-  border-radius: 2px;
   border: 0;
-  line-height: 14px;
-  padding: 10px 16px;
+  border-radius: 2px;
   background-color: transparent;
 
   &.button--dialog {
     min-width: 64px;
-    padding: 10px 8px;
     margin: 0 8px;
+    padding: 10px 8px;
   }
 
   &.button--raised {
-    box-shadow: 0px 2px 4px 0px $color-shadow;
+    box-shadow: 0 2px 4px 0 $color-shadow;
   }
 
   &.is-hidden {

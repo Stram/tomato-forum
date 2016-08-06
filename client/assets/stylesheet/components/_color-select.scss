@@ -2,17 +2,21 @@ $color-select-size: 40px;
 
 .color-select {
   & &__item {
+    display: inline-block;
+
     width: $color-select-size;
     height: $color-select-size;
-    border-radius: $color-select-size / 2;
-    display: inline-block;
     margin: 10px;
+
     cursor: pointer;
+
+    border-radius: $color-select-size / 2;
     outline: 0;
+
     -webkit-appearance: none;
 
     &:checked {
-      border: 3px solid black;
+      border: 3px solid $color-bg-black;
     }
   }
 }

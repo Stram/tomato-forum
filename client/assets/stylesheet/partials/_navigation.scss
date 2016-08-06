@@ -3,10 +3,12 @@
   padding-left: 20px;
 
   & &__header {
-    font-weight: bold;
     font-size: 20px;
-    color: $color-text-grey-600;
+    font-weight: bold;
+
     margin-top: 40px;
+
+    color: $color-text-grey-600;
   }
 
   & &__items {
@@ -15,6 +17,7 @@
 
   & &__item {
     padding: 5px;
+
     color: $color-text-grey-900;
   }
 }

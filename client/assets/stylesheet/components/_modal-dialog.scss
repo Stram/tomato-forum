@@ -5,16 +5,18 @@
   bottom: 0;
   left: 0;
 
-  background-color: $base-grey-opaque;
   display: flex;
+
+  background-color: $base-grey-opaque;
+
   align-items: center;
   justify-content: center;
 }
 
 .modal-dialog {
-  box-shadow: 0px 2px 2px 0px $color-shadow;
-  background-color: $color-bg-white;
   border-radius: 2px;
+  background-color: $color-bg-white;
+  box-shadow: 0 2px 2px 0 $color-shadow;
 
   & &__header {
     padding: 24px 24px 20px;
@@ -25,7 +27,8 @@
   }
 
   & &__actions {
-    text-align: right;
     padding: 8px;
+
+    text-align: right;
   }
 }
