@@ -1,9 +1,9 @@
 {
-  "name": "express-forum",
+  "name": "tomato",
   "version": "0.0.1",
   "description": "Example of a forum made using express and backbone",
   "main": "server/server.js",
-  "repository": "git@bitbucket.org:stjepan_petrusa/express-forum.git",
+  "repository": "git@github.com:Stram/tomato-forum.git",
   "scripts": {
     "start": "nodemon server/server.js --watch server --exec babel-node --presets es2015,stage-2",
     "webpackDev": "webpack --progress --colors --watch",
@@ -13,7 +13,7 @@
   "author": "Stjepan Petrusa",
   "license": "ISC",
   "apidoc": {
-    "title": "Express api doc",
+    "title": "Tomato api doc",
     "version": "0.1.0"
   },
   "dependencies": {
