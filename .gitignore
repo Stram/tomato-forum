@@ -3,4 +3,5 @@ node_modules
 
 uploads
 server/config
+public/app.js
 dist

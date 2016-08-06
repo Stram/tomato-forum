@@ -2,7 +2,6 @@ import Marionette from 'backbone.marionette';
 
 import InputTextView from 'components/form-property/input-text/component';
 import SwitchView from 'components/form-property/switch/component';
-import TrixView from 'components/form-property/trix/component';
 import ColorSelectView from 'components/form-property/color-select/component';
 
 
@@ -21,8 +20,6 @@ export default Marionette.CollectionView.extend({
       return InputTextView;
     case 'switch':
       return SwitchView;
-    case 'trix':
-      return TrixView;
     case 'color-select':
       return ColorSelectView;
     default:

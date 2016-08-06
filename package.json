@@ -7,7 +7,7 @@
   "scripts": {
     "start": "nodemon server/server.js --watch server --exec babel-node --presets es2015,stage-2",
     "webpackDev": "webpack --progress --colors --watch",
-    "build": "webpack",
+    "build": "webpack --optimize-minimize --optimize-dedupe",
     "docs": "apidoc -i server/"
   },
   "author": "Stjepan Petrusa",
@@ -33,8 +33,7 @@
     "passport-facebook": "^2.1.1",
     "passport-google-oauth": "^1.0.0",
     "passport-local": "^1.0.0",
-    "rand-token": "^0.2.1",
-    "trix": "^0.9.8"
+    "rand-token": "^0.2.1"
   },
   "devDependencies": {
     "babel-cli": "^6.10.1",

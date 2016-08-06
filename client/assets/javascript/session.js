@@ -32,7 +32,6 @@ export default {
         }
       }).done((response) => {
         self.setCurrentUser(response.user);
-        self.updateTheme();
         resolve(response.user);
       }).fail((jqXHR) => {
         if (jqXHR.status >= 400) {

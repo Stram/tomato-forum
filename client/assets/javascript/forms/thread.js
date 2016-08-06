@@ -13,7 +13,7 @@ export default class CategoryForm extends BaseForm {
 
       content: {
         name: 'content',
-        type: 'trix'
+        type: 'text'
       }
     };
   }
