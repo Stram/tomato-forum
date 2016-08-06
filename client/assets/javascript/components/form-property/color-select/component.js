@@ -1,12 +1,12 @@
-import Backbone from 'backbone';
+import Marionette from 'backbone.marionette';
 import _ from 'underscore';
 import $ from 'jquery';
 
-import template from './template.html';
+import template from './template.hbs';
 
 import colorsEnum from 'enum/colors';
 
-export default Backbone.View.extend({
+export default Marionette.View.extend({
   tagName: 'div',
 
   className: 'color-select',
@@ -19,30 +19,21 @@ export default Backbone.View.extend({
     this.colors = _.pairs(colorsEnum).map((colorArray) => {
       return {
         id: colorArray[0],
-        hexValue: colorArray[1].hexColor
+        hexValue: colorArray[1].hexColor,
+        isSelected: colorArray[0] === this.value
       };
     });
   },
 
   template,
 
-  render() {
-    this.$el.html(
-      _.template(
-        this.template({
-          label: this.name,
-          value: this.value,
-          inputId: this.inputId,
-          colors: this.colors
-        })
-      )
-    );
-
-    return this;
-  },
-
-  close() {
-    this.remove();
+  templateContext() {
+    return {
+      label: this.name,
+      value: this.value,
+      inputId: this.inputId,
+      colors: this.colors
+    };
   },
 
   getValue() {

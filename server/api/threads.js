@@ -8,7 +8,7 @@ import permissions from '../services/permissions';
 
 const router = new express.Router();
 
-// router.use(permissions.checkAuthentification);
+router.use(permissions.checkAuthentification);
 
 /**
  * @api {post} /threads/ Create thread
@@ -54,7 +54,7 @@ router.post('/', (req, res) => {
           handleError(updatedCategoryError, res);
           return;
         }
-        
+
         res.status(201);
         res.json({
           thread: newThread.toObject()
@@ -64,17 +64,42 @@ router.post('/', (req, res) => {
   });
 });
 
+/**
+ * @api {get} /threads/ Get all threads
+ * @apiName GetThreads
+ * @apiGroup Threads
+ *
+ * @apiParam {String} title Threads title.
+ * @apiParam {String} content Threads content.
+ * @apiParam {ObjectId} owner Threads owner.
+ */
 router.get('/', (req, res) => {
   Thread.find().then((threads) => {
     res.json(threads.map((thread) => thread.toObject()));
   });
 });
 
+/**
+ * @api {get} /threads/:id Get specific thread
+ * @apiName GetThread
+ * @apiGroup Threads
+ *
+ * @apiParam {String} title Threads title.
+ * @apiParam {String} content Threads content.
+ * @apiParam {ObjectId} owner Threads owner.
+ */
 router.get('/:threadId', (req, res) => {
   Thread.findById(req.params.threadId)
     .populate({path: 'owner', populate: {path: 'profilePhoto'}})
     .populate({path: 'comments', populate: {path: 'user', populate: {path: 'profilePhoto'}}})
-    .then((thread) => res.json(thread.toObject()));
+    .then((thread) => {
+      if (thread) {
+        res.json(thread.toObject());
+      } else {
+        res.status(404);
+        res.send();
+      }
+    });
 });
 
 module.exports = router;

@@ -1,11 +1,10 @@
-import Backbone from 'backbone';
+import Marionette from 'backbone.marionette';
 import _ from 'underscore';
 import $ from 'jquery';
 
-// template
-import template from './template.html';
+import template from './template.hbs';
 
-export default Backbone.View.extend({
+export default Marionette.View.extend({
   tagName: 'div',
 
   className: 'trix-container',
@@ -17,20 +16,10 @@ export default Backbone.View.extend({
 
   template,
 
-  render() {
-    this.$el.html(
-      _.template(
-        this.template({
-          inputId: this.inputId
-        })
-      )
-    );
-
-    return this;
-  },
-
-  close() {
-    this.remove();
+  templateContext() {
+    return {
+      inputId: this.inputId
+    };
   },
 
   getValue() {

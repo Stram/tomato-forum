@@ -3,9 +3,9 @@ import Category from 'models/category';
 
 import config from 'config';
 
-const Forum = Backbone.Collection.extend({
+const Categories = Backbone.Collection.extend({
   model: Category,
   url: `${config.apiEndpoint}/categories`
 });
 
-export default new Forum();
+export default new Categories();

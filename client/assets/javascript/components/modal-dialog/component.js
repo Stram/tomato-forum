@@ -1,25 +1,33 @@
-import Backbone from 'backbone';
-import _ from 'underscore';
+import Marionette from 'backbone.marionette';
 import $ from 'jquery';
 
-import template from './template.html';
+import template from './template.hbs';
 
-export default Backbone.View.extend({
+export default Marionette.View.extend({
   tagName: 'div',
 
   className: 'modal-dialog-container',
 
-  events: {
-    click: 'onDismissClick',
-    'click .js-modal-dialog-confirm-action': 'onConfirmClick',
-    'click .js-modal-dialog-cancel-action': 'onCancelClick'
+  template,
+
+  ui: {
+    confirm: '.js-modal-dialog-confirm-action',
+    cancel: '.js-modal-dialog-cancel-action'
   },
 
-  template,
+  events: {
+    click: 'onDismissClick',
+    'click @ui.confirm': 'onConfirmClick',
+    'click @ui.cancel': 'onCancelClick'
+  },
+
+  regions: {
+    content: '.js-modal-content'
+  },
 
   initialize(args) {
     this.title = args.title;
-    this.content = args.content;
+    this.contentView = args.contentView;
 
     this.confirmLabel = args.confirmLabel;
     this.confirmAction = args.confirmAction;
@@ -28,43 +36,44 @@ export default Backbone.View.extend({
     this.cancelAction = args.cancelAction;
 
     this.headerColor = args.headerColor;
+
+    if (!this.contentView) {
+      throw new Error('contentView must be defined!');
+    }
+  },
+
+  templateContext() {
+    return {
+      title: this.title,
+      confirmLabel: this.confirmLabel,
+      cancelLabel: this.cancelLabel,
+      headerColor: this.headerColor
+    };
+  },
+
+  onBeforeAttach() {
+    this.showChildView('content', this.contentView);
   },
 
   onConfirmClick() {
-    this.confirmAction();
+    if (this.confirmAction) {
+      this.confirmAction();
+    } else {
+      this.trigger('confirm');
+    }
   },
 
   onCancelClick() {
-    this.cancelAction();
+    if (this.cancelAction) {
+      this.cancelAction();
+    } else {
+      this.trigger('cancel');
+    }
   },
 
   onDismissClick(event) {
     if ($(event.target).hasClass('modal-dialog-container')) {
       this.onCancelClick();
     }
-  },
-
-  render() {
-    this.$el.html(
-      _.template(
-        this.template({
-          title: this.title,
-          content: this.content,
-          confirmLabel: this.confirmLabel,
-          cancelLabel: this.cancelLabel,
-          headerColor: this.headerColor
-        })
-      )
-    );
-
-    $('body').append(this.$el);
-    $('body').addClass('is-scrolling-disabled');
-
-    return this;
-  },
-
-  close() {
-    this.remove();
-    $('body').removeClass('is-scrolling-disabled');
   }
 });

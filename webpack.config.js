@@ -11,7 +11,6 @@ module.exports = {
 
   resolve: {
     root: [
-      path.join(__dirname, 'client/assets/javascript/vendor'),
       path.join(__dirname, 'client/assets/javascript')
     ],
     modulesDirectories: [
@@ -38,6 +37,12 @@ module.exports = {
       loader: 'underscore-template-loader',
       query: {
         engine: 'underscore'
+      }
+    }, {
+      test: /\.hbs$/,
+      loader: 'handlebars-loader/index.js',
+      query: {
+        runtime: 'handlebars/dist/handlebars.runtime.js'
       }
     }]
   },

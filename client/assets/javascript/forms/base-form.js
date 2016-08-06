@@ -1,55 +1,53 @@
+import Backbone from 'backbone';
 import _ from 'underscore';
 
-import FormView from 'components/form/component';
-import formUtils from 'utils/form';
-
-const createFormPropertyObject = formUtils.createFormPropertyObject;
+import FormView from 'collection-views/form/component';
 
 export default class BaseForm {
   constructor(attributes) {
     this.model = attributes.model;
+    this.propertyModel = Backbone.Model;
   }
 
   getForm() {
-    if (!this.form) {
+    if (!this.formView) {
       this._setupFormView();
     }
 
-    return this.form;
+    return this.formView;
   }
 
   submit() {
-    const propertyViews = this.form.propertyViews;
-    _.each(propertyViews, (view) => {
-      this.model.set(view.name, view.getValue());
-    });
+    const formView = this.formView;
+    if (formView) {
+      formView.children.each((view) => {
+        this.model.set(view.name, view.getValue());
+      });
+    } else {
+      throw new Error('Cannot get form view');
+    }
 
     this.model.save();
   }
 
-  close() {
-    if (this.form) {
-      this.form.close();
-    }
-  }
-
   _setupFormView() {
-    const propertyViews = [];
-
-    const properties = _.keys(this.properties);
-    _.each(properties, (propertyName) => {
-      const propertyOptions = this.properties[propertyName];
-      propertyOptions.value = propertyOptions.value || this.model.get(propertyName);
-      const propertyView = createFormPropertyObject(propertyName, propertyOptions);
-      propertyViews.push(propertyView);
+    const PropertyModel = Backbone.Model.extend({
+      idAttribute: 'cid'
     });
 
-    this.form = new FormView({
-      propertyViews
+    const PropertiesCollection = Backbone.Collection.extend({
+      model: PropertyModel
     });
 
-    this.form.on('submit', this.submit);
 
-    this.form.render();
+    this.propertiesCollection = new PropertiesCollection(
+      _.values(this.properties).map((property) => new PropertyModel(property))
+    );
+
+    this.formView = new FormView({
+      collection: this.propertiesCollection
+    });
+
+    this.formView.on('submit', this.submit);
   }
 }

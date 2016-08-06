@@ -1,6 +1,0 @@
-<div class="color-select__label">
-<%= label %>
-</div>
-<% _.each(colors, function(color) { %>
-  <input type="radio" name="<%= inputId %>" value="<%= color.id %>" class="color-select__item js-color-select-<%= inputId %>" style="background-color: <%= color.hexValue %>" <% if (value === color.id) { %> checked <% }; %>/>
-<% }); %>

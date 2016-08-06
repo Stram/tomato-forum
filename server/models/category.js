@@ -13,6 +13,10 @@ const categorySchema = new Schema({
     type: Date,
     default: new Date()
   },
+  allowNewThreads: {
+    type: Boolean,
+    default: true
+  },
 
   threads: [{
     type: ObjectId,

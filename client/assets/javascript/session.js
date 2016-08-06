@@ -1,16 +1,15 @@
 import $ from 'jquery';
 import config from 'config';
+import app from 'application/app';
 
-import router from 'router';
+import router from 'router/main';
 
 export default {
   _currentUser: null,
 
   setCurrentUser(user) {
     this._currentUser = user;
-    if (user) {
-      $('body').addClass(`theme-${user.background}`);
-    }
+    app.updateTheme(user);
   },
 
   getCurrentUser() {
@@ -33,6 +32,7 @@ export default {
         }
       }).done((response) => {
         self.setCurrentUser(response.user);
+        self.updateTheme();
         resolve(response.user);
       }).fail((jqXHR) => {
         if (jqXHR.status >= 400) {
@@ -55,14 +55,17 @@ export default {
     });
   },
 
-  initSession(callback) {
-    const self = this;
-    $.ajax({
-      url: `${config.apiEndpoint}/users/current`
-    }).done((response) => {
-      self.setCurrentUser(response.user);
-
-      callback.apply(self);
+  initSession() {
+    return new Promise((resolve, reject) => {
+      const self = this;
+      $.ajax({
+        url: `${config.apiEndpoint}/users/current`
+      }).done((response) => {
+        self.setCurrentUser(response.user);
+        resolve(response);
+      }).fail((error) => {
+        reject(error);
+      });
     });
   }
 };

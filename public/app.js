@@ -46,19 +46,15 @@
 
 	'use strict';
 
-	var _backbone = __webpack_require__(5);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _jquery = __webpack_require__(2);
-
-	var _jquery2 = _interopRequireDefault(_jquery);
-
 	var _session = __webpack_require__(1);
 
 	var _session2 = _interopRequireDefault(_session);
 
-	__webpack_require__(58);
+	var _app = __webpack_require__(4);
+
+	var _app2 = _interopRequireDefault(_app);
+
+	__webpack_require__(15);
 
 	__webpack_require__(50);
 
@@ -66,10 +62,8 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	(0, _jquery2.default)(function () {
-	  _session2.default.initSession(function () {
-	    _backbone2.default.history.start({ pushState: true });
-	  });
+	_session2.default.initSession().then(function () {
+	  _app2.default.start();
 	});
 
 /***/ },
@@ -90,9 +84,13 @@
 
 	var _config2 = _interopRequireDefault(_config);
 
-	var _router = __webpack_require__(58);
+	var _app = __webpack_require__(4);
 
-	var _router2 = _interopRequireDefault(_router);
+	var _app2 = _interopRequireDefault(_app);
+
+	var _main = __webpack_require__(15);
+
+	var _main2 = _interopRequireDefault(_main);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -101,9 +99,7 @@
 
 	  setCurrentUser: function setCurrentUser(user) {
 	    this._currentUser = user;
-	    if (user) {
-	      (0, _jquery2.default)('body').addClass('theme-' + user.background);
-	    }
+	    _app2.default.updateTheme(user);
 	  },
 	  getCurrentUser: function getCurrentUser() {
 	    return this._currentUser;
@@ -123,6 +119,7 @@
 	        }
 	      }).done(function (response) {
 	        self.setCurrentUser(response.user);
+	        self.updateTheme();
 	        resolve(response.user);
 	      }).fail(function (jqXHR) {
 	        if (jqXHR.status >= 400) {
@@ -140,17 +137,22 @@
 	      method: 'POST'
 	    }).done(function () {
 	      self.setCurrentUser(null);
-	      _router2.default.navigate('login', true);
+	      _main2.default.navigate('login', true);
 	    });
 	  },
-	  initSession: function initSession(callback) {
-	    var self = this;
-	    _jquery2.default.ajax({
-	      url: _config2.default.apiEndpoint + '/users/current'
-	    }).done(function (response) {
-	      self.setCurrentUser(response.user);
+	  initSession: function initSession() {
+	    var _this = this;
 
-	      callback.apply(self);
+	    return new Promise(function (resolve, reject) {
+	      var self = _this;
+	      _jquery2.default.ajax({
+	        url: _config2.default.apiEndpoint + '/users/current'
+	      }).done(function (response) {
+	        self.setCurrentUser(response.user);
+	        resolve(response);
+	      }).fail(function (error) {
+	        reject(error);
+	      });
 	    });
 	  }
 	};
@@ -10249,7 +10251,82 @@
 	};
 
 /***/ },
-/* 4 */,
+/* 4 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(5);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _backbone3 = __webpack_require__(7);
+
+	var _backbone4 = _interopRequireDefault(_backbone3);
+
+	var _component = __webpack_require__(10);
+
+	var _component2 = _interopRequireDefault(_component);
+
+	var _component3 = __webpack_require__(13);
+
+	var _component4 = _interopRequireDefault(_component3);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Application = _backbone4.default.Application.extend({
+	  region: '#body',
+
+	  channelName: 'application',
+
+	  radioRequests: {
+	    'modal:show': 'showModal'
+	  },
+
+	  radioEvents: {
+	    'modal:hide': 'hideModal'
+	  },
+
+	  initialize: function initialize() {
+	    this.applicationView = new _component2.default();
+	    this.showView(this.applicationView, { replaceElement: true });
+	  },
+	  updateTheme: function updateTheme(currentUser) {
+	    if (currentUser) {
+	      this.getView().updateTheme(currentUser.background);
+	    }
+	  },
+	  onStart: function onStart() {
+	    _backbone2.default.history.start({ pushState: true });
+	  },
+	  getBaseView: function getBaseView() {
+	    return this.getView();
+	  },
+	  showModal: function showModal(options) {
+	    var modalOptions = options || {};
+	    var modalView = new _component4.default(modalOptions);
+	    var applicationView = this.getView();
+
+	    applicationView.showChildView('modal', modalView);
+	    applicationView.$el.addClass('is-scrolling-disabled');
+
+	    return modalView;
+	  },
+	  hideModal: function hideModal() {
+	    var applicationView = this.getView();
+
+	    applicationView.$el.removeClass('is-scrolling-disabled');
+	    applicationView.getChildView('modal').destroy();
+	  }
+	});
+
+	exports.default = new Application();
+
+/***/ },
 /* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -13731,13 +13808,5084 @@
 
 
 /***/ },
-/* 7 */,
-/* 8 */,
-/* 9 */,
-/* 10 */,
-/* 11 */,
-/* 12 */,
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// MarionetteJS (Backbone.Marionette)
+	// ----------------------------------
+	// v3.0.0-pre.4
+	//
+	// Copyright (c)2016 Derick Bailey, Muted Solutions, LLC.
+	// Distributed under MIT license
+	//
+	// http://marionettejs.com
+
+
+	(function (global, factory) {
+		 true ? module.exports = factory(__webpack_require__(5), __webpack_require__(6), __webpack_require__(8), __webpack_require__(9)) :
+		typeof define === 'function' && define.amd ? define(['backbone', 'underscore', 'backbone.radio', 'backbone.babysitter'], factory) :
+		(global.Marionette = global['Mn'] = factory(global.Backbone,global._,global.Backbone.Radio,global.Backbone.ChildViewContainer));
+	}(this, function (Backbone,_,Radio,ChildViewContainer) { 'use strict';
+
+		Backbone = 'default' in Backbone ? Backbone['default'] : Backbone;
+		_ = 'default' in _ ? _['default'] : _;
+		Radio = 'default' in Radio ? Radio['default'] : Radio;
+		ChildViewContainer = 'default' in ChildViewContainer ? ChildViewContainer['default'] : ChildViewContainer;
+
+		var babelHelpers = {};
+
+		babelHelpers.toConsumableArray = function (arr) {
+		  if (Array.isArray(arr)) {
+		    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
+
+		    return arr2;
+		  } else {
+		    return Array.from(arr);
+		  }
+		};
+
+		babelHelpers;
+
+		var version = "3.0.0-pre.4";
+
+		//Internal utility for creating context style global utils
+		var proxy = function proxy(method) {
+		  return function (context) {
+		    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+		      args[_key - 1] = arguments[_key];
+		    }
+
+		    return method.apply(context, args);
+		  };
+		};
+
+		// Borrow the Backbone `extend` method so we can use it as needed
+		var extend = Backbone.Model.extend;
+
+		// Determine if `el` is a child of the document
+		var isNodeAttached = function isNodeAttached(el) {
+		  return Backbone.$.contains(document.documentElement, el);
+		};
+
+		// Merge `keys` from `options` onto `this`
+		var mergeOptions = function mergeOptions(options, keys) {
+		  if (!options) {
+		    return;
+		  }
+		  _.extend(this, _.pick(options, keys));
+		};
+
+		// Marionette.getOption
+		// --------------------
+
+		// Retrieve an object, function or other value from the
+		// object or its `options`, with `options` taking precedence.
+		var getOption = function getOption(optionName) {
+		  if (!optionName) {
+		    return;
+		  }
+		  if (this.options && this.options[optionName] !== undefined) {
+		    return this.options[optionName];
+		  } else {
+		    return this[optionName];
+		  }
+		};
+
+		// Marionette.normalizeMethods
+		// ----------------------
+
+		// Pass in a mapping of events => functions or function names
+		// and return a mapping of events => functions
+		var normalizeMethods = function normalizeMethods(hash) {
+		  var _this = this;
+
+		  return _.reduce(hash, function (normalizedHash, method, name) {
+		    if (!_.isFunction(method)) {
+		      method = _this[method];
+		    }
+		    if (method) {
+		      normalizedHash[name] = method;
+		    }
+		    return normalizedHash;
+		  }, {});
+		};
+
+		var deprecate = function deprecate(message, test) {
+		  if (_.isObject(message)) {
+		    message = message.prev + ' is going to be removed in the future. ' + 'Please use ' + message.next + ' instead.' + (message.url ? ' See: ' + message.url : '');
+		  }
+
+		  if (!Marionette.DEV_MODE) {
+		    return;
+		  }
+
+		  if ((test === undefined || !test) && !deprecate._cache[message]) {
+		    deprecate._warn('Deprecation warning: ' + message);
+		    deprecate._cache[message] = true;
+		  }
+		};
+
+		deprecate._console = typeof console !== 'undefined' ? console : {};
+		deprecate._warn = function () {
+		  var warn = deprecate._console.warn || deprecate._console.log || function () {};
+		  return warn.apply(deprecate._console, arguments);
+		};
+		deprecate._cache = {};
+
+		// split the event name on the ":"
+		var splitter = /(^|:)(\w)/gi;
+
+		// take the event section ("section1:section2:section3")
+		// and turn it in to uppercase name onSection1Section2Section3
+		function getEventName(match, prefix, eventName) {
+		  return eventName.toUpperCase();
+		}
+
+		// Trigger an event and/or a corresponding method name. Examples:
+		//
+		// `this.triggerMethod("foo")` will trigger the "foo" event and
+		// call the "onFoo" method.
+		//
+		// `this.triggerMethod("foo:bar")` will trigger the "foo:bar" event and
+		// call the "onFooBar" method.
+		function triggerMethod(event) {
+		  // get the method name from the event name
+		  var methodName = 'on' + event.replace(splitter, getEventName);
+		  var method = getOption.call(this, methodName);
+		  var result;
+
+		  // call the onMethodName if it exists
+
+		  for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+		    args[_key - 1] = arguments[_key];
+		  }
+
+		  if (_.isFunction(method)) {
+		    // pass all args, except the event name
+		    result = method.apply(this, args);
+		  }
+
+		  // trigger the event
+		  this.trigger.apply(this, [event].concat(args));
+
+		  return result;
+		}
+
+		// triggerMethodOn invokes triggerMethod on a specific context
+		//
+		// e.g. `Marionette.triggerMethodOn(view, 'show')`
+		// will trigger a "show" event or invoke onShow the view.
+		function triggerMethodOn(context) {
+		  var fnc = _.isFunction(context.triggerMethod) ? context.triggerMethod : triggerMethod;
+
+		  for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+		    args[_key2 - 1] = arguments[_key2];
+		  }
+
+		  return fnc.apply(context, args);
+		}
+
+		// Trigger method on children unless a pure Backbone.View
+		function triggerMethodChildren(view, event, shouldTrigger) {
+		  if (!view._getImmediateChildren) {
+		    return;
+		  }
+		  _.each(view._getImmediateChildren(), function (child) {
+		    if (!shouldTrigger(child)) {
+		      return;
+		    }
+		    triggerMethodOn(child, event, child);
+		  });
+		}
+
+		function shouldTriggerAttach(view) {
+		  return !view._isAttached;
+		}
+
+		function shouldAttach(view) {
+		  if (!shouldTriggerAttach(view)) {
+		    return false;
+		  }
+		  view._isAttached = true;
+		  return true;
+		}
+
+		function shouldTriggerDetach(view) {
+		  return view._isAttached;
+		}
+
+		function shouldDetach(view) {
+		  if (!shouldTriggerDetach(view)) {
+		    return false;
+		  }
+		  view._isAttached = false;
+		  return true;
+		}
+
+		// Monitor a view's state, propagating attach/detach events to children and firing dom:refresh
+		// whenever a rendered view is attached or an attached view is rendered.
+		function monitorViewEvents(view) {
+		  if (view._areViewEventsMonitored) {
+		    return;
+		  }
+
+		  view._areViewEventsMonitored = true;
+
+		  function handleBeforeAttach() {
+		    triggerMethodChildren(view, 'before:attach', shouldTriggerAttach);
+		  }
+
+		  function handleAttach() {
+		    triggerMethodChildren(view, 'attach', shouldAttach);
+		    triggerDOMRefresh();
+		  }
+
+		  function handleBeforeDetach() {
+		    triggerMethodChildren(view, 'before:detach', shouldTriggerDetach);
+		  }
+
+		  function handleDetach() {
+		    triggerMethodChildren(view, 'detach', shouldDetach);
+		  }
+
+		  function handleRender() {
+		    triggerDOMRefresh();
+		  }
+
+		  function triggerDOMRefresh() {
+		    if (view._isAttached && view._isRendered) {
+		      triggerMethodOn(view, 'dom:refresh', view);
+		    }
+		  }
+
+		  view.on({
+		    'before:attach': handleBeforeAttach,
+		    'attach': handleAttach,
+		    'before:detach': handleBeforeDetach,
+		    'detach': handleDetach,
+		    'render': handleRender
+		  });
+		}
+
+		// Internal utility for setting options consistently across Mn
+		var _setOptions = function _setOptions() {
+		  for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+		    args[_key] = arguments[_key];
+		  }
+
+		  this.options = _.extend.apply(_, [{}, _.result(this, 'options')].concat(args));
+		};
+
+		var errorProps = ['description', 'fileName', 'lineNumber', 'name', 'message', 'number'];
+
+		var MarionetteError = extend.call(Error, {
+		  urlRoot: 'http://marionettejs.com/docs/v' + version + '/',
+
+		  constructor: function MarionetteError(message, options) {
+		    if (_.isObject(message)) {
+		      options = message;
+		      message = options.message;
+		    } else if (!options) {
+		      options = {};
+		    }
+
+		    var error = Error.call(this, message);
+		    _.extend(this, _.pick(error, errorProps), _.pick(options, errorProps));
+
+		    this.captureStackTrace();
+
+		    if (options.url) {
+		      this.url = this.urlRoot + options.url;
+		    }
+		  },
+
+		  captureStackTrace: function captureStackTrace() {
+		    if (Error.captureStackTrace) {
+		      Error.captureStackTrace(this, MarionetteError);
+		    }
+		  },
+
+		  toString: function toString() {
+		    return this.name + ': ' + this.message + (this.url ? ' See: ' + this.url : '');
+		  }
+		});
+
+		MarionetteError.extend = extend;
+
+		// Bind/unbind the event to handlers specified as a string of
+		// handler names on the target object
+		function bindFromStrings(target, entity, evt, methods, actionName) {
+		  var methodNames = methods.split(/\s+/);
+
+		  _.each(methodNames, function (methodName) {
+		    var method = target[methodName];
+		    if (!method) {
+		      throw new MarionetteError('Method "' + methodName + '" was configured as an event handler, but does not exist.');
+		    }
+
+		    target[actionName](entity, evt, method);
+		  });
+		}
+
+		// generic looping function
+		function iterateEvents(target, entity, bindings, actionName) {
+		  if (!entity || !bindings) {
+		    return;
+		  }
+
+		  // type-check bindings
+		  if (!_.isObject(bindings)) {
+		    throw new MarionetteError({
+		      message: 'Bindings must be an object.',
+		      url: 'marionette.functions.html#marionettebindentityevents'
+		    });
+		  }
+
+		  // iterate the bindings and bind/unbind them
+		  _.each(bindings, function (method, evt) {
+
+		    // allow for a list of method names as a string
+		    if (_.isString(method)) {
+		      bindFromStrings(target, entity, evt, method, actionName);
+		      return;
+		    }
+
+		    target[actionName](entity, evt, method);
+		  });
+		}
+
+		function bindEntityEvents(entity, bindings) {
+		  iterateEvents(this, entity, bindings, 'listenTo');
+		  return this;
+		}
+
+		function unbindEntityEvents(entity, bindings) {
+		  iterateEvents(this, entity, bindings, 'stopListening');
+		  return this;
+		}
+
+		var CommonMixin = {
+
+		  // Imports the "normalizeMethods" to transform hashes of
+		  // events=>function references/names to a hash of events=>function references
+		  normalizeMethods: normalizeMethods,
+
+		  _setOptions: _setOptions,
+
+		  // A handy way to merge passed-in options onto the instance
+		  mergeOptions: mergeOptions,
+
+		  // Enable getting options from this or this.options by name.
+		  getOption: getOption,
+
+		  // Enable binding view's events from another entity.
+		  bindEntityEvents: bindEntityEvents,
+
+		  // Enable unbinding view's events from another entity.
+		  unbindEntityEvents: unbindEntityEvents
+		};
+
+		function iterateReplies(target, channel, bindings, actionName) {
+		  if (!channel || !bindings) {
+		    return;
+		  }
+
+		  // type-check bindings
+		  if (!_.isObject(bindings)) {
+		    throw new MarionetteError({
+		      message: 'Bindings must be an object.',
+		      url: 'marionette.functions.html#marionettebindradiorequests'
+		    });
+		  }
+
+		  var normalizedRadioRequests = normalizeMethods.call(target, bindings);
+
+		  channel[actionName](normalizedRadioRequests, target);
+		}
+
+		function bindRadioRequests(channel, bindings) {
+		  iterateReplies(this, channel, bindings, 'reply');
+		  return this;
+		}
+
+		function unbindRadioRequests(channel, bindings) {
+		  iterateReplies(this, channel, bindings, 'stopReplying');
+		  return this;
+		}
+
+		// MixinOptions
+		// - channelName
+		// - radioEvents
+		// - radioRequests
+
+		var RadioMixin = {
+
+		  _initRadio: function _initRadio() {
+		    var channelName = _.result(this, 'channelName');
+
+		    if (!channelName) {
+		      return;
+		    }
+
+		    var channel = this._channel = Radio.channel(channelName);
+
+		    var radioEvents = _.result(this, 'radioEvents');
+		    this.bindRadioEvents(channel, radioEvents);
+
+		    var radioRequests = _.result(this, 'radioRequests');
+		    this.bindRadioRequests(channel, radioRequests);
+
+		    this.on('destroy', this._destroyRadio);
+		  },
+
+		  _destroyRadio: function _destroyRadio() {
+		    this._channel.stopReplying(null, null, this);
+		  },
+
+		  getChannel: function getChannel() {
+		    return this._channel;
+		  },
+
+		  // Proxy `bindRadioEvents`
+		  bindRadioEvents: bindEntityEvents,
+
+		  // Proxy `unbindRadioEvents`
+		  unbindRadioEvents: unbindEntityEvents,
+
+		  // Proxy `bindRadioRequests`
+		  bindRadioRequests: bindRadioRequests,
+
+		  // Proxy `unbindRadioRequests`
+		  unbindRadioRequests: unbindRadioRequests
+
+		};
+
+		var ClassOptions = ['channelName', 'radioEvents', 'radioRequests'];
+
+		// A Base Class that other Classes should descend from.
+		// Object borrows many conventions and utilities from Backbone.
+		var MarionetteObject = function MarionetteObject(options) {
+		  this._setOptions(options);
+		  this.mergeOptions(options, ClassOptions);
+		  this.cid = _.uniqueId(this.cidPrefix);
+		  this._initRadio();
+		  this.initialize.apply(this, arguments);
+		};
+
+		MarionetteObject.extend = extend;
+
+		// Object Methods
+		// --------------
+
+		// Ensure it can trigger events with Backbone.Events
+		_.extend(MarionetteObject.prototype, Backbone.Events, CommonMixin, RadioMixin, {
+		  cidPrefix: 'mno',
+
+		  // for parity with Marionette.AbstractView lifecyle
+		  _isDestroyed: false,
+
+		  isDestroyed: function isDestroyed() {
+		    return this._isDestroyed;
+		  },
+
+		  //this is a noop method intended to be overridden by classes that extend from this base
+		  initialize: function initialize() {},
+
+		  destroy: function destroy() {
+		    if (this._isDestroyed) {
+		      return this;
+		    }
+
+		    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+		      args[_key] = arguments[_key];
+		    }
+
+		    this.triggerMethod.apply(this, ['before:destroy', this].concat(args));
+
+		    this._isDestroyed = true;
+		    this.triggerMethod.apply(this, ['destroy', this].concat(args));
+		    this.stopListening();
+
+		    return this;
+		  },
+
+		  triggerMethod: triggerMethod
+		});
+
+		// Manage templates stored in `<script>` blocks,
+		// caching them for faster access.
+		var TemplateCache = function TemplateCache(templateId) {
+		  this.templateId = templateId;
+		};
+
+		// TemplateCache object-level methods. Manage the template
+		// caches from these method calls instead of creating
+		// your own TemplateCache instances
+		_.extend(TemplateCache, {
+		  templateCaches: {},
+
+		  // Get the specified template by id. Either
+		  // retrieves the cached version, or loads it
+		  // from the DOM.
+		  get: function get(templateId, options) {
+		    var cachedTemplate = this.templateCaches[templateId];
+
+		    if (!cachedTemplate) {
+		      cachedTemplate = new TemplateCache(templateId);
+		      this.templateCaches[templateId] = cachedTemplate;
+		    }
+
+		    return cachedTemplate.load(options);
+		  },
+
+		  // Clear templates from the cache. If no arguments
+		  // are specified, clears all templates:
+		  // `clear()`
+		  //
+		  // If arguments are specified, clears each of the
+		  // specified templates from the cache:
+		  // `clear("#t1", "#t2", "...")`
+		  clear: function clear() {
+		    var i;
+
+		    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+		      args[_key] = arguments[_key];
+		    }
+
+		    var length = args.length;
+
+		    if (length > 0) {
+		      for (i = 0; i < length; i++) {
+		        delete this.templateCaches[args[i]];
+		      }
+		    } else {
+		      this.templateCaches = {};
+		    }
+		  }
+		});
+
+		// TemplateCache instance methods, allowing each
+		// template cache object to manage its own state
+		// and know whether or not it has been loaded
+		_.extend(TemplateCache.prototype, {
+
+		  // Internal method to load the template
+		  load: function load(options) {
+		    // Guard clause to prevent loading this template more than once
+		    if (this.compiledTemplate) {
+		      return this.compiledTemplate;
+		    }
+
+		    // Load the template and compile it
+		    var template = this.loadTemplate(this.templateId, options);
+		    this.compiledTemplate = this.compileTemplate(template, options);
+
+		    return this.compiledTemplate;
+		  },
+
+		  // Load a template from the DOM, by default. Override
+		  // this method to provide your own template retrieval
+		  // For asynchronous loading with AMD/RequireJS, consider
+		  // using a template-loader plugin as described here:
+		  // https://github.com/marionettejs/backbone.marionette/wiki/Using-marionette-with-requirejs
+		  loadTemplate: function loadTemplate(templateId, options) {
+		    var $template = Backbone.$(templateId);
+
+		    if (!$template.length) {
+		      throw new MarionetteError({
+		        name: 'NoTemplateError',
+		        message: 'Could not find template: "' + templateId + '"'
+		      });
+		    }
+		    return $template.html();
+		  },
+
+		  // Pre-compile the template before caching it. Override
+		  // this method if you do not need to pre-compile a template
+		  // (JST / RequireJS for example) or if you want to change
+		  // the template engine used (Handebars, etc).
+		  compileTemplate: function compileTemplate(rawTemplate, options) {
+		    return _.template(rawTemplate, options);
+		  }
+		});
+
+		// Render a template with data by passing in the template
+		// selector and the data to render.
+		var Renderer = {
+
+		  // Render a template with data. The `template` parameter is
+		  // passed to the `TemplateCache` object to retrieve the
+		  // template function. Override this method to provide your own
+		  // custom rendering and template handling for all of Marionette.
+		  render: function render(template, data) {
+		    if (!template) {
+		      throw new MarionetteError({
+		        name: 'TemplateNotFoundError',
+		        message: 'Cannot render the template since its false, null or undefined.'
+		      });
+		    }
+
+		    var templateFunc = _.isFunction(template) ? template : TemplateCache.get(template);
+
+		    return templateFunc(data);
+		  }
+		};
+
+		var _invoke = _.invokeMap || _.invoke;
+
+		// MixinOptions
+		// - behaviors
+
+		// Takes care of getting the behavior class
+		// given options and a key.
+		// If a user passes in options.behaviorClass
+		// default to using that.
+		// If a user passes in a Behavior Class directly, use that
+		// Otherwise delegate the lookup to the users `behaviorsLookup` implementation.
+		function getBehaviorClass(options, key) {
+		  if (options.behaviorClass) {
+		    return options.behaviorClass;
+		    //treat functions as a Behavior constructor
+		  } else if (_.isFunction(options)) {
+		      return options;
+		    }
+
+		  // behaviorsLookup can be either a flat object or a method
+		  if (_.isFunction(Marionette.Behaviors.behaviorsLookup)) {
+		    return Marionette.Behaviors.behaviorsLookup(options, key)[key];
+		  }
+
+		  return Marionette.Behaviors.behaviorsLookup[key];
+		}
+
+		// Iterate over the behaviors object, for each behavior
+		// instantiate it and get its grouped behaviors.
+		// This accepts a list of behaviors in either an object or array form
+		function parseBehaviors(view, behaviors) {
+		  return _.chain(behaviors).map(function (options, key) {
+		    var BehaviorClass = getBehaviorClass(options, key);
+		    //if we're passed a class directly instead of an object
+		    var _options = options === BehaviorClass ? {} : options;
+		    var behavior = new BehaviorClass(_options, view);
+		    var nestedBehaviors = parseBehaviors(view, _.result(behavior, 'behaviors'));
+
+		    return [behavior].concat(nestedBehaviors);
+		  }).flatten().value();
+		}
+
+		var BehaviorsMixin = {
+		  _initBehaviors: function _initBehaviors() {
+		    var behaviors = _.result(this, 'behaviors');
+
+		    // Behaviors defined on a view can be a flat object literal
+		    // or it can be a function that returns an object.
+		    this._behaviors = _.isObject(behaviors) ? parseBehaviors(this, behaviors) : {};
+		  },
+
+		  _getBehaviorTriggers: function _getBehaviorTriggers() {
+		    var triggers = _invoke(this._behaviors, 'getTriggers');
+		    return _.extend.apply(_, [{}].concat(babelHelpers.toConsumableArray(triggers)));
+		  },
+
+		  _getBehaviorEvents: function _getBehaviorEvents() {
+		    var events = _invoke(this._behaviors, 'getEvents');
+		    return _.extend.apply(_, [{}].concat(babelHelpers.toConsumableArray(events)));
+		  },
+
+		  // proxy behavior $el to the view's $el.
+		  _proxyBehaviorViewProperties: function _proxyBehaviorViewProperties() {
+		    _invoke(this._behaviors, 'proxyViewProperties');
+		  },
+
+		  // delegate modelEvents and collectionEvents
+		  _delegateBehaviorEntityEvents: function _delegateBehaviorEntityEvents() {
+		    _invoke(this._behaviors, 'delegateEntityEvents');
+		  },
+
+		  // undelegate modelEvents and collectionEvents
+		  _undelegateBehaviorEntityEvents: function _undelegateBehaviorEntityEvents() {
+		    _invoke(this._behaviors, 'undelegateEntityEvents');
+		  },
+
+		  _destroyBehaviors: function _destroyBehaviors(args) {
+		    // Call destroy on each behavior after
+		    // destroying the view.
+		    // This unbinds event listeners
+		    // that behaviors have registered for.
+		    _invoke.apply(undefined, [this._behaviors, 'destroy'].concat(babelHelpers.toConsumableArray(args)));
+		  },
+
+		  _bindBehaviorUIElements: function _bindBehaviorUIElements() {
+		    _invoke(this._behaviors, 'bindUIElements');
+		  },
+
+		  _unbindBehaviorUIElements: function _unbindBehaviorUIElements() {
+		    _invoke(this._behaviors, 'unbindUIElements');
+		  },
+
+		  _triggerEventOnBehaviors: function _triggerEventOnBehaviors() {
+		    var behaviors = this._behaviors;
+		    // Use good ol' for as this is a very hot function
+
+		    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+		      args[_key] = arguments[_key];
+		    }
+
+		    for (var i = 0, length = behaviors && behaviors.length; i < length; i++) {
+		      triggerMethod.apply(behaviors[i], args);
+		    }
+		  }
+		};
+
+		// MixinOptions
+		// - collectionEvents
+		// - modelEvents
+
+		var DelegateEntityEventsMixin = {
+		  // Handle `modelEvents`, and `collectionEvents` configuration
+		  _delegateEntityEvents: function _delegateEntityEvents(model, collection) {
+		    this._undelegateEntityEvents(model, collection);
+
+		    var modelEvents = _.result(this, 'modelEvents');
+		    bindEntityEvents.call(this, model, modelEvents);
+
+		    var collectionEvents = _.result(this, 'collectionEvents');
+		    bindEntityEvents.call(this, collection, collectionEvents);
+		  },
+
+		  _undelegateEntityEvents: function _undelegateEntityEvents(model, collection) {
+		    var modelEvents = _.result(this, 'modelEvents');
+		    unbindEntityEvents.call(this, model, modelEvents);
+
+		    var collectionEvents = _.result(this, 'collectionEvents');
+		    unbindEntityEvents.call(this, collection, collectionEvents);
+		  }
+		};
+
+		// Borrow event splitter from Backbone
+		var delegateEventSplitter = /^(\S+)\s*(.*)$/;
+
+		function uniqueName(eventName, selector) {
+		  return [eventName + _.uniqueId('.evt'), selector].join(' ');
+		}
+
+		// Set event name to be namespaced using a unique index
+		// to generate a non colliding event namespace
+		// http://api.jquery.com/event.namespace/
+		var getUniqueEventName = function getUniqueEventName(eventName) {
+		  var match = eventName.match(delegateEventSplitter);
+		  return uniqueName(match[1], match[2]);
+		};
+
+		// Internal method to create an event handler for a given `triggerDef` like
+		// 'click:foo'
+		function buildViewTrigger(view, triggerDef) {
+		  if (_.isString(triggerDef)) {
+		    triggerDef = { event: triggerDef };
+		  }
+
+		  var eventName = triggerDef.event;
+		  var shouldPreventDefault = triggerDef.preventDefault !== false;
+		  var shouldStopPropagation = triggerDef.stopPropagation !== false;
+
+		  return function (e) {
+		    if (shouldPreventDefault) {
+		      e.preventDefault();
+		    }
+
+		    if (shouldStopPropagation) {
+		      e.stopPropagation();
+		    }
+
+		    view.triggerMethod(eventName, view);
+		  };
+		}
+
+		var TriggersMixin = {
+
+		  // Configure `triggers` to forward DOM events to view
+		  // events. `triggers: {"click .foo": "do:foo"}`
+		  _getViewTriggers: function _getViewTriggers(view, triggers) {
+		    // Configure the triggers, prevent default
+		    // action and stop propagation of DOM events
+		    return _.reduce(triggers, function (events, value, key) {
+		      key = getUniqueEventName(key);
+		      events[key] = buildViewTrigger(view, value);
+		      return events;
+		    }, {});
+		  }
+
+		};
+
+		// allows for the use of the @ui. syntax within
+		// a given key for triggers and events
+		// swaps the @ui with the associated selector.
+		// Returns a new, non-mutated, parsed events hash.
+		var _normalizeUIKeys = function _normalizeUIKeys(hash, ui) {
+		  return _.reduce(hash, function (memo, val, key) {
+		    var normalizedKey = normalizeUIString(key, ui);
+		    memo[normalizedKey] = val;
+		    return memo;
+		  }, {});
+		};
+
+		// utility method for parsing @ui. syntax strings
+		// into associated selector
+		var normalizeUIString = function normalizeUIString(uiString, ui) {
+		  return uiString.replace(/@ui\.[a-zA-Z_$0-9]*/g, function (r) {
+		    return ui[r.slice(4)];
+		  });
+		};
+
+		// allows for the use of the @ui. syntax within
+		// a given value for regions
+		// swaps the @ui with the associated selector
+		var _normalizeUIValues = function _normalizeUIValues(hash, ui, properties) {
+		  _.each(hash, function (val, key) {
+		    if (_.isString(val)) {
+		      hash[key] = normalizeUIString(val, ui);
+		    } else if (_.isObject(val) && _.isArray(properties)) {
+		      _.extend(val, _normalizeUIValues(_.pick(val, properties), ui));
+		      /* Value is an object, and we got an array of embedded property names to normalize. */
+		      _.each(properties, function (property) {
+		        var propertyVal = val[property];
+		        if (_.isString(propertyVal)) {
+		          val[property] = normalizeUIString(propertyVal, ui);
+		        }
+		      });
+		    }
+		  });
+		  return hash;
+		};
+
+		var UIMixin = {
+
+		  // normalize the keys of passed hash with the views `ui` selectors.
+		  // `{"@ui.foo": "bar"}`
+		  normalizeUIKeys: function normalizeUIKeys(hash) {
+		    var uiBindings = this._getUIBindings();
+		    return _normalizeUIKeys(hash, uiBindings);
+		  },
+
+		  // normalize the values of passed hash with the views `ui` selectors.
+		  // `{foo: "@ui.bar"}`
+		  normalizeUIValues: function normalizeUIValues(hash, properties) {
+		    var uiBindings = this._getUIBindings();
+		    return _normalizeUIValues(hash, uiBindings, properties);
+		  },
+
+		  _getUIBindings: function _getUIBindings() {
+		    var uiBindings = _.result(this, '_uiBindings');
+		    var ui = _.result(this, 'ui');
+		    return uiBindings || ui;
+		  },
+
+		  // This method binds the elements specified in the "ui" hash inside the view's code with
+		  // the associated jQuery selectors.
+		  _bindUIElements: function _bindUIElements() {
+		    var _this = this;
+
+		    if (!this.ui) {
+		      return;
+		    }
+
+		    // store the ui hash in _uiBindings so they can be reset later
+		    // and so re-rendering the view will be able to find the bindings
+		    if (!this._uiBindings) {
+		      this._uiBindings = this.ui;
+		    }
+
+		    // get the bindings result, as a function or otherwise
+		    var bindings = _.result(this, '_uiBindings');
+
+		    // empty the ui so we don't have anything to start with
+		    this._ui = {};
+
+		    // bind each of the selectors
+		    _.each(bindings, function (selector, key) {
+		      _this._ui[key] = _this.$(selector);
+		    });
+
+		    this.ui = this._ui;
+		  },
+
+		  _unbindUIElements: function _unbindUIElements() {
+		    var _this2 = this;
+
+		    if (!this.ui || !this._uiBindings) {
+		      return;
+		    }
+
+		    // delete all of the existing ui bindings
+		    _.each(this.ui, function ($el, name) {
+		      delete _this2.ui[name];
+		    });
+
+		    // reset the ui element to the original bindings configuration
+		    this.ui = this._uiBindings;
+		    delete this._uiBindings;
+		    delete this._ui;
+		  },
+
+		  _getUI: function _getUI(name) {
+		    return this._ui[name];
+		  }
+		};
+
+		// MixinOptions
+		// - behaviors
+		// - childViewEventPrefix
+		// - childViewEvents
+		// - childViewTriggers
+		// - collectionEvents
+		// - modelEvents
+		// - triggers
+		// - ui
+
+		var ViewMixin = {
+		  supportsRenderLifecycle: true,
+		  supportsDestroyLifecycle: true,
+
+		  _isDestroyed: false,
+
+		  isDestroyed: function isDestroyed() {
+		    return !!this._isDestroyed;
+		  },
+
+
+		  _isRendered: false,
+
+		  isRendered: function isRendered() {
+		    return !!this._isRendered;
+		  },
+
+
+		  _isAttached: false,
+
+		  isAttached: function isAttached() {
+		    return !!this._isAttached;
+		  },
+
+
+		  // Overriding Backbone.View's `setElement` to handle
+		  // if an el was previously defined. If so, the view might be
+		  // rendered or attached on setElement.
+		  setElement: function setElement() {
+		    var hasEl = !!this.el;
+
+		    Backbone.View.prototype.setElement.apply(this, arguments);
+
+		    if (hasEl) {
+		      this._isRendered = !!this.$el.length;
+		      this._isAttached = isNodeAttached(this.el);
+		    }
+
+		    return this;
+		  },
+
+
+		  // Overriding Backbone.View's `delegateEvents` to handle
+		  // `events` and `triggers`
+		  delegateEvents: function delegateEvents(eventsArg) {
+
+		    this._proxyBehaviorViewProperties();
+		    this._buildEventProxies();
+
+		    var viewEvents = this._getEvents(eventsArg);
+
+		    if (typeof eventsArg === 'undefined') {
+		      this.events = viewEvents;
+		    }
+
+		    var combinedEvents = _.extend({}, this._getBehaviorEvents(), viewEvents, this._getBehaviorTriggers(), this.getTriggers());
+
+		    Backbone.View.prototype.delegateEvents.call(this, combinedEvents);
+
+		    return this;
+		  },
+
+
+		  _getEvents: function _getEvents(eventsArg) {
+		    var events = eventsArg || this.events;
+
+		    if (_.isFunction(events)) {
+		      return this.normalizeUIKeys(events());
+		    }
+
+		    return this.normalizeUIKeys(events);
+		  },
+
+		  // Configure `triggers` to forward DOM events to view
+		  // events. `triggers: {"click .foo": "do:foo"}`
+		  getTriggers: function getTriggers() {
+		    if (!this.triggers) {
+		      return;
+		    }
+
+		    // Allow `triggers` to be configured as a function
+		    var triggers = this.normalizeUIKeys(_.result(this, 'triggers'));
+
+		    // Configure the triggers, prevent default
+		    // action and stop propagation of DOM events
+		    return this._getViewTriggers(this, triggers);
+		  },
+
+
+		  // Handle `modelEvents`, and `collectionEvents` configuration
+		  delegateEntityEvents: function delegateEntityEvents() {
+		    this._delegateEntityEvents(this.model, this.collection);
+
+		    // bind each behaviors model and collection events
+		    this._delegateBehaviorEntityEvents();
+
+		    return this;
+		  },
+
+
+		  // Handle unbinding `modelEvents`, and `collectionEvents` configuration
+		  undelegateEntityEvents: function undelegateEntityEvents() {
+		    this._undelegateEntityEvents(this.model, this.collection);
+
+		    // unbind each behaviors model and collection events
+		    this._undelegateBehaviorEntityEvents();
+
+		    return this;
+		  },
+
+
+		  // Internal helper method to verify whether the view hasn't been destroyed
+		  _ensureViewIsIntact: function _ensureViewIsIntact() {
+		    if (this._isDestroyed) {
+		      throw new MarionetteError({
+		        name: 'ViewDestroyedError',
+		        message: 'View (cid: "' + this.cid + '") has already been destroyed and cannot be used.'
+		      });
+		    }
+		  },
+
+
+		  // Handle destroying the view and its children.
+		  destroy: function destroy() {
+		    if (this._isDestroyed) {
+		      return this;
+		    }
+		    var shouldTriggerDetach = !!this._isAttached;
+
+		    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+		      args[_key] = arguments[_key];
+		    }
+
+		    this.triggerMethod.apply(this, ['before:destroy', this].concat(args));
+		    if (shouldTriggerDetach) {
+		      this.triggerMethod('before:detach', this);
+		    }
+
+		    // unbind UI elements
+		    this.unbindUIElements();
+
+		    // remove the view from the DOM
+		    // https://github.com/jashkenas/backbone/blob/1.2.3/backbone.js#L1235
+		    this._removeElement();
+
+		    if (shouldTriggerDetach) {
+		      this._isAttached = false;
+		      this.triggerMethod('detach', this);
+		    }
+
+		    // remove children after the remove to prevent extra paints
+		    this._removeChildren();
+
+		    this._destroyBehaviors(args);
+
+		    this._isDestroyed = true;
+		    this._isRendered = false;
+		    this.triggerMethod.apply(this, ['destroy', this].concat(args));
+
+		    this.stopListening();
+
+		    return this;
+		  },
+		  bindUIElements: function bindUIElements() {
+		    this._bindUIElements();
+		    this._bindBehaviorUIElements();
+
+		    return this;
+		  },
+
+
+		  // This method unbinds the elements specified in the "ui" hash
+		  unbindUIElements: function unbindUIElements() {
+		    this._unbindUIElements();
+		    this._unbindBehaviorUIElements();
+
+		    return this;
+		  },
+		  getUI: function getUI(name) {
+		    this._ensureViewIsIntact();
+		    return this._getUI(name);
+		  },
+
+
+		  // used as the prefix for child view events
+		  // that are forwarded through the layoutview
+		  childViewEventPrefix: 'childview',
+
+		  // import the `triggerMethod` to trigger events with corresponding
+		  // methods if the method exists
+		  triggerMethod: function triggerMethod$$() {
+		    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+		      args[_key2] = arguments[_key2];
+		    }
+
+		    var ret = triggerMethod.apply(this, args);
+
+		    this._triggerEventOnBehaviors.apply(this, args);
+		    this._triggerEventOnParentLayout.apply(this, args);
+
+		    return ret;
+		  },
+
+
+		  // Cache `childViewEvents` and `childViewTriggers`
+		  _buildEventProxies: function _buildEventProxies() {
+		    this._childViewEvents = _.result(this, 'childViewEvents');
+		    this._childViewTriggers = _.result(this, 'childViewTriggers');
+		  },
+
+		  _triggerEventOnParentLayout: function _triggerEventOnParentLayout(eventName) {
+		    var layoutView = this._parentView();
+		    if (!layoutView) {
+		      return;
+		    }
+
+		    // invoke triggerMethod on parent view
+		    var eventPrefix = _.result(layoutView, 'childViewEventPrefix');
+		    var prefixedEventName = eventPrefix + ':' + eventName;
+
+		    for (var _len3 = arguments.length, args = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+		      args[_key3 - 1] = arguments[_key3];
+		    }
+
+		    layoutView.triggerMethod.apply(layoutView, [prefixedEventName].concat(args));
+
+		    // use the parent view's childViewEvents handler
+		    var childViewEvents = layoutView.normalizeMethods(layoutView._childViewEvents);
+
+		    if (!!childViewEvents && _.isFunction(childViewEvents[eventName])) {
+		      childViewEvents[eventName].apply(layoutView, args);
+		    }
+
+		    // use the parent view's proxyEvent handlers
+		    var childViewTriggers = layoutView._childViewTriggers;
+
+		    // Call the event with the proxy name on the parent layout
+		    if (childViewTriggers && _.isString(childViewTriggers[eventName])) {
+		      layoutView.triggerMethod.apply(layoutView, [childViewTriggers[eventName]].concat(args));
+		    }
+		  },
+
+
+		  // Walk the _parent tree until we find a view (if one exists).
+		  // Returns the parent view hierarchically closest to this view.
+		  _parentView: function _parentView() {
+		    var parent = this._parent;
+
+		    while (parent) {
+		      if (parent instanceof View) {
+		        return parent;
+		      }
+		      parent = parent._parent;
+		    }
+		  }
+		};
+
+		_.extend(ViewMixin, BehaviorsMixin, CommonMixin, DelegateEntityEventsMixin, TriggersMixin, UIMixin);
+
+		function destroyBackboneView(view) {
+		  if (!view.supportsDestroyLifecycle) {
+		    triggerMethodOn(view, 'before:destroy', view);
+		  }
+
+		  var shouldTriggerDetach = !!view._isAttached;
+
+		  if (shouldTriggerDetach) {
+		    triggerMethodOn(view, 'before:detach', view);
+		  }
+
+		  view.remove();
+
+		  if (shouldTriggerDetach) {
+		    view._isAttached = false;
+		    triggerMethodOn(view, 'detach', view);
+		  }
+
+		  view._isDestroyed = true;
+
+		  if (!view.supportsDestroyLifecycle) {
+		    triggerMethodOn(view, 'destroy', view);
+		  }
+		}
+
+		var ClassOptions$2 = ['allowMissingEl', 'parentEl', 'replaceElement'];
+
+		var Region = MarionetteObject.extend({
+		  cidPrefix: 'mnr',
+		  replaceElement: false,
+		  _isReplaced: false,
+
+		  constructor: function constructor(options) {
+		    this._setOptions(options);
+
+		    this.mergeOptions(options, ClassOptions$2);
+
+		    // getOption necessary because options.el may be passed as undefined
+		    this._initEl = this.el = this.getOption('el');
+
+		    // Handle when this.el is passed in as a $ wrapped element.
+		    this.el = this.el instanceof Backbone.$ ? this.el[0] : this.el;
+
+		    if (!this.el) {
+		      throw new MarionetteError({
+		        name: 'NoElError',
+		        message: 'An "el" must be specified for a region.'
+		      });
+		    }
+
+		    this.$el = this.getEl(this.el);
+		    MarionetteObject.call(this, options);
+		  },
+
+
+		  // Displays a backbone view instance inside of the region. Handles calling the `render`
+		  // method for you. Reads content directly from the `el` attribute. The `preventDestroy`
+		  // option can be used to prevent a view from the old view being destroyed on show.
+		  show: function show(view, options) {
+		    if (!this._ensureElement(options)) {
+		      return;
+		    }
+		    this._ensureView(view);
+		    if (view === this.currentView) {
+		      return this;
+		    }
+
+		    this.triggerMethod('before:show', this, view, options);
+
+		    monitorViewEvents(view);
+
+		    this.empty(options);
+
+		    // We need to listen for if a view is destroyed in a way other than through the region.
+		    // If this happens we need to remove the reference to the currentView since once a view
+		    // has been destroyed we can not reuse it.
+		    view.on('destroy', this.empty, this);
+
+		    // Make this region the view's parent.
+		    // It's important that this parent binding happens before rendering so that any events
+		    // the child may trigger during render can also be triggered on the child's ancestor views.
+		    view._parent = this;
+
+		    this._renderView(view);
+
+		    this._attachView(view, options);
+
+		    this.triggerMethod('show', this, view, options);
+		    return this;
+		  },
+		  _renderView: function _renderView(view) {
+		    if (view._isRendered) {
+		      return;
+		    }
+
+		    if (!view.supportsRenderLifecycle) {
+		      triggerMethodOn(view, 'before:render', view);
+		    }
+
+		    view.render();
+
+		    if (!view.supportsRenderLifecycle) {
+		      view._isRendered = true;
+		      triggerMethodOn(view, 'render', view);
+		    }
+		  },
+		  _attachView: function _attachView(view) {
+		    var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+		    var shouldTriggerAttach = !view._isAttached && isNodeAttached(this.el);
+		    var shouldReplaceEl = typeof options.replaceElement === 'undefined' ? !!_.result(this, 'replaceElement') : !!options.replaceElement;
+
+		    if (shouldTriggerAttach) {
+		      triggerMethodOn(view, 'before:attach', view);
+		    }
+
+		    this.attachHtml(view, shouldReplaceEl);
+
+		    if (shouldTriggerAttach) {
+		      view._isAttached = true;
+		      triggerMethodOn(view, 'attach', view);
+		    }
+
+		    this.currentView = view;
+		  },
+		  _ensureElement: function _ensureElement() {
+		    var options = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+		    if (!_.isObject(this.el)) {
+		      this.$el = this.getEl(this.el);
+		      this.el = this.$el[0];
+		    }
+
+		    if (!this.$el || this.$el.length === 0) {
+		      var allowMissingEl = typeof options.allowMissingEl === 'undefined' ? !!_.result(this, 'allowMissingEl') : !!options.allowMissingEl;
+
+		      if (allowMissingEl) {
+		        return false;
+		      } else {
+		        throw new MarionetteError('An "el" must exist in DOM for this region ' + this.cid);
+		      }
+		    }
+		    return true;
+		  },
+		  _ensureView: function _ensureView(view) {
+		    if (!view) {
+		      throw new MarionetteError({
+		        name: 'ViewNotValid',
+		        message: 'The view passed is undefined and therefore invalid. You must pass a view instance to show.'
+		      });
+		    }
+
+		    if (view._isDestroyed) {
+		      throw new MarionetteError({
+		        name: 'ViewDestroyedError',
+		        message: 'View (cid: "' + view.cid + '") has already been destroyed and cannot be used.'
+		      });
+		    }
+		  },
+
+
+		  // Override this method to change how the region finds the DOM element that it manages. Return
+		  // a jQuery selector object scoped to a provided parent el or the document if none exists.
+		  getEl: function getEl(el) {
+		    return Backbone.$(el, _.result(this, 'parentEl'));
+		  },
+		  _replaceEl: function _replaceEl(view) {
+		    // always restore the el to ensure the regions el is present before replacing
+		    this._restoreEl();
+
+		    var parent = this.el.parentNode;
+
+		    parent.replaceChild(view.el, this.el);
+		    this._isReplaced = true;
+		  },
+
+
+		  // Restore the region's element in the DOM.
+		  _restoreEl: function _restoreEl() {
+		    if (!this.currentView) {
+		      return;
+		    }
+
+		    var view = this.currentView;
+		    var parent = view.el.parentNode;
+
+		    if (!parent) {
+		      return;
+		    }
+
+		    parent.replaceChild(this.el, view.el);
+		    this._isReplaced = false;
+		  },
+		  isReplaced: function isReplaced() {
+		    return !!this._isReplaced;
+		  },
+
+
+		  // Override this method to change how the new view is appended to the `$el` that the
+		  // region is managing
+		  attachHtml: function attachHtml(view, shouldReplace) {
+		    if (shouldReplace) {
+		      // replace the region's node with the view's node
+		      this._replaceEl(view);
+		    } else {
+		      this.el.appendChild(view.el);
+		    }
+		  },
+
+
+		  // Destroy the current view, if there is one. If there is no current view, it does
+		  // nothing and returns immediately.
+		  empty: function empty() {
+		    var options = arguments.length <= 0 || arguments[0] === undefined ? { allowMissingEl: true } : arguments[0];
+
+		    var view = this.currentView;
+
+		    // If there is no view in the region we should only detach current html
+		    if (!view) {
+		      if (this._ensureElement(options)) {
+		        this.detachHtml();
+		      }
+		      return this;
+		    }
+
+		    view.off('destroy', this.empty, this);
+		    this.triggerMethod('before:empty', this, view);
+
+		    if (this._isReplaced) {
+		      this._restoreEl();
+		    }
+
+		    delete this.currentView;
+
+		    if (!view._isDestroyed) {
+		      this._removeView(view, options);
+		    }
+
+		    delete view._parent;
+
+		    this.triggerMethod('empty', this, view);
+		    return this;
+		  },
+		  _removeView: function _removeView(view) {
+		    var _ref = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+		    var preventDestroy = _ref.preventDestroy;
+
+		    var shouldPreventDestroy = !!preventDestroy;
+
+		    if (shouldPreventDestroy) {
+		      this._detachView(view);
+		      return;
+		    }
+
+		    if (view.destroy) {
+		      view.destroy();
+		    } else {
+		      destroyBackboneView(view);
+		    }
+		  },
+		  _detachView: function _detachView(view) {
+		    var shouldTriggerDetach = !!view._isAttached;
+
+		    if (shouldTriggerDetach) {
+		      triggerMethodOn(view, 'before:detach', view);
+		    }
+
+		    this.detachHtml();
+
+		    if (shouldTriggerDetach) {
+		      view._isAttached = false;
+		      triggerMethodOn(view, 'detach', view);
+		    }
+		  },
+
+
+		  // Override this method to change how the region detaches current content
+		  detachHtml: function detachHtml() {
+		    this.$el.contents().detach();
+		  },
+
+
+		  // Checks whether a view is currently present within the region. Returns `true` if there is
+		  // and `false` if no view is present.
+		  hasView: function hasView() {
+		    return !!this.currentView;
+		  },
+
+
+		  // Reset the region by destroying any existing view and clearing out the cached `$el`.
+		  // The next time a view is shown via this region, the region will re-query the DOM for
+		  // the region's `el`.
+		  reset: function reset(options) {
+		    this.empty(options);
+
+		    if (this.$el) {
+		      this.el = this._initEl;
+		    }
+
+		    delete this.$el;
+		    return this;
+		  },
+
+
+		  destroy: function destroy(options) {
+		    this.reset(options);
+		    return MarionetteObject.prototype.destroy.apply(this, arguments);
+		  }
+		});
+
+		// MixinOptions
+		// - regions
+		// - regionClass
+
+		var RegionsMixin = {
+		  regionClass: Region,
+
+		  // Internal method to initialize the regions that have been defined in a
+		  // `regions` attribute on this View.
+		  _initRegions: function _initRegions() {
+
+		    // init regions hash
+		    this.regions = this.regions || {};
+		    this._regions = {};
+
+		    this.addRegions(_.result(this, 'regions'));
+		  },
+
+		  // Internal method to re-initialize all of the regions by updating
+		  // the `el` that they point to
+		  _reInitRegions: function _reInitRegions() {
+		    _invoke(this._regions, 'reset');
+		  },
+
+		  // Add a single region, by name, to the View
+		  addRegion: function addRegion(name, definition) {
+		    var regions = {};
+		    regions[name] = definition;
+		    return this.addRegions(regions)[name];
+		  },
+
+		  // Add multiple regions as a {name: definition, name2: def2} object literal
+		  addRegions: function addRegions(regions) {
+		    // If there's nothing to add, stop here.
+		    if (_.isEmpty(regions)) {
+		      return;
+		    }
+
+		    // Normalize region selectors hash to allow
+		    // a user to use the @ui. syntax.
+		    regions = this.normalizeUIValues(regions, ['selector', 'el']);
+
+		    // Add the regions definitions to the regions property
+		    this.regions = _.extend({}, this.regions, regions);
+
+		    return this._addRegions(regions);
+		  },
+
+		  // internal method to build and add regions
+		  _addRegions: function _addRegions(regionDefinitions) {
+		    var _this = this;
+
+		    return _.reduce(regionDefinitions, function (regions, definition, name) {
+		      regions[name] = _this._buildRegion(definition);
+		      _this._addRegion(regions[name], name);
+		      return regions;
+		    }, {});
+		  },
+
+		  // return the region instance from the definition
+		  _buildRegion: function _buildRegion(definition) {
+		    if (definition instanceof Region) {
+		      return definition;
+		    }
+
+		    return this._buildRegionFromDefinition(definition);
+		  },
+
+		  _buildRegionFromDefinition: function _buildRegionFromDefinition(definition) {
+		    if (_.isString(definition)) {
+		      return this._buildRegionFromObject({ el: definition });
+		    }
+
+		    if (_.isFunction(definition)) {
+		      return this._buildRegionFromRegionClass(definition);
+		    }
+
+		    if (_.isObject(definition)) {
+		      return this._buildRegionFromObject(definition);
+		    }
+
+		    throw new MarionetteError({
+		      message: 'Improper region configuration type.',
+		      url: 'marionette.region.html#region-configuration-types'
+		    });
+		  },
+
+		  _buildRegionFromObject: function _buildRegionFromObject(definition) {
+		    var RegionClass = definition.regionClass || this.regionClass;
+
+		    var options = _.omit(definition, 'regionClass');
+
+		    _.defaults(options, {
+		      el: definition.selector,
+		      parentEl: _.partial(_.result, this, 'el')
+		    });
+
+		    return new RegionClass(options);
+		  },
+
+		  // Build the region directly from a given `RegionClass`
+		  _buildRegionFromRegionClass: function _buildRegionFromRegionClass(RegionClass) {
+		    return new RegionClass({
+		      parentEl: _.partial(_.result, this, 'el')
+		    });
+		  },
+
+		  _addRegion: function _addRegion(region, name) {
+		    this.triggerMethod('before:add:region', this, name, region);
+
+		    region._parent = this;
+
+		    this._regions[name] = region;
+
+		    this.triggerMethod('add:region', this, name, region);
+		  },
+
+		  // Remove a single region from the View, by name
+		  removeRegion: function removeRegion(name) {
+		    var region = this._regions[name];
+
+		    this._removeRegion(region, name);
+
+		    return region;
+		  },
+
+		  // Remove all regions from the View
+		  removeRegions: function removeRegions() {
+		    var regions = this.getRegions();
+
+		    _.each(this._regions, _.bind(this._removeRegion, this));
+
+		    return regions;
+		  },
+
+		  _removeRegion: function _removeRegion(region, name) {
+		    this.triggerMethod('before:remove:region', this, name, region);
+
+		    region.empty();
+		    region.stopListening();
+
+		    delete this.regions[name];
+		    delete this._regions[name];
+
+		    this.triggerMethod('remove:region', this, name, region);
+		  },
+
+		  // Empty all regions in the region manager, but
+		  // leave them attached
+		  emptyRegions: function emptyRegions() {
+		    var regions = this.getRegions();
+		    _invoke(regions, 'empty');
+		    return regions;
+		  },
+
+		  // Checks to see if view contains region
+		  // Accepts the region name
+		  // hasRegion('main')
+		  hasRegion: function hasRegion(name) {
+		    return !!this.getRegion(name);
+		  },
+
+		  // Provides access to regions
+		  // Accepts the region name
+		  // getRegion('main')
+		  getRegion: function getRegion(name) {
+		    return this._regions[name];
+		  },
+
+		  // Get all regions
+		  getRegions: function getRegions() {
+		    return _.clone(this._regions);
+		  },
+
+		  showChildView: function showChildView(name, view) {
+		    var region = this.getRegion(name);
+
+		    for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) {
+		      args[_key - 2] = arguments[_key];
+		    }
+
+		    return region.show.apply(region, [view].concat(args));
+		  },
+
+		  getChildView: function getChildView(name) {
+		    return this.getRegion(name).currentView;
+		  }
+
+		};
+
+		var ClassOptions$1 = ['behaviors', 'childViewEventPrefix', 'childViewEvents', 'childViewTriggers', 'collectionEvents', 'events', 'modelEvents', 'regionClass', 'regions', 'template', 'templateContext', 'triggers', 'ui'];
+
+		// The standard view. Includes view events, automatic rendering
+		// of Underscore templates, nested views, and more.
+		var View = Backbone.View.extend({
+		  constructor: function constructor(options) {
+		    this.render = _.bind(this.render, this);
+
+		    this._setOptions(options);
+
+		    this.mergeOptions(options, ClassOptions$1);
+
+		    monitorViewEvents(this);
+
+		    this._initBehaviors();
+		    this._initRegions();
+
+		    var args = Array.prototype.slice.call(arguments);
+		    args[0] = this.options;
+		    Backbone.View.prototype.constructor.apply(this, args);
+
+		    this.delegateEntityEvents();
+		  },
+
+
+		  // Serialize the view's model *or* collection, if
+		  // it exists, for the template
+		  serializeData: function serializeData() {
+		    if (!this.model && !this.collection) {
+		      return {};
+		    }
+
+		    // If we have a model, we serialize that
+		    if (this.model) {
+		      return this.serializeModel();
+		    }
+
+		    // Otherwise, we serialize the collection,
+		    // making it available under the `items` property
+		    return {
+		      items: this.serializeCollection()
+		    };
+		  },
+
+
+		  // Prepares the special `model` property of a view
+		  // for being displayed in the template. By default
+		  // we simply clone the attributes. Override this if
+		  // you need a custom transformation for your view's model
+		  serializeModel: function serializeModel() {
+		    if (!this.model) {
+		      return {};
+		    }
+		    return _.clone(this.model.attributes);
+		  },
+
+
+		  // Serialize a collection by cloning each of
+		  // its model's attributes
+		  serializeCollection: function serializeCollection() {
+		    if (!this.collection) {
+		      return {};
+		    }
+		    return this.collection.map(function (model) {
+		      return _.clone(model.attributes);
+		    });
+		  },
+
+
+		  // Render the view, defaulting to underscore.js templates.
+		  // You can override this in your view definition to provide
+		  // a very specific rendering for your view. In general, though,
+		  // you should override the `Marionette.Renderer` object to
+		  // change how Marionette renders views.
+		  // Subsequent renders after the first will re-render all nested
+		  // views.
+		  render: function render() {
+		    this._ensureViewIsIntact();
+
+		    this.triggerMethod('before:render', this);
+
+		    // If this is not the first render call, then we need to
+		    // re-initialize the `el` for each region
+		    if (this._isRendered) {
+		      this._reInitRegions();
+		    }
+
+		    this._renderTemplate();
+		    this.bindUIElements();
+
+		    this._isRendered = true;
+		    this.triggerMethod('render', this);
+
+		    return this;
+		  },
+
+
+		  // Internal method to render the template with the serialized data
+		  // and template context via the `Marionette.Renderer` object.
+		  _renderTemplate: function _renderTemplate() {
+		    var template = this.getTemplate();
+
+		    // Allow template-less views
+		    if (template === false) {
+		      return;
+		    }
+
+		    // Add in entity data and template context
+		    var data = this.mixinTemplateContext(this.serializeData());
+
+		    // Render and add to el
+		    var html = Renderer.render(template, data, this);
+		    this.attachElContent(html);
+		  },
+
+
+		  // Get the template for this view
+		  // instance. You can set a `template` attribute in the view
+		  // definition or pass a `template: "whatever"` parameter in
+		  // to the constructor options.
+		  getTemplate: function getTemplate() {
+		    return this.template;
+		  },
+
+
+		  // Mix in template context methods. Looks for a
+		  // `templateContext` attribute, which can either be an
+		  // object literal, or a function that returns an object
+		  // literal. All methods and attributes from this object
+		  // are copies to the object passed in.
+		  mixinTemplateContext: function mixinTemplateContext() {
+		    var target = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+		    var templateContext = _.result(this, 'templateContext');
+		    return _.extend(target, templateContext);
+		  },
+
+		  // Attaches the content of a given view.
+		  // This method can be overridden to optimize rendering,
+		  // or to render in a non standard way.
+		  //
+		  // For example, using `innerHTML` instead of `$el.html`
+		  //
+		  // ```js
+		  // attachElContent(html) {
+		  //   this.el.innerHTML = html;
+		  //   return this;
+		  // }
+		  // ```
+		  attachElContent: function attachElContent(html) {
+		    this.$el.html(html);
+
+		    return this;
+		  },
+
+
+		  // called by ViewMixin destroy
+		  _removeChildren: function _removeChildren() {
+		    this.removeRegions();
+		  },
+
+
+		  _getImmediateChildren: function _getImmediateChildren() {
+		    return _.chain(this.getRegions()).map('currentView').compact().value();
+		  }
+		});
+
+		_.extend(View.prototype, ViewMixin, RegionsMixin);
+
+		var ClassOptions$3 = ['behaviors', 'childView', 'childViewEventPrefix', 'childViewEvents', 'childViewOptions', 'childViewTriggers', 'collectionEvents', 'events', 'filter', 'emptyView', 'emptyViewOptions', 'modelEvents', 'reorderOnSort', 'sort', 'triggers', 'ui', 'viewComparator'];
+
+		// A view that iterates over a Backbone.Collection
+		// and renders an individual child view for each model.
+		var CollectionView = Backbone.View.extend({
+
+		  // flag for maintaining the sorted order of the collection
+		  sort: true,
+
+		  // constructor
+		  // option to pass `{sort: false}` to prevent the `CollectionView` from
+		  // maintaining the sorted order of the collection.
+		  // This will fallback onto appending childView's to the end.
+		  //
+		  // option to pass `{comparator: compFunction()}` to allow the `CollectionView`
+		  // to use a custom sort order for the collection.
+		  constructor: function constructor(options) {
+		    this.render = _.bind(this.render, this);
+
+		    this._setOptions(options);
+
+		    this.mergeOptions(options, ClassOptions$3);
+
+		    monitorViewEvents(this);
+
+		    this._initBehaviors();
+		    this.once('render', this._initialEvents);
+		    this._initChildViewStorage();
+		    this._bufferedChildren = [];
+
+		    var args = Array.prototype.slice.call(arguments);
+		    args[0] = this.options;
+		    Backbone.View.prototype.constructor.apply(this, args);
+
+		    this.delegateEntityEvents();
+		  },
+
+
+		  // Instead of inserting elements one by one into the page, it's much more performant to insert
+		  // elements into a document fragment and then insert that document fragment into the page
+		  _startBuffering: function _startBuffering() {
+		    this._isBuffering = true;
+		  },
+		  _endBuffering: function _endBuffering() {
+		    var shouldTriggerAttach = !!this._isAttached;
+		    var triggerOnChildren = shouldTriggerAttach ? this._getImmediateChildren() : [];
+
+		    this._isBuffering = false;
+
+		    _.each(triggerOnChildren, function (child) {
+		      triggerMethodOn(child, 'before:attach', child);
+		    });
+
+		    this.attachBuffer(this, this._createBuffer());
+
+		    _.each(triggerOnChildren, function (child) {
+		      child._isAttached = true;
+		      triggerMethodOn(child, 'attach', child);
+		    });
+
+		    this._bufferedChildren = [];
+		  },
+		  _getImmediateChildren: function _getImmediateChildren() {
+		    return _.values(this.children._views);
+		  },
+
+
+		  // Configured the initial events that the collection view binds to.
+		  _initialEvents: function _initialEvents() {
+		    if (this.collection) {
+		      this.listenTo(this.collection, 'add', this._onCollectionAdd);
+		      this.listenTo(this.collection, 'remove', this._onCollectionRemove);
+		      this.listenTo(this.collection, 'reset', this.render);
+
+		      if (this.sort) {
+		        this.listenTo(this.collection, 'sort', this._sortViews);
+		      }
+		    }
+		  },
+
+
+		  // Handle a child added to the collection
+		  _onCollectionAdd: function _onCollectionAdd(child, collection, opts) {
+		    // `index` is present when adding with `at` since BB 1.2; indexOf fallback for < 1.2
+		    var index = opts.at !== undefined && (opts.index || collection.indexOf(child));
+
+		    // When filtered or when there is no initial index, calculate index.
+		    if (this.filter || index === false) {
+		      index = _.indexOf(this._filteredSortedModels(index), child);
+		    }
+
+		    if (this._shouldAddChild(child, index)) {
+		      this._destroyEmptyView();
+		      var ChildView = this._getChildView(child);
+		      this._addChild(child, ChildView, index);
+		    }
+		  },
+
+
+		  // get the child view by model it holds, and remove it
+		  _onCollectionRemove: function _onCollectionRemove(model) {
+		    var view = this.children.findByModel(model);
+		    this.removeChildView(view);
+		    this._checkEmpty();
+		  },
+
+
+		  // Render children views. Override this method to provide your own implementation of a
+		  // render function for the collection view.
+		  render: function render() {
+		    this._ensureViewIsIntact();
+		    this.triggerMethod('before:render', this);
+		    this._renderChildren();
+		    this._isRendered = true;
+		    this.triggerMethod('render', this);
+		    return this;
+		  },
+
+
+		  // An efficient rendering used for filtering. Instead of modifying the whole DOM for the
+		  // collection view, we are only adding or removing the related childrenViews.
+		  setFilter: function setFilter(filter) {
+		    var _ref = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+		    var preventRender = _ref.preventRender;
+
+		    var canBeRendered = this._isRendered && !this._isDestroyed;
+		    var filterChanged = this.filter !== filter;
+		    var shouldRender = canBeRendered && filterChanged && !preventRender;
+
+		    if (shouldRender) {
+		      this.triggerMethod('before:apply:filter', this);
+		      var previousModels = this._filteredSortedModels();
+		      this.filter = filter;
+		      var models = this._filteredSortedModels();
+		      this._applyModelDeltas(models, previousModels);
+		      this.triggerMethod('apply:filter', this);
+		    } else {
+		      this.filter = filter;
+		    }
+		    return this;
+		  },
+
+
+		  // `removeFilter` is actually an alias for removing filters.
+		  removeFilter: function removeFilter(options) {
+		    this.setFilter(null, options);
+		    return this;
+		  },
+
+
+		  // Calculate and apply difference by cid between `models` and `previousModels`.
+		  _applyModelDeltas: function _applyModelDeltas(models, previousModels) {
+		    var _this = this;
+
+		    var currentIds = {};
+		    _.each(models, function (model, index) {
+		      var addedChildNotExists = !_this.children.findByModel(model);
+		      if (addedChildNotExists) {
+		        _this._onCollectionAdd(model, _this.collection, { at: index });
+		      }
+		      currentIds[model.cid] = true;
+		    });
+		    _.each(previousModels, function (prevModel) {
+		      var removedChildExists = !currentIds[prevModel.cid] && _this.children.findByModel(prevModel);
+		      if (removedChildExists) {
+		        _this._onCollectionRemove(prevModel);
+		      }
+		    });
+		  },
+
+
+		  // Reorder DOM after sorting. When your element's rendering do not use their index,
+		  // you can pass reorderOnSort: true to only reorder the DOM after a sort instead of
+		  // rendering all the collectionView.
+		  reorder: function reorder() {
+		    var _this2 = this;
+
+		    var children = this.children;
+		    var models = this._filteredSortedModels();
+
+		    if (!models.length && this._showingEmptyView) {
+		      return this;
+		    }
+
+		    var anyModelsAdded = _.some(models, function (model) {
+		      return !children.findByModel(model);
+		    });
+
+		    // If there are any new models added due to filtering we need to add child views,
+		    // so render as normal.
+		    if (anyModelsAdded) {
+		      this.render();
+		    } else {
+		      (function () {
+		        // Get the DOM nodes in the same order as the models.
+		        var elsToReorder = _.map(models, function (model, index) {
+		          var view = children.findByModel(model);
+		          view._index = index;
+		          return view.el;
+		        });
+
+		        // Find the views that were children before but aren't in this new ordering.
+		        var filteredOutViews = children.filter(function (view) {
+		          return !_.contains(elsToReorder, view.el);
+		        });
+
+		        _this2.triggerMethod('before:reorder', _this2);
+
+		        // Since append moves elements that are already in the DOM, appending the elements
+		        // will effectively reorder them.
+		        _this2._appendReorderedChildren(elsToReorder);
+
+		        // remove any views that have been filtered out
+		        _.each(filteredOutViews, _.bind(_this2.removeChildView, _this2));
+		        _this2._checkEmpty();
+
+		        _this2.triggerMethod('reorder', _this2);
+		      })();
+		    }
+		    return this;
+		  },
+
+
+		  // Render view after sorting. Override this method to change how the view renders
+		  // after a `sort` on the collection.
+		  resortView: function resortView() {
+		    if (this.reorderOnSort) {
+		      this.reorder();
+		    } else {
+		      this._renderChildren();
+		    }
+		    return this;
+		  },
+
+
+		  // Internal method. This checks for any changes in the order of the collection.
+		  // If the index of any view doesn't match, it will render.
+		  _sortViews: function _sortViews() {
+		    var _this3 = this;
+
+		    var models = this._filteredSortedModels();
+
+		    // check for any changes in sort order of views
+		    var orderChanged = _.find(models, function (item, index) {
+		      var view = _this3.children.findByModel(item);
+		      return !view || view._index !== index;
+		    });
+
+		    if (orderChanged) {
+		      this.resortView();
+		    }
+		  },
+
+
+		  // Internal reference to what index a `emptyView` is.
+		  _emptyViewIndex: -1,
+
+		  // Internal method. Separated so that CompositeView can append to the childViewContainer
+		  // if necessary
+		  _appendReorderedChildren: function _appendReorderedChildren(children) {
+		    this.$el.append(children);
+		  },
+
+
+		  // Internal method. Separated so that CompositeView can have more control over events
+		  // being triggered, around the rendering process
+		  _renderChildren: function _renderChildren() {
+		    this._destroyEmptyView();
+		    this._destroyChildren({ checkEmpty: false });
+
+		    var models = this._filteredSortedModels();
+		    if (this.isEmpty({ processedModels: models })) {
+		      this._showEmptyView();
+		    } else {
+		      this.triggerMethod('before:render:children', this);
+		      this._startBuffering();
+		      this._showCollection(models);
+		      this._endBuffering();
+		      this.triggerMethod('render:children', this);
+		    }
+		  },
+
+
+		  // Internal method to loop through collection and show each child view.
+		  _showCollection: function _showCollection(models) {
+		    var _this4 = this;
+
+		    _.each(models, function (child, index) {
+		      var ChildView = _this4._getChildView(child);
+		      _this4._addChild(child, ChildView, index);
+		    });
+		  },
+
+
+		  // Allow the collection to be sorted by a custom view comparator
+		  _filteredSortedModels: function _filteredSortedModels(addedAt) {
+		    if (!this.collection) {
+		      return [];
+		    }
+
+		    var viewComparator = this.getViewComparator();
+		    var models = this.collection.models;
+		    addedAt = Math.min(Math.max(addedAt, 0), models.length - 1);
+
+		    if (viewComparator) {
+		      var addedModel = void 0;
+		      // Preserve `at` location, even for a sorted view
+		      if (addedAt) {
+		        addedModel = models[addedAt];
+		        models = models.slice(0, addedAt).concat(models.slice(addedAt + 1));
+		      }
+		      models = this._sortModelsBy(models, viewComparator);
+		      if (addedModel) {
+		        models.splice(addedAt, 0, addedModel);
+		      }
+		    }
+
+		    // Filter after sorting in case the filter uses the index
+		    models = this._filterModels(models);
+
+		    return models;
+		  },
+		  getViewComparator: function getViewComparator() {
+		    return this.viewComparator;
+		  },
+
+
+		  // Filter an array of models, if a filter exists
+		  _filterModels: function _filterModels(models) {
+		    var _this5 = this;
+
+		    if (this.filter) {
+		      models = _.filter(models, function (model, index) {
+		        return _this5._shouldAddChild(model, index);
+		      });
+		    }
+		    return models;
+		  },
+		  _sortModelsBy: function _sortModelsBy(models, comparator) {
+		    if (typeof comparator === 'string') {
+		      return _.sortBy(models, function (model) {
+		        return model.get(comparator);
+		      });
+		    } else if (comparator.length === 1) {
+		      return _.sortBy(models, _.bind(comparator, this));
+		    } else {
+		      return models.sort(_.bind(comparator, this));
+		    }
+		  },
+
+
+		  // Internal method to show an empty view in place of a collection of child views,
+		  // when the collection is empty
+		  _showEmptyView: function _showEmptyView() {
+		    var EmptyView = this.getEmptyView();
+
+		    if (EmptyView && !this._showingEmptyView) {
+		      this._showingEmptyView = true;
+
+		      var model = new Backbone.Model();
+		      var emptyViewOptions = this.emptyViewOptions || this.childViewOptions;
+		      if (_.isFunction(emptyViewOptions)) {
+		        emptyViewOptions = emptyViewOptions.call(this, model, this._emptyViewIndex);
+		      }
+
+		      var view = this.buildChildView(model, EmptyView, emptyViewOptions);
+
+		      this.triggerMethod('before:render:empty', this, view);
+		      this._addChildView(view, 0);
+		      this.triggerMethod('render:empty', this, view);
+
+		      view._parent = this;
+		    }
+		  },
+
+
+		  // Internal method to destroy an existing emptyView instance if one exists. Called when
+		  // a collection view has been rendered empty, and then a child is added to the collection.
+		  _destroyEmptyView: function _destroyEmptyView() {
+		    if (this._showingEmptyView) {
+		      this.triggerMethod('before:remove:empty', this);
+
+		      this._destroyChildren();
+		      delete this._showingEmptyView;
+
+		      this.triggerMethod('remove:empty', this);
+		    }
+		  },
+
+
+		  // Retrieve the empty view class
+		  getEmptyView: function getEmptyView() {
+		    return this.emptyView;
+		  },
+
+
+		  // Retrieve the `childView` class, either from `this.options.childView` or from
+		  // the `childView` in the object definition. The "options" takes precedence.
+		  // The `childView` property can be either a view class or a function that
+		  // returns a view class. If it is a function, it will receive the model that
+		  // will be passed to the view instance (created from the returned view class)
+		  _getChildView: function _getChildView(child) {
+		    var childView = this.childView;
+
+		    if (!childView) {
+		      throw new MarionetteError({
+		        name: 'NoChildViewError',
+		        message: 'A "childView" must be specified'
+		      });
+		    }
+
+		    // first check if the `childView` is a view class (the common case)
+		    // then check if it's a function (which we assume that returns a view class)
+		    if (childView.prototype instanceof Backbone.View || childView === Backbone.View) {
+		      return childView;
+		    } else if (_.isFunction(childView)) {
+		      return childView.call(this, child);
+		    } else {
+		      throw new MarionetteError({
+		        name: 'InvalidChildViewError',
+		        message: '"childView" must be a view class or a function that returns a view class'
+		      });
+		    }
+		  },
+
+
+		  // Internal method for building and adding a child view
+		  _addChild: function _addChild(child, ChildView, index) {
+		    var childViewOptions = this._getChildViewOptions(child, index);
+
+		    var view = this.buildChildView(child, ChildView, childViewOptions);
+
+		    this.addChildView(view, index);
+
+		    return view;
+		  },
+		  _getChildViewOptions: function _getChildViewOptions(child, index) {
+		    if (_.isFunction(this.childViewOptions)) {
+		      return this.childViewOptions(child, index);
+		    }
+
+		    return this.childViewOptions;
+		  },
+
+
+		  // Render the child's view and add it to the HTML for the collection view at a given index.
+		  // This will also update the indices of later views in the collection in order to keep the
+		  // children in sync with the collection.
+		  addChildView: function addChildView(view, index) {
+		    this.triggerMethod('before:add:child', this, view);
+
+		    // increment indices of views after this one
+		    this._updateIndices(view, true, index);
+
+		    view._parent = this;
+
+		    this._addChildView(view, index);
+
+		    this.triggerMethod('add:child', this, view);
+
+		    return view;
+		  },
+
+
+		  // Internal method. This decrements or increments the indices of views after the added/removed
+		  // view to keep in sync with the collection.
+		  _updateIndices: function _updateIndices(view, increment, index) {
+		    if (!this.sort) {
+		      return;
+		    }
+
+		    if (increment) {
+		      // assign the index to the view
+		      view._index = index;
+		    }
+
+		    // update the indexes of views after this one
+		    this.children.each(function (laterView) {
+		      if (laterView._index >= view._index) {
+		        laterView._index += increment ? 1 : -1;
+		      }
+		    });
+		  },
+
+
+		  // Internal Method. Add the view to children and render it at the given index.
+		  _addChildView: function _addChildView(view, index) {
+		    // Only trigger attach if already attached and not buffering,
+		    // otherwise _endBuffering() or Region#show() handles this.
+		    var shouldTriggerAttach = !this._isBuffering && this._isAttached;
+
+		    monitorViewEvents(view);
+
+		    // set up the child view event forwarding
+		    this._proxyChildEvents(view);
+
+		    // Store the child view itself so we can properly remove and/or destroy it later
+		    this.children.add(view);
+
+		    if (!view.supportsRenderLifecycle) {
+		      triggerMethodOn(view, 'before:render', view);
+		    }
+
+		    // Render view
+		    view.render();
+
+		    if (!view.supportsRenderLifecycle) {
+		      view._isRendered = true;
+		      triggerMethodOn(view, 'render', view);
+		    }
+
+		    if (shouldTriggerAttach) {
+		      triggerMethodOn(view, 'before:attach', view);
+		    }
+
+		    // Attach view
+		    this.attachHtml(this, view, index);
+
+		    if (shouldTriggerAttach) {
+		      view._isAttached = true;
+		      triggerMethodOn(view, 'attach', view);
+		    }
+		  },
+
+
+		  // Build a `childView` for a model in the collection.
+		  buildChildView: function buildChildView(child, ChildViewClass, childViewOptions) {
+		    var options = _.extend({ model: child }, childViewOptions);
+		    return new ChildViewClass(options);
+		  },
+
+
+		  // Remove the child view and destroy it. This function also updates the indices of later views
+		  // in the collection in order to keep the children in sync with the collection.
+		  removeChildView: function removeChildView(view) {
+		    if (!view || view._isDestroyed) {
+		      return;
+		    }
+
+		    this.triggerMethod('before:remove:child', this, view);
+
+		    if (view.destroy) {
+		      view.destroy();
+		    } else {
+		      destroyBackboneView(view);
+		    }
+
+		    delete view._parent;
+		    this.stopListening(view);
+		    this.children.remove(view);
+		    this.triggerMethod('remove:child', this, view);
+
+		    // decrement the index of views after this one
+		    this._updateIndices(view, false);
+		  },
+
+
+		  // check if the collection is empty or optionally whether an array of pre-processed models is empty
+		  isEmpty: function isEmpty(options) {
+		    var models = void 0;
+		    if (_.result(options, 'processedModels')) {
+		      models = options.processedModels;
+		    } else {
+		      models = this.collection ? this.collection.models : [];
+		      models = this._filterModels(models);
+		    }
+		    return models.length === 0;
+		  },
+
+
+		  // If empty, show the empty view
+		  _checkEmpty: function _checkEmpty() {
+		    if (this.isEmpty()) {
+		      this._showEmptyView();
+		    }
+		  },
+
+
+		  // You might need to override this if you've overridden attachHtml
+		  attachBuffer: function attachBuffer(collectionView, buffer) {
+		    collectionView.$el.append(buffer);
+		  },
+
+
+		  // Create a fragment buffer from the currently buffered children
+		  _createBuffer: function _createBuffer() {
+		    var elBuffer = document.createDocumentFragment();
+		    _.each(this._bufferedChildren, function (b) {
+		      elBuffer.appendChild(b.el);
+		    });
+		    return elBuffer;
+		  },
+
+
+		  // Append the HTML to the collection's `el`. Override this method to do something other
+		  // than `.append`.
+		  attachHtml: function attachHtml(collectionView, childView, index) {
+		    if (collectionView._isBuffering) {
+		      // buffering happens on reset events and initial renders
+		      // in order to reduce the number of inserts into the
+		      // document, which are expensive.
+		      collectionView._bufferedChildren.splice(index, 0, childView);
+		    } else {
+		      // If we've already rendered the main collection, append
+		      // the new child into the correct order if we need to. Otherwise
+		      // append to the end.
+		      if (!collectionView._insertBefore(childView, index)) {
+		        collectionView._insertAfter(childView);
+		      }
+		    }
+		  },
+
+
+		  // Internal method. Check whether we need to insert the view into the correct position.
+		  _insertBefore: function _insertBefore(childView, index) {
+		    var currentView = void 0;
+		    var findPosition = this.sort && index < this.children.length - 1;
+		    if (findPosition) {
+		      // Find the view after this one
+		      currentView = this.children.find(function (view) {
+		        return view._index === index + 1;
+		      });
+		    }
+
+		    if (currentView) {
+		      currentView.$el.before(childView.el);
+		      return true;
+		    }
+
+		    return false;
+		  },
+
+
+		  // Internal method. Append a view to the end of the $el
+		  _insertAfter: function _insertAfter(childView) {
+		    this.$el.append(childView.el);
+		  },
+
+
+		  // Internal method to set up the `children` object for storing all of the child views
+		  _initChildViewStorage: function _initChildViewStorage() {
+		    this.children = new ChildViewContainer();
+		  },
+
+
+		  // called by ViewMixin destroy
+		  _removeChildren: function _removeChildren() {
+		    this._destroyChildren({ checkEmpty: false });
+		  },
+
+
+		  // Destroy the child views that this collection view is holding on to, if any
+		  _destroyChildren: function _destroyChildren() {
+		    var _ref2 = arguments.length <= 0 || arguments[0] === undefined ? {} : arguments[0];
+
+		    var checkEmpty = _ref2.checkEmpty;
+
+		    this.triggerMethod('before:destroy:children', this);
+		    var shouldCheckEmpty = checkEmpty !== false;
+		    var childViews = this.children.map(_.identity);
+
+		    this.children.each(_.bind(this.removeChildView, this));
+
+		    if (shouldCheckEmpty) {
+		      this._checkEmpty();
+		    }
+
+		    this.triggerMethod('destroy:children', this);
+		    return childViews;
+		  },
+
+
+		  // Return true if the given child should be shown. Return false otherwise.
+		  // The filter will be passed (child, index, collection), where
+		  //  'child' is the given model
+		  //  'index' is the index of that model in the collection
+		  //  'collection' is the collection referenced by this CollectionView
+		  _shouldAddChild: function _shouldAddChild(child, index) {
+		    var filter = this.filter;
+		    return !_.isFunction(filter) || filter.call(this, child, index, this.collection);
+		  },
+
+
+		  // Set up the child view event forwarding. Uses a "childview:" prefix in front of all forwarded events.
+		  _proxyChildEvents: function _proxyChildEvents(view) {
+		    var prefix = _.result(this, 'childViewEventPrefix');
+
+		    // Forward all child view events through the parent,
+		    // prepending "childview:" to the event name
+		    this.listenTo(view, 'all', function (eventName) {
+
+		      var childEventName = prefix + ':' + eventName;
+
+		      var childViewEvents = this.normalizeMethods(this._childViewEvents);
+
+		      // call collectionView childViewEvent if defined
+
+		      for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+		        args[_key - 1] = arguments[_key];
+		      }
+
+		      if (typeof childViewEvents !== 'undefined' && _.isFunction(childViewEvents[eventName])) {
+		        childViewEvents[eventName].apply(this, args);
+		      }
+
+		      // use the parent view's proxyEvent handlers
+		      var childViewTriggers = this._childViewTriggers;
+
+		      // Call the event with the proxy name on the parent layout
+		      if (childViewTriggers && _.isString(childViewTriggers[eventName])) {
+		        this.triggerMethod.apply(this, [childViewTriggers[eventName]].concat(args));
+		      }
+
+		      this.triggerMethod.apply(this, [childEventName].concat(args));
+		    });
+		  }
+		});
+
+		_.extend(CollectionView.prototype, ViewMixin);
+
+		var ClassOptions$4 = ['childViewContainer', 'template', 'templateContext'];
+
+		// Used for rendering a branch-leaf, hierarchical structure.
+		// Extends directly from CollectionView and also renders an
+		// a child view as `modelView`, for the top leaf
+		// @deprecated
+		var CompositeView = CollectionView.extend({
+
+		  // Setting up the inheritance chain which allows changes to
+		  // Marionette.CollectionView.prototype.constructor which allows overriding
+		  // option to pass '{sort: false}' to prevent the CompositeView from
+		  // maintaining the sorted order of the collection.
+		  // This will fallback onto appending childView's to the end.
+
+		  constructor: function constructor(options) {
+		    deprecate('CompositeView is deprecated. Convert to View at your earliest convenience');
+
+		    this.mergeOptions(options, ClassOptions$4);
+
+		    CollectionView.prototype.constructor.apply(this, arguments);
+		  },
+
+
+		  // Configured the initial events that the composite view
+		  // binds to. Override this method to prevent the initial
+		  // events, or to add your own initial events.
+		  _initialEvents: function _initialEvents() {
+
+		    // Bind only after composite view is rendered to avoid adding child views
+		    // to nonexistent childViewContainer
+
+		    if (this.collection) {
+		      this.listenTo(this.collection, 'add', this._onCollectionAdd);
+		      this.listenTo(this.collection, 'remove', this._onCollectionRemove);
+		      this.listenTo(this.collection, 'reset', this.renderChildren);
+
+		      if (this.sort) {
+		        this.listenTo(this.collection, 'sort', this._sortViews);
+		      }
+		    }
+		  },
+
+
+		  // Retrieve the `childView` to be used when rendering each of
+		  // the items in the collection. The default is to return
+		  // `this.childView` or Marionette.CompositeView if no `childView`
+		  // has been defined. As happens in CollectionView, `childView` can
+		  // be a function (which should return a view class).
+		  _getChildView: function _getChildView(child) {
+		    var childView = this.childView;
+
+		    // for CompositeView, if `childView` is not specified, we'll get the same
+		    // composite view class rendered for each child in the collection
+		    // then check if the `childView` is a view class (the common case)
+		    // finally check if it's a function (which we assume that returns a view class)
+		    if (!childView) {
+		      return this.constructor;
+		    } else if (childView.prototype instanceof Backbone.View || childView === Backbone.View) {
+		      return childView;
+		    } else if (_.isFunction(childView)) {
+		      return childView.call(this, child);
+		    } else {
+		      throw new MarionetteError({
+		        name: 'InvalidChildViewError',
+		        message: '"childView" must be a view class or a function that returns a view class'
+		      });
+		    }
+		  },
+
+
+		  // Return the serialized model
+		  serializeData: function serializeData() {
+		    return this.serializeModel();
+		  },
+
+
+		  // Renders the model and the collection.
+		  render: function render() {
+		    this._ensureViewIsIntact();
+		    this._isRendering = true;
+		    this.resetChildViewContainer();
+
+		    this.triggerMethod('before:render', this);
+
+		    this._renderTemplate();
+		    this.bindUIElements();
+		    this.renderChildren();
+
+		    this._isRendering = false;
+		    this._isRendered = true;
+		    this.triggerMethod('render', this);
+		    return this;
+		  },
+		  renderChildren: function renderChildren() {
+		    if (this._isRendered || this._isRendering) {
+		      CollectionView.prototype._renderChildren.call(this);
+		    }
+		  },
+
+
+		  // You might need to override this if you've overridden attachHtml
+		  attachBuffer: function attachBuffer(compositeView, buffer) {
+		    var $container = this.getChildViewContainer(compositeView);
+		    $container.append(buffer);
+		  },
+
+
+		  // Internal method. Append a view to the end of the $el.
+		  // Overidden from CollectionView to ensure view is appended to
+		  // childViewContainer
+		  _insertAfter: function _insertAfter(childView) {
+		    var $container = this.getChildViewContainer(this, childView);
+		    $container.append(childView.el);
+		  },
+
+
+		  // Internal method. Append reordered childView'.
+		  // Overidden from CollectionView to ensure reordered views
+		  // are appended to childViewContainer
+		  _appendReorderedChildren: function _appendReorderedChildren(children) {
+		    var $container = this.getChildViewContainer(this);
+		    $container.append(children);
+		  },
+
+
+		  // Internal method to ensure an `$childViewContainer` exists, for the
+		  // `attachHtml` method to use.
+		  getChildViewContainer: function getChildViewContainer(containerView, childView) {
+		    if (!!containerView.$childViewContainer) {
+		      return containerView.$childViewContainer;
+		    }
+
+		    var container = void 0;
+		    var childViewContainer = containerView.childViewContainer;
+		    if (childViewContainer) {
+
+		      var selector = _.result(containerView, 'childViewContainer');
+
+		      if (selector.charAt(0) === '@' && containerView.ui) {
+		        container = containerView.ui[selector.substr(4)];
+		      } else {
+		        container = containerView.$(selector);
+		      }
+
+		      if (container.length <= 0) {
+		        throw new MarionetteError({
+		          name: 'ChildViewContainerMissingError',
+		          message: 'The specified "childViewContainer" was not found: ' + containerView.childViewContainer
+		        });
+		      }
+		    } else {
+		      container = containerView.$el;
+		    }
+
+		    containerView.$childViewContainer = container;
+		    return container;
+		  },
+
+
+		  // Internal method to reset the `$childViewContainer` on render
+		  resetChildViewContainer: function resetChildViewContainer() {
+		    if (this.$childViewContainer) {
+		      this.$childViewContainer = undefined;
+		    }
+		  }
+		});
+
+		// To prevent duplication but allow the best View organization
+		// Certain View methods are mixed directly into the deprecated CompositeView
+		var MixinFromView = _.pick(View.prototype, 'serializeModel', 'getTemplate', '_renderTemplate', 'mixinTemplateContext', 'attachElContent');
+		_.extend(CompositeView.prototype, MixinFromView);
+
+		var ClassOptions$5 = ['collectionEvents', 'events', 'modelEvents', 'triggers', 'ui'];
+
+		var Behavior = MarionetteObject.extend({
+		  cidPrefix: 'mnb',
+
+		  constructor: function constructor(options, view) {
+		    // Setup reference to the view.
+		    // this comes in handle when a behavior
+		    // wants to directly talk up the chain
+		    // to the view.
+		    this.view = view;
+		    this.defaults = _.clone(_.result(this, 'defaults', {}));
+		    this._setOptions(this.defaults, options);
+		    this.mergeOptions(this.options, ClassOptions$5);
+
+		    // Construct an internal UI hash using
+		    // the behaviors UI hash and then the view UI hash.
+		    // This allows the user to use UI hash elements
+		    // defined in the parent view as well as those
+		    // defined in the given behavior.
+		    // This order will help the reuse and share of a behavior
+		    // between multiple views, while letting a view override a
+		    // selector under an UI key.
+		    this.ui = _.extend({}, _.result(this, 'ui'), _.result(view, 'ui'));
+
+		    MarionetteObject.apply(this, arguments);
+		  },
+
+		  // proxy behavior $ method to the view
+		  // this is useful for doing jquery DOM lookups
+		  // scoped to behaviors view.
+		  $: function $() {
+		    return this.view.$.apply(this.view, arguments);
+		  },
+
+		  // Stops the behavior from listening to events.
+		  // Overrides Object#destroy to prevent additional events from being triggered.
+		  destroy: function destroy() {
+		    this.stopListening();
+
+		    return this;
+		  },
+
+		  proxyViewProperties: function proxyViewProperties() {
+		    this.$el = this.view.$el;
+		    this.el = this.view.el;
+
+		    return this;
+		  },
+
+		  bindUIElements: function bindUIElements() {
+		    this._bindUIElements();
+
+		    return this;
+		  },
+
+		  unbindUIElements: function unbindUIElements() {
+		    this._unbindUIElements();
+
+		    return this;
+		  },
+
+		  getUI: function getUI(name) {
+		    this.view._ensureViewIsIntact();
+		    return this._getUI(name);
+		  },
+
+		  // Handle `modelEvents`, and `collectionEvents` configuration
+		  delegateEntityEvents: function delegateEntityEvents() {
+		    this._delegateEntityEvents(this.view.model, this.view.collection);
+
+		    return this;
+		  },
+
+		  undelegateEntityEvents: function undelegateEntityEvents() {
+		    this._undelegateEntityEvents(this.view.model, this.view.collection);
+
+		    return this;
+		  },
+
+		  getEvents: function getEvents() {
+		    // Normalize behavior events hash to allow
+		    // a user to use the @ui. syntax.
+		    var behaviorEvents = this.normalizeUIKeys(_.result(this, 'events'));
+
+		    // binds the handler to the behavior and builds a unique eventName
+		    return _.reduce(behaviorEvents, function (events, behaviorHandler, key) {
+		      if (!_.isFunction(behaviorHandler)) {
+		        behaviorHandler = this[behaviorHandler];
+		      }
+		      if (!behaviorHandler) {
+		        return;
+		      }
+		      key = getUniqueEventName(key);
+		      events[key] = _.bind(behaviorHandler, this);
+		      return events;
+		    }, {}, this);
+		  },
+
+		  // Internal method to build all trigger handlers for a given behavior
+		  getTriggers: function getTriggers() {
+		    if (!this.triggers) {
+		      return;
+		    }
+
+		    // Normalize behavior triggers hash to allow
+		    // a user to use the @ui. syntax.
+		    var behaviorTriggers = this.normalizeUIKeys(_.result(this, 'triggers'));
+
+		    return this._getViewTriggers(this.view, behaviorTriggers);
+		  }
+
+		});
+
+		_.extend(Behavior.prototype, DelegateEntityEventsMixin, TriggersMixin, UIMixin);
+
+		var ClassOptions$6 = ['region', 'regionClass'];
+
+		// A container for a Marionette application.
+		var Application = MarionetteObject.extend({
+		  cidPrefix: 'mna',
+
+		  constructor: function constructor(options) {
+		    this._setOptions(options);
+
+		    this.mergeOptions(options, ClassOptions$6);
+
+		    this._initRegion();
+
+		    MarionetteObject.prototype.constructor.apply(this, arguments);
+		  },
+
+		  regionClass: Region,
+
+		  _initRegion: function _initRegion(options) {
+		    var region = this.region;
+		    var RegionClass = this.regionClass;
+
+		    // if the region is a string expect an el or selector
+		    // and instantiate a region
+		    if (_.isString(region)) {
+		      this._region = new RegionClass({
+		        el: region
+		      });
+		      return;
+		    }
+
+		    this._region = region;
+		  },
+
+		  getRegion: function getRegion() {
+		    return this._region;
+		  },
+
+		  showView: function showView(view) {
+		    var region = this.getRegion();
+
+		    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+		      args[_key - 1] = arguments[_key];
+		    }
+
+		    return region.show.apply(region, [view].concat(args));
+		  },
+
+		  getView: function getView() {
+		    return this.getRegion().currentView;
+		  },
+
+		  // kick off all of the application's processes.
+		  start: function start(options) {
+		    this.triggerMethod('before:start', this, options);
+		    this.triggerMethod('start', this, options);
+		    return this;
+		  }
+
+		});
+
+		var ClassOptions$7 = ['appRoutes', 'controller'];
+
+		var AppRouter = Backbone.Router.extend({
+
+		  constructor: function constructor(options) {
+		    this._setOptions(options);
+
+		    this.mergeOptions(options, ClassOptions$7);
+
+		    Backbone.Router.apply(this, arguments);
+
+		    var appRoutes = this.appRoutes;
+		    var controller = this._getController();
+		    this.processAppRoutes(controller, appRoutes);
+		    this.on('route', this._processOnRoute, this);
+		  },
+
+		  // Similar to route method on a Backbone Router but
+		  // method is called on the controller
+		  appRoute: function appRoute(route, methodName) {
+		    var controller = this._getController();
+		    this._addAppRoute(controller, route, methodName);
+		    return this;
+		  },
+
+		  // process the route event and trigger the onRoute
+		  // method call, if it exists
+		  _processOnRoute: function _processOnRoute(routeName, routeArgs) {
+		    // make sure an onRoute before trying to call it
+		    if (_.isFunction(this.onRoute)) {
+		      // find the path that matches the current route
+		      var routePath = _.invert(this.appRoutes)[routeName];
+		      this.onRoute(routeName, routePath, routeArgs);
+		    }
+		  },
+
+		  // Internal method to process the `appRoutes` for the
+		  // router, and turn them in to routes that trigger the
+		  // specified method on the specified `controller`.
+		  processAppRoutes: function processAppRoutes(controller, appRoutes) {
+		    var _this = this;
+
+		    if (!appRoutes) {
+		      return this;
+		    }
+
+		    var routeNames = _.keys(appRoutes).reverse(); // Backbone requires reverted order of routes
+
+		    _.each(routeNames, function (route) {
+		      _this._addAppRoute(controller, route, appRoutes[route]);
+		    });
+
+		    return this;
+		  },
+
+		  _getController: function _getController() {
+		    return this.controller;
+		  },
+
+		  _addAppRoute: function _addAppRoute(controller, route, methodName) {
+		    var method = controller[methodName];
+
+		    if (!method) {
+		      throw new MarionetteError('Method "' + methodName + '" was not found on the controller');
+		    }
+
+		    this.route(route, methodName, _.bind(method, controller));
+		  },
+
+		  triggerMethod: triggerMethod
+		});
+
+		_.extend(AppRouter.prototype, CommonMixin);
+
+		// Placeholder method to be extended by the user.
+		// The method should define the object that stores the behaviors.
+		// i.e.
+		//
+		// ```js
+		// Marionette.Behaviors.behaviorsLookup: function() {
+		//   return App.Behaviors
+		// }
+		// ```
+		function behaviorsLookup() {
+		  throw new MarionetteError({
+		    message: 'You must define where your behaviors are stored.',
+		    url: 'marionette.behaviors.md#behaviorslookup'
+		  });
+		}
+
+		// Add Feature flags here
+		// e.g. 'class' => false
+		var FEATURES = {};
+
+		function isEnabled(name) {
+		  return !!FEATURES[name];
+		}
+
+		function setEnabled(name, state) {
+		  return FEATURES[name] = state;
+		}
+
+		var previousMarionette = Backbone.Marionette;
+		var Marionette = Backbone.Marionette = {};
+
+		// This allows you to run multiple instances of Marionette on the same
+		// webapp. After loading the new version, call `noConflict()` to
+		// get a reference to it. At the same time the old version will be
+		// returned to Backbone.Marionette.
+		Marionette.noConflict = function () {
+		  Backbone.Marionette = previousMarionette;
+		  return this;
+		};
+
+		// Utilities
+		Marionette.bindEntityEvents = proxy(bindEntityEvents);
+		Marionette.unbindEntityEvents = proxy(unbindEntityEvents);
+		Marionette.bindRadioEvents = proxy(bindEntityEvents);
+		Marionette.unbindRadioEvents = proxy(unbindEntityEvents);
+		Marionette.bindRadioRequests = proxy(bindRadioRequests);
+		Marionette.unbindRadioRequests = proxy(unbindRadioRequests);
+		Marionette.mergeOptions = proxy(mergeOptions);
+		Marionette.getOption = proxy(getOption);
+		Marionette.normalizeMethods = proxy(normalizeMethods);
+		Marionette.extend = extend;
+		Marionette.isNodeAttached = isNodeAttached;
+		Marionette.deprecate = deprecate;
+		Marionette.triggerMethod = proxy(triggerMethod);
+		Marionette.triggerMethodOn = triggerMethodOn;
+		Marionette.isEnabled = isEnabled;
+		Marionette.setEnabled = setEnabled;
+		Marionette.monitorViewEvents = monitorViewEvents;
+
+		Marionette.Behaviors = {};
+		Marionette.Behaviors.behaviorsLookup = behaviorsLookup;
+
+		// Classes
+		Marionette.Application = Application;
+		Marionette.AppRouter = AppRouter;
+		Marionette.Renderer = Renderer;
+		Marionette.TemplateCache = TemplateCache;
+		Marionette.View = View;
+		Marionette.CollectionView = CollectionView;
+		Marionette.CompositeView = CompositeView;
+		Marionette.Behavior = Behavior;
+		Marionette.Region = Region;
+		Marionette.Error = MarionetteError;
+		Marionette.Object = MarionetteObject;
+
+		// Configuration
+		Marionette.DEV_MODE = false;
+		Marionette.FEATURES = FEATURES;
+		Marionette.VERSION = version;
+
+		return Marionette;
+
+	}));
+
+	//# sourceMappingURL=backbone.marionette.js.map
+
+
+/***/ },
+/* 8 */
+/***/ function(module, exports, __webpack_require__) {
+
+	// Backbone.Radio v2.0.0-pre.1
+
+	(function (global, factory) {
+	   true ? module.exports = factory(__webpack_require__(6), __webpack_require__(5)) :
+	  typeof define === 'function' && define.amd ? define(['underscore', 'backbone'], factory) :
+	  (global.Backbone = global.Backbone || {}, global.Backbone.Radio = factory(global._,global.Backbone));
+	}(this, function (_,Backbone) { 'use strict';
+
+	  _ = 'default' in _ ? _['default'] : _;
+	  Backbone = 'default' in Backbone ? Backbone['default'] : Backbone;
+
+	  var babelHelpers = {};
+	  babelHelpers.typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+	    return typeof obj;
+	  } : function (obj) {
+	    return obj && typeof Symbol === "function" && obj.constructor === Symbol ? "symbol" : typeof obj;
+	  };
+	  babelHelpers;
+
+	  var previousRadio = Backbone.Radio;
+
+	  var Radio = Backbone.Radio = {};
+
+	  Radio.VERSION = '2.0.0-pre.1';
+
+	  // This allows you to run multiple instances of Radio on the same
+	  // webapp. After loading the new version, call `noConflict()` to
+	  // get a reference to it. At the same time the old version will be
+	  // returned to Backbone.Radio.
+	  Radio.noConflict = function () {
+	    Backbone.Radio = previousRadio;
+	    return this;
+	  };
+
+	  // Whether or not we're in DEBUG mode or not. DEBUG mode helps you
+	  // get around the issues of lack of warnings when events are mis-typed.
+	  Radio.DEBUG = false;
+
+	  // Format debug text.
+	  Radio._debugText = function (warning, eventName, channelName) {
+	    return warning + (channelName ? ' on the ' + channelName + ' channel' : '') + ': "' + eventName + '"';
+	  };
+
+	  // This is the method that's called when an unregistered event was called.
+	  // By default, it logs warning to the console. By overriding this you could
+	  // make it throw an Error, for instance. This would make firing a nonexistent event
+	  // have the same consequence as firing a nonexistent method on an Object.
+	  Radio.debugLog = function (warning, eventName, channelName) {
+	    if (Radio.DEBUG && console && console.warn) {
+	      console.warn(Radio._debugText(warning, eventName, channelName));
+	    }
+	  };
+
+	  var eventSplitter = /\s+/;
+
+	  // An internal method used to handle Radio's method overloading for Requests.
+	  // It's borrowed from Backbone.Events. It differs from Backbone's overload
+	  // API (which is used in Backbone.Events) in that it doesn't support space-separated
+	  // event names.
+	  Radio._eventsApi = function (obj, action, name, rest) {
+	    if (!name) {
+	      return false;
+	    }
+
+	    var results = {};
+
+	    // Handle event maps.
+	    if ((typeof name === 'undefined' ? 'undefined' : babelHelpers.typeof(name)) === 'object') {
+	      for (var key in name) {
+	        var result = obj[action].apply(obj, [key, name[key]].concat(rest));
+	        eventSplitter.test(key) ? _.extend(results, result) : results[key] = result;
+	      }
+	      return results;
+	    }
+
+	    // Handle space separated event names.
+	    if (eventSplitter.test(name)) {
+	      var names = name.split(eventSplitter);
+	      for (var i = 0, l = names.length; i < l; i++) {
+	        results[names[i]] = obj[action].apply(obj, [names[i]].concat(rest));
+	      }
+	      return results;
+	    }
+
+	    return false;
+	  };
+
+	  // An optimized way to execute callbacks.
+	  Radio._callHandler = function (callback, context, args) {
+	    var a1 = args[0],
+	        a2 = args[1],
+	        a3 = args[2];
+	    switch (args.length) {
+	      case 0:
+	        return callback.call(context);
+	      case 1:
+	        return callback.call(context, a1);
+	      case 2:
+	        return callback.call(context, a1, a2);
+	      case 3:
+	        return callback.call(context, a1, a2, a3);
+	      default:
+	        return callback.apply(context, args);
+	    }
+	  };
+
+	  // A helper used by `off` methods to the handler from the store
+	  function removeHandler(store, name, callback, context) {
+	    var event = store[name];
+	    if ((!callback || callback === event.callback || callback === event.callback._callback) && (!context || context === event.context)) {
+	      delete store[name];
+	      return true;
+	    }
+	  }
+
+	  function removeHandlers(store, name, callback, context) {
+	    store || (store = {});
+	    var names = name ? [name] : _.keys(store);
+	    var matched = false;
+
+	    for (var i = 0, length = names.length; i < length; i++) {
+	      name = names[i];
+
+	      // If there's no event by this name, log it and continue
+	      // with the loop
+	      if (!store[name]) {
+	        continue;
+	      }
+
+	      if (removeHandler(store, name, callback, context)) {
+	        matched = true;
+	      }
+	    }
+
+	    return matched;
+	  }
+
+	  /*
+	   * tune-in
+	   * -------
+	   * Get console logs of a channel's activity
+	   *
+	   */
+
+	  var _logs = {};
+
+	  // This is to produce an identical function in both tuneIn and tuneOut,
+	  // so that Backbone.Events unregisters it.
+	  function _partial(channelName) {
+	    return _logs[channelName] || (_logs[channelName] = _.partial(Radio.log, channelName));
+	  }
+
+	  _.extend(Radio, {
+
+	    // Log information about the channel and event
+	    log: function log(channelName, eventName) {
+	      if (typeof console === 'undefined') {
+	        return;
+	      }
+	      var args = _.drop(arguments, 2);
+	      console.log('[' + channelName + '] "' + eventName + '"', args);
+	    },
+
+	    // Logs all events on this channel to the console. It sets an
+	    // internal value on the channel telling it we're listening,
+	    // then sets a listener on the Backbone.Events
+	    tuneIn: function tuneIn(channelName) {
+	      var channel = Radio.channel(channelName);
+	      channel._tunedIn = true;
+	      channel.on('all', _partial(channelName));
+	      return this;
+	    },
+
+	    // Stop logging all of the activities on this channel to the console
+	    tuneOut: function tuneOut(channelName) {
+	      var channel = Radio.channel(channelName);
+	      channel._tunedIn = false;
+	      channel.off('all', _partial(channelName));
+	      delete _logs[channelName];
+	      return this;
+	    }
+	  });
+
+	  /*
+	   * Backbone.Radio.Requests
+	   * -----------------------
+	   * A messaging system for requesting data.
+	   *
+	   */
+
+	  function makeCallback(callback) {
+	    return _.isFunction(callback) ? callback : function () {
+	      return callback;
+	    };
+	  }
+
+	  Radio.Requests = {
+
+	    // Make a request
+	    request: function request(name) {
+	      var args = _.rest(arguments);
+	      var results = Radio._eventsApi(this, 'request', name, args);
+	      if (results) {
+	        return results;
+	      }
+	      var channelName = this.channelName;
+	      var requests = this._requests;
+
+	      // Check if we should log the request, and if so, do it
+	      if (channelName && this._tunedIn) {
+	        Radio.log.apply(this, [channelName, name].concat(args));
+	      }
+
+	      // If the request isn't handled, log it in DEBUG mode and exit
+	      if (requests && (requests[name] || requests['default'])) {
+	        var handler = requests[name] || requests['default'];
+	        args = requests[name] ? args : arguments;
+	        return Radio._callHandler(handler.callback, handler.context, args);
+	      } else {
+	        Radio.debugLog('An unhandled request was fired', name, channelName);
+	      }
+	    },
+
+	    // Set up a handler for a request
+	    reply: function reply(name, callback, context) {
+	      if (Radio._eventsApi(this, 'reply', name, [callback, context])) {
+	        return this;
+	      }
+
+	      this._requests || (this._requests = {});
+
+	      if (this._requests[name]) {
+	        Radio.debugLog('A request was overwritten', name, this.channelName);
+	      }
+
+	      this._requests[name] = {
+	        callback: makeCallback(callback),
+	        context: context || this
+	      };
+
+	      return this;
+	    },
+
+	    // Set up a handler that can only be requested once
+	    replyOnce: function replyOnce(name, callback, context) {
+	      if (Radio._eventsApi(this, 'replyOnce', name, [callback, context])) {
+	        return this;
+	      }
+
+	      var self = this;
+
+	      var once = _.once(function () {
+	        self.stopReplying(name);
+	        return makeCallback(callback).apply(this, arguments);
+	      });
+
+	      return this.reply(name, once, context);
+	    },
+
+	    // Remove handler(s)
+	    stopReplying: function stopReplying(name, callback, context) {
+	      if (Radio._eventsApi(this, 'stopReplying', name)) {
+	        return this;
+	      }
+
+	      // Remove everything if there are no arguments passed
+	      if (!name && !callback && !context) {
+	        delete this._requests;
+	      } else if (!removeHandlers(this._requests, name, callback, context)) {
+	        Radio.debugLog('Attempted to remove the unregistered request', name, this.channelName);
+	      }
+
+	      return this;
+	    }
+	  };
+
+	  /*
+	   * Backbone.Radio.channel
+	   * ----------------------
+	   * Get a reference to a channel by name.
+	   *
+	   */
+
+	  Radio._channels = {};
+
+	  Radio.channel = function (channelName) {
+	    if (!channelName) {
+	      throw new Error('You must provide a name for the channel.');
+	    }
+
+	    if (Radio._channels[channelName]) {
+	      return Radio._channels[channelName];
+	    } else {
+	      return Radio._channels[channelName] = new Radio.Channel(channelName);
+	    }
+	  };
+
+	  /*
+	   * Backbone.Radio.Channel
+	   * ----------------------
+	   * A Channel is an object that extends from Backbone.Events,
+	   * and Radio.Requests.
+	   *
+	   */
+
+	  Radio.Channel = function (channelName) {
+	    this.channelName = channelName;
+	  };
+
+	  _.extend(Radio.Channel.prototype, Backbone.Events, Radio.Requests, {
+
+	    // Remove all handlers from the messaging systems of this channel
+	    reset: function reset() {
+	      this.off();
+	      this.stopListening();
+	      this.stopReplying();
+	      return this;
+	    }
+	  });
+
+	  /*
+	   * Top-level API
+	   * -------------
+	   * Supplies the 'top-level API' for working with Channels directly
+	   * from Backbone.Radio.
+	   *
+	   */
+
+	  var channel;
+	  var args;
+	  var systems = [Backbone.Events, Radio.Requests];
+	  _.each(systems, function (system) {
+	    _.each(system, function (method, methodName) {
+	      Radio[methodName] = function (channelName) {
+	        args = _.rest(arguments);
+	        channel = this.channel(channelName);
+	        return channel[methodName].apply(channel, args);
+	      };
+	    });
+	  });
+
+	  Radio.reset = function (channelName) {
+	    var channels = !channelName ? this._channels : [this._channels[channelName]];
+	    _.invoke(channels, 'reset');
+	  };
+
+	  return Radio;
+
+	}));
+	//# sourceMappingURL=./backbone.radio.js.map
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var __WEBPACK_AMD_DEFINE_ARRAY__, __WEBPACK_AMD_DEFINE_RESULT__;// Backbone.BabySitter
+	// -------------------
+	// v1.0.0-pre.1
+	//
+	// Copyright (c)2016 Derick Bailey, Muted Solutions, LLC.
+	// Distributed under MIT license
+	//
+	// http://github.com/marionettejs/backbone.babysitter
+
+	(function(root, factory) {
+
+	  if (true) {
+	    !(__WEBPACK_AMD_DEFINE_ARRAY__ = [__webpack_require__(5), __webpack_require__(6)], __WEBPACK_AMD_DEFINE_RESULT__ = function(Backbone, _) {
+	      return factory(Backbone, _);
+	    }.apply(exports, __WEBPACK_AMD_DEFINE_ARRAY__), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
+	  } else if (typeof exports !== 'undefined') {
+	    var Backbone = require('backbone');
+	    var _ = require('underscore');
+	    module.exports = factory(Backbone, _);
+	  } else {
+	    factory(root.Backbone, root._);
+	  }
+
+	}(this, function(Backbone, _) {
+	  'use strict';
+
+	  var previousChildViewContainer = Backbone.ChildViewContainer;
+
+	  // BabySitter.ChildViewContainer
+	  // -----------------------------
+	  //
+	  // Provide a container to store, retrieve and
+	  // shut down child views.
+	  
+	  Backbone.ChildViewContainer = (function (Backbone, _) {
+	  
+	    // Container Constructor
+	    // ---------------------
+	  
+	    var Container = function(views){
+	      this._views = {};
+	      this._indexByModel = {};
+	      this._indexByCustom = {};
+	      this._updateLength();
+	  
+	      _.each(views, this.add, this);
+	    };
+	  
+	    // Container Methods
+	    // -----------------
+	  
+	    _.extend(Container.prototype, {
+	  
+	      // Add a view to this container. Stores the view
+	      // by `cid` and makes it searchable by the model
+	      // cid (and model itself). Optionally specify
+	      // a custom key to store an retrieve the view.
+	      add: function(view, customIndex){
+	        var viewCid = view.cid;
+	  
+	        // store the view
+	        this._views[viewCid] = view;
+	  
+	        // index it by model
+	        if (view.model){
+	          this._indexByModel[view.model.cid] = viewCid;
+	        }
+	  
+	        // index by custom
+	        if (customIndex){
+	          this._indexByCustom[customIndex] = viewCid;
+	        }
+	  
+	        this._updateLength();
+	        return this;
+	      },
+	  
+	      // Find a view by the model that was attached to
+	      // it. Uses the model's `cid` to find it.
+	      findByModel: function(model){
+	        return this.findByModelCid(model.cid);
+	      },
+	  
+	      // Find a view by the `cid` of the model that was attached to
+	      // it. Uses the model's `cid` to find the view `cid` and
+	      // retrieve the view using it.
+	      findByModelCid: function(modelCid){
+	        var viewCid = this._indexByModel[modelCid];
+	        return this.findByCid(viewCid);
+	      },
+	  
+	      // Find a view by a custom indexer.
+	      findByCustom: function(index){
+	        var viewCid = this._indexByCustom[index];
+	        return this.findByCid(viewCid);
+	      },
+	  
+	      // Find by index. This is not guaranteed to be a
+	      // stable index.
+	      findByIndex: function(index){
+	        return _.values(this._views)[index];
+	      },
+	  
+	      // retrieve a view by its `cid` directly
+	      findByCid: function(cid){
+	        return this._views[cid];
+	      },
+	  
+	      // Remove a view
+	      remove: function(view){
+	        var viewCid = view.cid;
+	  
+	        // delete model index
+	        if (view.model){
+	          delete this._indexByModel[view.model.cid];
+	        }
+	  
+	        // delete custom index
+	        _.any(this._indexByCustom, function(cid, key) {
+	          if (cid === viewCid) {
+	            delete this._indexByCustom[key];
+	            return true;
+	          }
+	        }, this);
+	  
+	        // remove the view from the container
+	        delete this._views[viewCid];
+	  
+	        // update the length
+	        this._updateLength();
+	        return this;
+	      },
+	  
+	      // Call a method on every view in the container,
+	      // passing parameters to the call method one at a
+	      // time, like `function.call`.
+	      call: function(method){
+	        this.apply(method, _.tail(arguments));
+	      },
+	  
+	      // Apply a method on every view in the container,
+	      // passing parameters to the call method one at a
+	      // time, like `function.apply`.
+	      apply: function(method, args){
+	        _.each(this._views, function(view){
+	          if (_.isFunction(view[method])){
+	            view[method].apply(view, args || []);
+	          }
+	        });
+	      },
+	  
+	      // Update the `.length` attribute on this container
+	      _updateLength: function(){
+	        this.length = _.size(this._views);
+	      }
+	    });
+	  
+	    // Borrowing this code from Backbone.Collection:
+	    // http://backbonejs.org/docs/backbone.html#section-106
+	    //
+	    // Mix in methods from Underscore, for iteration, and other
+	    // collection related features.
+	    var methods = ['forEach', 'each', 'map', 'find', 'detect', 'filter',
+	      'select', 'reject', 'every', 'all', 'some', 'any', 'include',
+	      'contains', 'invoke', 'toArray', 'first', 'initial', 'rest',
+	      'last', 'without', 'isEmpty', 'pluck', 'reduce'];
+	  
+	    _.each(methods, function(method) {
+	      Container.prototype[method] = function() {
+	        var views = _.values(this._views);
+	        var args = [views].concat(_.toArray(arguments));
+	        return _[method].apply(_, args);
+	      };
+	    });
+	  
+	    // return the public API
+	    return Container;
+	  })(Backbone, _);
+	  
+
+	  Backbone.ChildViewContainer.VERSION = '1.0.0-pre.1';
+
+	  Backbone.ChildViewContainer.noConflict = function () {
+	    Backbone.ChildViewContainer = previousChildViewContainer;
+	    return this;
+	  };
+
+	  return Backbone.ChildViewContainer;
+
+	}));
+
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(7);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _template = __webpack_require__(11);
+
+	var _template2 = _interopRequireDefault(_template);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+
+	  template: _template2.default,
+
+	  tagName: 'body',
+
+	  attributes: {
+	    id: 'body'
+	  },
+
+	  className: 'body',
+
+	  regions: {
+	    header: '#header',
+	    main: '#main',
+	    footer: '#footer',
+	    modal: '#modal'
+	  },
+
+	  updateTheme: function updateTheme(theme) {
+	    this.$el.addClass('theme-' + theme);
+	  }
+	});
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Handlebars = __webpack_require__(12);
+	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+	    return "<header class=\"header\" id=\"header\"></header>\n<main class=\"page-content\" id=\"main\"></main>\n<footer class=\"footer\" id=\"footer\"></footer>\n<section class=\"modal\" id=\"modal\"></section>\n";
+	},"useData":true});
+
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/*!
+
+	 handlebars v4.0.5
+
+	Copyright (C) 2011-2015 by Yehuda Katz
+
+	Permission is hereby granted, free of charge, to any person obtaining a copy
+	of this software and associated documentation files (the "Software"), to deal
+	in the Software without restriction, including without limitation the rights
+	to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+	copies of the Software, and to permit persons to whom the Software is
+	furnished to do so, subject to the following conditions:
+
+	The above copyright notice and this permission notice shall be included in
+	all copies or substantial portions of the Software.
+
+	THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+	IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+	FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+	AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+	LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+	OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+	THE SOFTWARE.
+
+	@license
+	*/
+	(function webpackUniversalModuleDefinition(root, factory) {
+		if(true)
+			module.exports = factory();
+		else if(typeof define === 'function' && define.amd)
+			define([], factory);
+		else if(typeof exports === 'object')
+			exports["Handlebars"] = factory();
+		else
+			root["Handlebars"] = factory();
+	})(this, function() {
+	return /******/ (function(modules) { // webpackBootstrap
+	/******/ 	// The module cache
+	/******/ 	var installedModules = {};
+
+	/******/ 	// The require function
+	/******/ 	function __webpack_require__(moduleId) {
+
+	/******/ 		// Check if module is in cache
+	/******/ 		if(installedModules[moduleId])
+	/******/ 			return installedModules[moduleId].exports;
+
+	/******/ 		// Create a new module (and put it into the cache)
+	/******/ 		var module = installedModules[moduleId] = {
+	/******/ 			exports: {},
+	/******/ 			id: moduleId,
+	/******/ 			loaded: false
+	/******/ 		};
+
+	/******/ 		// Execute the module function
+	/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+
+	/******/ 		// Flag the module as loaded
+	/******/ 		module.loaded = true;
+
+	/******/ 		// Return the exports of the module
+	/******/ 		return module.exports;
+	/******/ 	}
+
+
+	/******/ 	// expose the modules object (__webpack_modules__)
+	/******/ 	__webpack_require__.m = modules;
+
+	/******/ 	// expose the module cache
+	/******/ 	__webpack_require__.c = installedModules;
+
+	/******/ 	// __webpack_public_path__
+	/******/ 	__webpack_require__.p = "";
+
+	/******/ 	// Load entry module and return exports
+	/******/ 	return __webpack_require__(0);
+	/******/ })
+	/************************************************************************/
+	/******/ ([
+	/* 0 */
+	/***/ function(module, exports, __webpack_require__) {
+
+		'use strict';
+
+		var _interopRequireWildcard = __webpack_require__(1)['default'];
+
+		var _interopRequireDefault = __webpack_require__(2)['default'];
+
+		exports.__esModule = true;
+
+		var _handlebarsBase = __webpack_require__(3);
+
+		var base = _interopRequireWildcard(_handlebarsBase);
+
+		// Each of these augment the Handlebars object. No need to setup here.
+		// (This is done to easily share code between commonjs and browse envs)
+
+		var _handlebarsSafeString = __webpack_require__(17);
+
+		var _handlebarsSafeString2 = _interopRequireDefault(_handlebarsSafeString);
+
+		var _handlebarsException = __webpack_require__(5);
+
+		var _handlebarsException2 = _interopRequireDefault(_handlebarsException);
+
+		var _handlebarsUtils = __webpack_require__(4);
+
+		var Utils = _interopRequireWildcard(_handlebarsUtils);
+
+		var _handlebarsRuntime = __webpack_require__(18);
+
+		var runtime = _interopRequireWildcard(_handlebarsRuntime);
+
+		var _handlebarsNoConflict = __webpack_require__(19);
+
+		var _handlebarsNoConflict2 = _interopRequireDefault(_handlebarsNoConflict);
+
+		// For compatibility and usage outside of module systems, make the Handlebars object a namespace
+		function create() {
+		  var hb = new base.HandlebarsEnvironment();
+
+		  Utils.extend(hb, base);
+		  hb.SafeString = _handlebarsSafeString2['default'];
+		  hb.Exception = _handlebarsException2['default'];
+		  hb.Utils = Utils;
+		  hb.escapeExpression = Utils.escapeExpression;
+
+		  hb.VM = runtime;
+		  hb.template = function (spec) {
+		    return runtime.template(spec, hb);
+		  };
+
+		  return hb;
+		}
+
+		var inst = create();
+		inst.create = create;
+
+		_handlebarsNoConflict2['default'](inst);
+
+		inst['default'] = inst;
+
+		exports['default'] = inst;
+		module.exports = exports['default'];
+
+	/***/ },
+	/* 1 */
+	/***/ function(module, exports) {
+
+		"use strict";
+
+		exports["default"] = function (obj) {
+		  if (obj && obj.__esModule) {
+		    return obj;
+		  } else {
+		    var newObj = {};
+
+		    if (obj != null) {
+		      for (var key in obj) {
+		        if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key];
+		      }
+		    }
+
+		    newObj["default"] = obj;
+		    return newObj;
+		  }
+		};
+
+		exports.__esModule = true;
+
+	/***/ },
+	/* 2 */
+	/***/ function(module, exports) {
+
+		"use strict";
+
+		exports["default"] = function (obj) {
+		  return obj && obj.__esModule ? obj : {
+		    "default": obj
+		  };
+		};
+
+		exports.__esModule = true;
+
+	/***/ },
+	/* 3 */
+	/***/ function(module, exports, __webpack_require__) {
+
+		'use strict';
+
+		var _interopRequireDefault = __webpack_require__(2)['default'];
+
+		exports.__esModule = true;
+		exports.HandlebarsEnvironment = HandlebarsEnvironment;
+
+		var _utils = __webpack_require__(4);
+
+		var _exception = __webpack_require__(5);
+
+		var _exception2 = _interopRequireDefault(_exception);
+
+		var _helpers = __webpack_require__(6);
+
+		var _decorators = __webpack_require__(14);
+
+		var _logger = __webpack_require__(16);
+
+		var _logger2 = _interopRequireDefault(_logger);
+
+		var VERSION = '4.0.5';
+		exports.VERSION = VERSION;
+		var COMPILER_REVISION = 7;
+
+		exports.COMPILER_REVISION = COMPILER_REVISION;
+		var REVISION_CHANGES = {
+		  1: '<= 1.0.rc.2', // 1.0.rc.2 is actually rev2 but doesn't report it
+		  2: '== 1.0.0-rc.3',
+		  3: '== 1.0.0-rc.4',
+		  4: '== 1.x.x',
+		  5: '== 2.0.0-alpha.x',
+		  6: '>= 2.0.0-beta.1',
+		  7: '>= 4.0.0'
+		};
+
+		exports.REVISION_CHANGES = REVISION_CHANGES;
+		var objectType = '[object Object]';
+
+		function HandlebarsEnvironment(helpers, partials, decorators) {
+		  this.helpers = helpers || {};
+		  this.partials = partials || {};
+		  this.decorators = decorators || {};
+
+		  _helpers.registerDefaultHelpers(this);
+		  _decorators.registerDefaultDecorators(this);
+		}
+
+		HandlebarsEnvironment.prototype = {
+		  constructor: HandlebarsEnvironment,
+
+		  logger: _logger2['default'],
+		  log: _logger2['default'].log,
+
+		  registerHelper: function registerHelper(name, fn) {
+		    if (_utils.toString.call(name) === objectType) {
+		      if (fn) {
+		        throw new _exception2['default']('Arg not supported with multiple helpers');
+		      }
+		      _utils.extend(this.helpers, name);
+		    } else {
+		      this.helpers[name] = fn;
+		    }
+		  },
+		  unregisterHelper: function unregisterHelper(name) {
+		    delete this.helpers[name];
+		  },
+
+		  registerPartial: function registerPartial(name, partial) {
+		    if (_utils.toString.call(name) === objectType) {
+		      _utils.extend(this.partials, name);
+		    } else {
+		      if (typeof partial === 'undefined') {
+		        throw new _exception2['default']('Attempting to register a partial called "' + name + '" as undefined');
+		      }
+		      this.partials[name] = partial;
+		    }
+		  },
+		  unregisterPartial: function unregisterPartial(name) {
+		    delete this.partials[name];
+		  },
+
+		  registerDecorator: function registerDecorator(name, fn) {
+		    if (_utils.toString.call(name) === objectType) {
+		      if (fn) {
+		        throw new _exception2['default']('Arg not supported with multiple decorators');
+		      }
+		      _utils.extend(this.decorators, name);
+		    } else {
+		      this.decorators[name] = fn;
+		    }
+		  },
+		  unregisterDecorator: function unregisterDecorator(name) {
+		    delete this.decorators[name];
+		  }
+		};
+
+		var log = _logger2['default'].log;
+
+		exports.log = log;
+		exports.createFrame = _utils.createFrame;
+		exports.logger = _logger2['default'];
+
+	/***/ },
+	/* 4 */
+	/***/ function(module, exports) {
+
+		'use strict';
+
+		exports.__esModule = true;
+		exports.extend = extend;
+		exports.indexOf = indexOf;
+		exports.escapeExpression = escapeExpression;
+		exports.isEmpty = isEmpty;
+		exports.createFrame = createFrame;
+		exports.blockParams = blockParams;
+		exports.appendContextPath = appendContextPath;
+		var escape = {
+		  '&': '&amp;',
+		  '<': '&lt;',
+		  '>': '&gt;',
+		  '"': '&quot;',
+		  "'": '&#x27;',
+		  '`': '&#x60;',
+		  '=': '&#x3D;'
+		};
+
+		var badChars = /[&<>"'`=]/g,
+		    possible = /[&<>"'`=]/;
+
+		function escapeChar(chr) {
+		  return escape[chr];
+		}
+
+		function extend(obj /* , ...source */) {
+		  for (var i = 1; i < arguments.length; i++) {
+		    for (var key in arguments[i]) {
+		      if (Object.prototype.hasOwnProperty.call(arguments[i], key)) {
+		        obj[key] = arguments[i][key];
+		      }
+		    }
+		  }
+
+		  return obj;
+		}
+
+		var toString = Object.prototype.toString;
+
+		exports.toString = toString;
+		// Sourced from lodash
+		// https://github.com/bestiejs/lodash/blob/master/LICENSE.txt
+		/* eslint-disable func-style */
+		var isFunction = function isFunction(value) {
+		  return typeof value === 'function';
+		};
+		// fallback for older versions of Chrome and Safari
+		/* istanbul ignore next */
+		if (isFunction(/x/)) {
+		  exports.isFunction = isFunction = function (value) {
+		    return typeof value === 'function' && toString.call(value) === '[object Function]';
+		  };
+		}
+		exports.isFunction = isFunction;
+
+		/* eslint-enable func-style */
+
+		/* istanbul ignore next */
+		var isArray = Array.isArray || function (value) {
+		  return value && typeof value === 'object' ? toString.call(value) === '[object Array]' : false;
+		};
+
+		exports.isArray = isArray;
+		// Older IE versions do not directly support indexOf so we must implement our own, sadly.
+
+		function indexOf(array, value) {
+		  for (var i = 0, len = array.length; i < len; i++) {
+		    if (array[i] === value) {
+		      return i;
+		    }
+		  }
+		  return -1;
+		}
+
+		function escapeExpression(string) {
+		  if (typeof string !== 'string') {
+		    // don't escape SafeStrings, since they're already safe
+		    if (string && string.toHTML) {
+		      return string.toHTML();
+		    } else if (string == null) {
+		      return '';
+		    } else if (!string) {
+		      return string + '';
+		    }
+
+		    // Force a string conversion as this will be done by the append regardless and
+		    // the regex test will do this transparently behind the scenes, causing issues if
+		    // an object's to string has escaped characters in it.
+		    string = '' + string;
+		  }
+
+		  if (!possible.test(string)) {
+		    return string;
+		  }
+		  return string.replace(badChars, escapeChar);
+		}
+
+		function isEmpty(value) {
+		  if (!value && value !== 0) {
+		    return true;
+		  } else if (isArray(value) && value.length === 0) {
+		    return true;
+		  } else {
+		    return false;
+		  }
+		}
+
+		function createFrame(object) {
+		  var frame = extend({}, object);
+		  frame._parent = object;
+		  return frame;
+		}
+
+		function blockParams(params, ids) {
+		  params.path = ids;
+		  return params;
+		}
+
+		function appendContextPath(contextPath, id) {
+		  return (contextPath ? contextPath + '.' : '') + id;
+		}
+
+	/***/ },
+	/* 5 */
+	/***/ function(module, exports) {
+
+		'use strict';
+
+		exports.__esModule = true;
+
+		var errorProps = ['description', 'fileName', 'lineNumber', 'message', 'name', 'number', 'stack'];
+
+		function Exception(message, node) {
+		  var loc = node && node.loc,
+		      line = undefined,
+		      column = undefined;
+		  if (loc) {
+		    line = loc.start.line;
+		    column = loc.start.column;
+
+		    message += ' - ' + line + ':' + column;
+		  }
+
+		  var tmp = Error.prototype.constructor.call(this, message);
+
+		  // Unfortunately errors are not enumerable in Chrome (at least), so `for prop in tmp` doesn't work.
+		  for (var idx = 0; idx < errorProps.length; idx++) {
+		    this[errorProps[idx]] = tmp[errorProps[idx]];
+		  }
+
+		  /* istanbul ignore else */
+		  if (Error.captureStackTrace) {
+		    Error.captureStackTrace(this, Exception);
+		  }
+
+		  if (loc) {
+		    this.lineNumber = line;
+		    this.column = column;
+		  }
+		}
+
+		Exception.prototype = new Error();
+
+		exports['default'] = Exception;
+		module.exports = exports['default'];
+
+	/***/ },
+	/* 6 */
+	/***/ function(module, exports, __webpack_require__) {
+
+		'use strict';
+
+		var _interopRequireDefault = __webpack_require__(2)['default'];
+
+		exports.__esModule = true;
+		exports.registerDefaultHelpers = registerDefaultHelpers;
+
+		var _helpersBlockHelperMissing = __webpack_require__(7);
+
+		var _helpersBlockHelperMissing2 = _interopRequireDefault(_helpersBlockHelperMissing);
+
+		var _helpersEach = __webpack_require__(8);
+
+		var _helpersEach2 = _interopRequireDefault(_helpersEach);
+
+		var _helpersHelperMissing = __webpack_require__(9);
+
+		var _helpersHelperMissing2 = _interopRequireDefault(_helpersHelperMissing);
+
+		var _helpersIf = __webpack_require__(10);
+
+		var _helpersIf2 = _interopRequireDefault(_helpersIf);
+
+		var _helpersLog = __webpack_require__(11);
+
+		var _helpersLog2 = _interopRequireDefault(_helpersLog);
+
+		var _helpersLookup = __webpack_require__(12);
+
+		var _helpersLookup2 = _interopRequireDefault(_helpersLookup);
+
+		var _helpersWith = __webpack_require__(13);
+
+		var _helpersWith2 = _interopRequireDefault(_helpersWith);
+
+		function registerDefaultHelpers(instance) {
+		  _helpersBlockHelperMissing2['default'](instance);
+		  _helpersEach2['default'](instance);
+		  _helpersHelperMissing2['default'](instance);
+		  _helpersIf2['default'](instance);
+		  _helpersLog2['default'](instance);
+		  _helpersLookup2['default'](instance);
+		  _helpersWith2['default'](instance);
+		}
+
+	/***/ },
+	/* 7 */
+	/***/ function(module, exports, __webpack_require__) {
+
+		'use strict';
+
+		exports.__esModule = true;
+
+		var _utils = __webpack_require__(4);
+
+		exports['default'] = function (instance) {
+		  instance.registerHelper('blockHelperMissing', function (context, options) {
+		    var inverse = options.inverse,
+		        fn = options.fn;
+
+		    if (context === true) {
+		      return fn(this);
+		    } else if (context === false || context == null) {
+		      return inverse(this);
+		    } else if (_utils.isArray(context)) {
+		      if (context.length > 0) {
+		        if (options.ids) {
+		          options.ids = [options.name];
+		        }
+
+		        return instance.helpers.each(context, options);
+		      } else {
+		        return inverse(this);
+		      }
+		    } else {
+		      if (options.data && options.ids) {
+		        var data = _utils.createFrame(options.data);
+		        data.contextPath = _utils.appendContextPath(options.data.contextPath, options.name);
+		        options = { data: data };
+		      }
+
+		      return fn(context, options);
+		    }
+		  });
+		};
+
+		module.exports = exports['default'];
+
+	/***/ },
+	/* 8 */
+	/***/ function(module, exports, __webpack_require__) {
+
+		'use strict';
+
+		var _interopRequireDefault = __webpack_require__(2)['default'];
+
+		exports.__esModule = true;
+
+		var _utils = __webpack_require__(4);
+
+		var _exception = __webpack_require__(5);
+
+		var _exception2 = _interopRequireDefault(_exception);
+
+		exports['default'] = function (instance) {
+		  instance.registerHelper('each', function (context, options) {
+		    if (!options) {
+		      throw new _exception2['default']('Must pass iterator to #each');
+		    }
+
+		    var fn = options.fn,
+		        inverse = options.inverse,
+		        i = 0,
+		        ret = '',
+		        data = undefined,
+		        contextPath = undefined;
+
+		    if (options.data && options.ids) {
+		      contextPath = _utils.appendContextPath(options.data.contextPath, options.ids[0]) + '.';
+		    }
+
+		    if (_utils.isFunction(context)) {
+		      context = context.call(this);
+		    }
+
+		    if (options.data) {
+		      data = _utils.createFrame(options.data);
+		    }
+
+		    function execIteration(field, index, last) {
+		      if (data) {
+		        data.key = field;
+		        data.index = index;
+		        data.first = index === 0;
+		        data.last = !!last;
+
+		        if (contextPath) {
+		          data.contextPath = contextPath + field;
+		        }
+		      }
+
+		      ret = ret + fn(context[field], {
+		        data: data,
+		        blockParams: _utils.blockParams([context[field], field], [contextPath + field, null])
+		      });
+		    }
+
+		    if (context && typeof context === 'object') {
+		      if (_utils.isArray(context)) {
+		        for (var j = context.length; i < j; i++) {
+		          if (i in context) {
+		            execIteration(i, i, i === context.length - 1);
+		          }
+		        }
+		      } else {
+		        var priorKey = undefined;
+
+		        for (var key in context) {
+		          if (context.hasOwnProperty(key)) {
+		            // We're running the iterations one step out of sync so we can detect
+		            // the last iteration without have to scan the object twice and create
+		            // an itermediate keys array.
+		            if (priorKey !== undefined) {
+		              execIteration(priorKey, i - 1);
+		            }
+		            priorKey = key;
+		            i++;
+		          }
+		        }
+		        if (priorKey !== undefined) {
+		          execIteration(priorKey, i - 1, true);
+		        }
+		      }
+		    }
+
+		    if (i === 0) {
+		      ret = inverse(this);
+		    }
+
+		    return ret;
+		  });
+		};
+
+		module.exports = exports['default'];
+
+	/***/ },
+	/* 9 */
+	/***/ function(module, exports, __webpack_require__) {
+
+		'use strict';
+
+		var _interopRequireDefault = __webpack_require__(2)['default'];
+
+		exports.__esModule = true;
+
+		var _exception = __webpack_require__(5);
+
+		var _exception2 = _interopRequireDefault(_exception);
+
+		exports['default'] = function (instance) {
+		  instance.registerHelper('helperMissing', function () /* [args, ]options */{
+		    if (arguments.length === 1) {
+		      // A missing field in a {{foo}} construct.
+		      return undefined;
+		    } else {
+		      // Someone is actually trying to call something, blow up.
+		      throw new _exception2['default']('Missing helper: "' + arguments[arguments.length - 1].name + '"');
+		    }
+		  });
+		};
+
+		module.exports = exports['default'];
+
+	/***/ },
+	/* 10 */
+	/***/ function(module, exports, __webpack_require__) {
+
+		'use strict';
+
+		exports.__esModule = true;
+
+		var _utils = __webpack_require__(4);
+
+		exports['default'] = function (instance) {
+		  instance.registerHelper('if', function (conditional, options) {
+		    if (_utils.isFunction(conditional)) {
+		      conditional = conditional.call(this);
+		    }
+
+		    // Default behavior is to render the positive path if the value is truthy and not empty.
+		    // The `includeZero` option may be set to treat the condtional as purely not empty based on the
+		    // behavior of isEmpty. Effectively this determines if 0 is handled by the positive path or negative.
+		    if (!options.hash.includeZero && !conditional || _utils.isEmpty(conditional)) {
+		      return options.inverse(this);
+		    } else {
+		      return options.fn(this);
+		    }
+		  });
+
+		  instance.registerHelper('unless', function (conditional, options) {
+		    return instance.helpers['if'].call(this, conditional, { fn: options.inverse, inverse: options.fn, hash: options.hash });
+		  });
+		};
+
+		module.exports = exports['default'];
+
+	/***/ },
+	/* 11 */
+	/***/ function(module, exports) {
+
+		'use strict';
+
+		exports.__esModule = true;
+
+		exports['default'] = function (instance) {
+		  instance.registerHelper('log', function () /* message, options */{
+		    var args = [undefined],
+		        options = arguments[arguments.length - 1];
+		    for (var i = 0; i < arguments.length - 1; i++) {
+		      args.push(arguments[i]);
+		    }
+
+		    var level = 1;
+		    if (options.hash.level != null) {
+		      level = options.hash.level;
+		    } else if (options.data && options.data.level != null) {
+		      level = options.data.level;
+		    }
+		    args[0] = level;
+
+		    instance.log.apply(instance, args);
+		  });
+		};
+
+		module.exports = exports['default'];
+
+	/***/ },
+	/* 12 */
+	/***/ function(module, exports) {
+
+		'use strict';
+
+		exports.__esModule = true;
+
+		exports['default'] = function (instance) {
+		  instance.registerHelper('lookup', function (obj, field) {
+		    return obj && obj[field];
+		  });
+		};
+
+		module.exports = exports['default'];
+
+	/***/ },
+	/* 13 */
+	/***/ function(module, exports, __webpack_require__) {
+
+		'use strict';
+
+		exports.__esModule = true;
+
+		var _utils = __webpack_require__(4);
+
+		exports['default'] = function (instance) {
+		  instance.registerHelper('with', function (context, options) {
+		    if (_utils.isFunction(context)) {
+		      context = context.call(this);
+		    }
+
+		    var fn = options.fn;
+
+		    if (!_utils.isEmpty(context)) {
+		      var data = options.data;
+		      if (options.data && options.ids) {
+		        data = _utils.createFrame(options.data);
+		        data.contextPath = _utils.appendContextPath(options.data.contextPath, options.ids[0]);
+		      }
+
+		      return fn(context, {
+		        data: data,
+		        blockParams: _utils.blockParams([context], [data && data.contextPath])
+		      });
+		    } else {
+		      return options.inverse(this);
+		    }
+		  });
+		};
+
+		module.exports = exports['default'];
+
+	/***/ },
+	/* 14 */
+	/***/ function(module, exports, __webpack_require__) {
+
+		'use strict';
+
+		var _interopRequireDefault = __webpack_require__(2)['default'];
+
+		exports.__esModule = true;
+		exports.registerDefaultDecorators = registerDefaultDecorators;
+
+		var _decoratorsInline = __webpack_require__(15);
+
+		var _decoratorsInline2 = _interopRequireDefault(_decoratorsInline);
+
+		function registerDefaultDecorators(instance) {
+		  _decoratorsInline2['default'](instance);
+		}
+
+	/***/ },
+	/* 15 */
+	/***/ function(module, exports, __webpack_require__) {
+
+		'use strict';
+
+		exports.__esModule = true;
+
+		var _utils = __webpack_require__(4);
+
+		exports['default'] = function (instance) {
+		  instance.registerDecorator('inline', function (fn, props, container, options) {
+		    var ret = fn;
+		    if (!props.partials) {
+		      props.partials = {};
+		      ret = function (context, options) {
+		        // Create a new partials stack frame prior to exec.
+		        var original = container.partials;
+		        container.partials = _utils.extend({}, original, props.partials);
+		        var ret = fn(context, options);
+		        container.partials = original;
+		        return ret;
+		      };
+		    }
+
+		    props.partials[options.args[0]] = options.fn;
+
+		    return ret;
+		  });
+		};
+
+		module.exports = exports['default'];
+
+	/***/ },
+	/* 16 */
+	/***/ function(module, exports, __webpack_require__) {
+
+		'use strict';
+
+		exports.__esModule = true;
+
+		var _utils = __webpack_require__(4);
+
+		var logger = {
+		  methodMap: ['debug', 'info', 'warn', 'error'],
+		  level: 'info',
+
+		  // Maps a given level value to the `methodMap` indexes above.
+		  lookupLevel: function lookupLevel(level) {
+		    if (typeof level === 'string') {
+		      var levelMap = _utils.indexOf(logger.methodMap, level.toLowerCase());
+		      if (levelMap >= 0) {
+		        level = levelMap;
+		      } else {
+		        level = parseInt(level, 10);
+		      }
+		    }
+
+		    return level;
+		  },
+
+		  // Can be overridden in the host environment
+		  log: function log(level) {
+		    level = logger.lookupLevel(level);
+
+		    if (typeof console !== 'undefined' && logger.lookupLevel(logger.level) <= level) {
+		      var method = logger.methodMap[level];
+		      if (!console[method]) {
+		        // eslint-disable-line no-console
+		        method = 'log';
+		      }
+
+		      for (var _len = arguments.length, message = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+		        message[_key - 1] = arguments[_key];
+		      }
+
+		      console[method].apply(console, message); // eslint-disable-line no-console
+		    }
+		  }
+		};
+
+		exports['default'] = logger;
+		module.exports = exports['default'];
+
+	/***/ },
+	/* 17 */
+	/***/ function(module, exports) {
+
+		// Build out our basic SafeString type
+		'use strict';
+
+		exports.__esModule = true;
+		function SafeString(string) {
+		  this.string = string;
+		}
+
+		SafeString.prototype.toString = SafeString.prototype.toHTML = function () {
+		  return '' + this.string;
+		};
+
+		exports['default'] = SafeString;
+		module.exports = exports['default'];
+
+	/***/ },
+	/* 18 */
+	/***/ function(module, exports, __webpack_require__) {
+
+		'use strict';
+
+		var _interopRequireWildcard = __webpack_require__(1)['default'];
+
+		var _interopRequireDefault = __webpack_require__(2)['default'];
+
+		exports.__esModule = true;
+		exports.checkRevision = checkRevision;
+		exports.template = template;
+		exports.wrapProgram = wrapProgram;
+		exports.resolvePartial = resolvePartial;
+		exports.invokePartial = invokePartial;
+		exports.noop = noop;
+
+		var _utils = __webpack_require__(4);
+
+		var Utils = _interopRequireWildcard(_utils);
+
+		var _exception = __webpack_require__(5);
+
+		var _exception2 = _interopRequireDefault(_exception);
+
+		var _base = __webpack_require__(3);
+
+		function checkRevision(compilerInfo) {
+		  var compilerRevision = compilerInfo && compilerInfo[0] || 1,
+		      currentRevision = _base.COMPILER_REVISION;
+
+		  if (compilerRevision !== currentRevision) {
+		    if (compilerRevision < currentRevision) {
+		      var runtimeVersions = _base.REVISION_CHANGES[currentRevision],
+		          compilerVersions = _base.REVISION_CHANGES[compilerRevision];
+		      throw new _exception2['default']('Template was precompiled with an older version of Handlebars than the current runtime. ' + 'Please update your precompiler to a newer version (' + runtimeVersions + ') or downgrade your runtime to an older version (' + compilerVersions + ').');
+		    } else {
+		      // Use the embedded version info since the runtime doesn't know about this revision yet
+		      throw new _exception2['default']('Template was precompiled with a newer version of Handlebars than the current runtime. ' + 'Please update your runtime to a newer version (' + compilerInfo[1] + ').');
+		    }
+		  }
+		}
+
+		function template(templateSpec, env) {
+		  /* istanbul ignore next */
+		  if (!env) {
+		    throw new _exception2['default']('No environment passed to template');
+		  }
+		  if (!templateSpec || !templateSpec.main) {
+		    throw new _exception2['default']('Unknown template object: ' + typeof templateSpec);
+		  }
+
+		  templateSpec.main.decorator = templateSpec.main_d;
+
+		  // Note: Using env.VM references rather than local var references throughout this section to allow
+		  // for external users to override these as psuedo-supported APIs.
+		  env.VM.checkRevision(templateSpec.compiler);
+
+		  function invokePartialWrapper(partial, context, options) {
+		    if (options.hash) {
+		      context = Utils.extend({}, context, options.hash);
+		      if (options.ids) {
+		        options.ids[0] = true;
+		      }
+		    }
+
+		    partial = env.VM.resolvePartial.call(this, partial, context, options);
+		    var result = env.VM.invokePartial.call(this, partial, context, options);
+
+		    if (result == null && env.compile) {
+		      options.partials[options.name] = env.compile(partial, templateSpec.compilerOptions, env);
+		      result = options.partials[options.name](context, options);
+		    }
+		    if (result != null) {
+		      if (options.indent) {
+		        var lines = result.split('\n');
+		        for (var i = 0, l = lines.length; i < l; i++) {
+		          if (!lines[i] && i + 1 === l) {
+		            break;
+		          }
+
+		          lines[i] = options.indent + lines[i];
+		        }
+		        result = lines.join('\n');
+		      }
+		      return result;
+		    } else {
+		      throw new _exception2['default']('The partial ' + options.name + ' could not be compiled when running in runtime-only mode');
+		    }
+		  }
+
+		  // Just add water
+		  var container = {
+		    strict: function strict(obj, name) {
+		      if (!(name in obj)) {
+		        throw new _exception2['default']('"' + name + '" not defined in ' + obj);
+		      }
+		      return obj[name];
+		    },
+		    lookup: function lookup(depths, name) {
+		      var len = depths.length;
+		      for (var i = 0; i < len; i++) {
+		        if (depths[i] && depths[i][name] != null) {
+		          return depths[i][name];
+		        }
+		      }
+		    },
+		    lambda: function lambda(current, context) {
+		      return typeof current === 'function' ? current.call(context) : current;
+		    },
+
+		    escapeExpression: Utils.escapeExpression,
+		    invokePartial: invokePartialWrapper,
+
+		    fn: function fn(i) {
+		      var ret = templateSpec[i];
+		      ret.decorator = templateSpec[i + '_d'];
+		      return ret;
+		    },
+
+		    programs: [],
+		    program: function program(i, data, declaredBlockParams, blockParams, depths) {
+		      var programWrapper = this.programs[i],
+		          fn = this.fn(i);
+		      if (data || depths || blockParams || declaredBlockParams) {
+		        programWrapper = wrapProgram(this, i, fn, data, declaredBlockParams, blockParams, depths);
+		      } else if (!programWrapper) {
+		        programWrapper = this.programs[i] = wrapProgram(this, i, fn);
+		      }
+		      return programWrapper;
+		    },
+
+		    data: function data(value, depth) {
+		      while (value && depth--) {
+		        value = value._parent;
+		      }
+		      return value;
+		    },
+		    merge: function merge(param, common) {
+		      var obj = param || common;
+
+		      if (param && common && param !== common) {
+		        obj = Utils.extend({}, common, param);
+		      }
+
+		      return obj;
+		    },
+
+		    noop: env.VM.noop,
+		    compilerInfo: templateSpec.compiler
+		  };
+
+		  function ret(context) {
+		    var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+		    var data = options.data;
+
+		    ret._setup(options);
+		    if (!options.partial && templateSpec.useData) {
+		      data = initData(context, data);
+		    }
+		    var depths = undefined,
+		        blockParams = templateSpec.useBlockParams ? [] : undefined;
+		    if (templateSpec.useDepths) {
+		      if (options.depths) {
+		        depths = context !== options.depths[0] ? [context].concat(options.depths) : options.depths;
+		      } else {
+		        depths = [context];
+		      }
+		    }
+
+		    function main(context /*, options*/) {
+		      return '' + templateSpec.main(container, context, container.helpers, container.partials, data, blockParams, depths);
+		    }
+		    main = executeDecorators(templateSpec.main, main, container, options.depths || [], data, blockParams);
+		    return main(context, options);
+		  }
+		  ret.isTop = true;
+
+		  ret._setup = function (options) {
+		    if (!options.partial) {
+		      container.helpers = container.merge(options.helpers, env.helpers);
+
+		      if (templateSpec.usePartial) {
+		        container.partials = container.merge(options.partials, env.partials);
+		      }
+		      if (templateSpec.usePartial || templateSpec.useDecorators) {
+		        container.decorators = container.merge(options.decorators, env.decorators);
+		      }
+		    } else {
+		      container.helpers = options.helpers;
+		      container.partials = options.partials;
+		      container.decorators = options.decorators;
+		    }
+		  };
+
+		  ret._child = function (i, data, blockParams, depths) {
+		    if (templateSpec.useBlockParams && !blockParams) {
+		      throw new _exception2['default']('must pass block params');
+		    }
+		    if (templateSpec.useDepths && !depths) {
+		      throw new _exception2['default']('must pass parent depths');
+		    }
+
+		    return wrapProgram(container, i, templateSpec[i], data, 0, blockParams, depths);
+		  };
+		  return ret;
+		}
+
+		function wrapProgram(container, i, fn, data, declaredBlockParams, blockParams, depths) {
+		  function prog(context) {
+		    var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+		    var currentDepths = depths;
+		    if (depths && context !== depths[0]) {
+		      currentDepths = [context].concat(depths);
+		    }
+
+		    return fn(container, context, container.helpers, container.partials, options.data || data, blockParams && [options.blockParams].concat(blockParams), currentDepths);
+		  }
+
+		  prog = executeDecorators(fn, prog, container, depths, data, blockParams);
+
+		  prog.program = i;
+		  prog.depth = depths ? depths.length : 0;
+		  prog.blockParams = declaredBlockParams || 0;
+		  return prog;
+		}
+
+		function resolvePartial(partial, context, options) {
+		  if (!partial) {
+		    if (options.name === '@partial-block') {
+		      partial = options.data['partial-block'];
+		    } else {
+		      partial = options.partials[options.name];
+		    }
+		  } else if (!partial.call && !options.name) {
+		    // This is a dynamic partial that returned a string
+		    options.name = partial;
+		    partial = options.partials[partial];
+		  }
+		  return partial;
+		}
+
+		function invokePartial(partial, context, options) {
+		  options.partial = true;
+		  if (options.ids) {
+		    options.data.contextPath = options.ids[0] || options.data.contextPath;
+		  }
+
+		  var partialBlock = undefined;
+		  if (options.fn && options.fn !== noop) {
+		    options.data = _base.createFrame(options.data);
+		    partialBlock = options.data['partial-block'] = options.fn;
+
+		    if (partialBlock.partials) {
+		      options.partials = Utils.extend({}, options.partials, partialBlock.partials);
+		    }
+		  }
+
+		  if (partial === undefined && partialBlock) {
+		    partial = partialBlock;
+		  }
+
+		  if (partial === undefined) {
+		    throw new _exception2['default']('The partial ' + options.name + ' could not be found');
+		  } else if (partial instanceof Function) {
+		    return partial(context, options);
+		  }
+		}
+
+		function noop() {
+		  return '';
+		}
+
+		function initData(context, data) {
+		  if (!data || !('root' in data)) {
+		    data = data ? _base.createFrame(data) : {};
+		    data.root = context;
+		  }
+		  return data;
+		}
+
+		function executeDecorators(fn, prog, container, depths, data, blockParams) {
+		  if (fn.decorator) {
+		    var props = {};
+		    prog = fn.decorator(prog, props, container, depths && depths[0], data, blockParams, depths);
+		    Utils.extend(prog, props);
+		  }
+		  return prog;
+		}
+
+	/***/ },
+	/* 19 */
+	/***/ function(module, exports) {
+
+		/* WEBPACK VAR INJECTION */(function(global) {/* global window */
+		'use strict';
+
+		exports.__esModule = true;
+
+		exports['default'] = function (Handlebars) {
+		  /* istanbul ignore next */
+		  var root = typeof global !== 'undefined' ? global : window,
+		      $Handlebars = root.Handlebars;
+		  /* istanbul ignore next */
+		  Handlebars.noConflict = function () {
+		    if (root.Handlebars === Handlebars) {
+		      root.Handlebars = $Handlebars;
+		    }
+		    return Handlebars;
+		  };
+		};
+
+		module.exports = exports['default'];
+		/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }())))
+
+	/***/ }
+	/******/ ])
+	});
+	;
+
+/***/ },
 /* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(7);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _jquery = __webpack_require__(2);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _template = __webpack_require__(14);
+
+	var _template2 = _interopRequireDefault(_template);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+	  tagName: 'div',
+
+	  className: 'modal-dialog-container',
+
+	  template: _template2.default,
+
+	  ui: {
+	    confirm: '.js-modal-dialog-confirm-action',
+	    cancel: '.js-modal-dialog-cancel-action'
+	  },
+
+	  events: {
+	    click: 'onDismissClick',
+	    'click @ui.confirm': 'onConfirmClick',
+	    'click @ui.cancel': 'onCancelClick'
+	  },
+
+	  regions: {
+	    content: '.js-modal-content'
+	  },
+
+	  initialize: function initialize(args) {
+	    this.title = args.title;
+	    this.contentView = args.contentView;
+
+	    this.confirmLabel = args.confirmLabel;
+	    this.confirmAction = args.confirmAction;
+
+	    this.cancelLabel = args.cancelLabel;
+	    this.cancelAction = args.cancelAction;
+
+	    this.headerColor = args.headerColor;
+
+	    if (!this.contentView) {
+	      throw new Error('contentView must be defined!');
+	    }
+	  },
+	  templateContext: function templateContext() {
+	    return {
+	      title: this.title,
+	      confirmLabel: this.confirmLabel,
+	      cancelLabel: this.cancelLabel,
+	      headerColor: this.headerColor
+	    };
+	  },
+	  onBeforeAttach: function onBeforeAttach() {
+	    this.showChildView('content', this.contentView);
+	  },
+	  onConfirmClick: function onConfirmClick() {
+	    if (this.confirmAction) {
+	      this.confirmAction();
+	    } else {
+	      this.trigger('confirm');
+	    }
+	  },
+	  onCancelClick: function onCancelClick() {
+	    if (this.cancelAction) {
+	      this.cancelAction();
+	    } else {
+	      this.trigger('cancel');
+	    }
+	  },
+	  onDismissClick: function onDismissClick(event) {
+	    if ((0, _jquery2.default)(event.target).hasClass('modal-dialog-container')) {
+	      this.onCancelClick();
+	    }
+	  }
+	});
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Handlebars = __webpack_require__(12);
+	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+	module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
+	    var helper;
+
+	  return " style=\"background-color: "
+	    + container.escapeExpression(((helper = (helper = helpers.headerColor || (depth0 != null ? depth0.headerColor : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"headerColor","hash":{},"data":data}) : helper)))
+	    + "\" ";
+	},"3":function(container,depth0,helpers,partials,data) {
+	    var helper;
+
+	  return "      <div class=\"button button--dialog js-modal-dialog-cancel-action\">\n        "
+	    + container.escapeExpression(((helper = (helper = helpers.cancelLabel || (depth0 != null ? depth0.cancelLabel : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"cancelLabel","hash":{},"data":data}) : helper)))
+	    + "\n      </div>\n";
+	},"5":function(container,depth0,helpers,partials,data) {
+	    var helper;
+
+	  return "      <div class=\"button button--dialog js-modal-dialog-confirm-action\">\n        "
+	    + container.escapeExpression(((helper = (helper = helpers.confirmLabel || (depth0 != null ? depth0.confirmLabel : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"confirmLabel","hash":{},"data":data}) : helper)))
+	    + "\n      </div>\n";
+	},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+	    var stack1, helper, alias1=depth0 != null ? depth0 : {};
+
+	  return "<div class=\"modal-dialog\">\n  <div class=\"modal-dialog__header\" "
+	    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.headerColor : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+	    + ">\n    "
+	    + container.escapeExpression(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"title","hash":{},"data":data}) : helper)))
+	    + "\n  </div>\n\n  <div class=\"modal-dialog__content js-modal-content\"></div>\n\n  <div class=\"modal-dialog__actions\">\n"
+	    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.cancelLabel : depth0),{"name":"if","hash":{},"fn":container.program(3, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+	    + "\n"
+	    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.confirmLabel : depth0),{"name":"if","hash":{},"fn":container.program(5, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+	    + "  </div>\n</div>\n";
+	},"useData":true});
+
+/***/ },
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -13750,6 +18898,385 @@
 
 	var _backbone2 = _interopRequireDefault(_backbone);
 
+	var _app = __webpack_require__(4);
+
+	var _app2 = _interopRequireDefault(_app);
+
+	var _session = __webpack_require__(1);
+
+	var _session2 = _interopRequireDefault(_session);
+
+	var _component = __webpack_require__(16);
+
+	var _component2 = _interopRequireDefault(_component);
+
+	var _component3 = __webpack_require__(20);
+
+	var _component4 = _interopRequireDefault(_component3);
+
+	var _component5 = __webpack_require__(22);
+
+	var _component6 = _interopRequireDefault(_component5);
+
+	var _component7 = __webpack_require__(24);
+
+	var _component8 = _interopRequireDefault(_component7);
+
+	var _component9 = __webpack_require__(44);
+
+	var _component10 = _interopRequireDefault(_component9);
+
+	var _component11 = __webpack_require__(46);
+
+	var _component12 = _interopRequireDefault(_component11);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var Router = _backbone2.default.Router.extend({
+	  initialize: function initialize() {
+	    this.baseView = _app2.default.getBaseView();
+	  },
+
+
+	  routes: {
+	    '': 'landing',
+	    login: 'login',
+	    register: 'register',
+	    dashboard: 'dashboard',
+	    forum: 'forum',
+	    'thread/:threadId': 'thread'
+	  },
+
+	  showContentWrappedPage: function showContentWrappedPage(page) {
+	    this.contentView = this.contentView || new _component2.default();
+	    this.baseView.showChildView('main', this.contentView);
+	    this.contentView.showChildView('content', page);
+	  },
+	  changePage: function changePage(page) {
+	    var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
+
+	    if (options.authenticated && !_session2.default.isAuthenticated()) {
+	      this.navigate('login', true);
+	      return;
+	    }
+	    if (options.wrapped) {
+	      this.showContentWrappedPage(page);
+	    } else {
+	      this.baseView.showChildView('main', page);
+	    }
+	  },
+	  landing: function landing() {
+	    var forumView = new _component8.default();
+	    this.changePage(forumView, {
+	      authenticated: true,
+	      wrapped: true
+	    });
+	  },
+	  login: function login() {
+	    var loginView = new _component4.default();
+	    this.changePage(loginView);
+	  },
+	  register: function register() {
+	    var registerView = new _component6.default();
+	    this.changePage(registerView);
+	  },
+	  dashboard: function dashboard() {
+	    var dashboardView = new _component10.default();
+	    this.changePage(dashboardView, {
+	      authenticated: true,
+	      wrapped: true
+	    });
+	  },
+	  forum: function forum() {
+	    var forumView = new _component8.default();
+	    this.changePage(forumView, {
+	      authenticated: true,
+	      wrapped: true
+	    });
+	  },
+	  thread: function thread(threadId) {
+	    var threadView = new _component12.default({ threadId: threadId });
+	    this.changePage(threadView, {
+	      authenticated: true,
+	      wrapped: true
+	    });
+	  }
+	});
+
+	exports.default = new Router();
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(7);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _template = __webpack_require__(17);
+
+	var _template2 = _interopRequireDefault(_template);
+
+	var _main = __webpack_require__(15);
+
+	var _main2 = _interopRequireDefault(_main);
+
+	var _session = __webpack_require__(1);
+
+	var _session2 = _interopRequireDefault(_session);
+
+	var _component = __webpack_require__(18);
+
+	var _component2 = _interopRequireDefault(_component);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+
+	  template: _template2.default,
+
+	  tagName: 'article',
+
+	  className: 'content-wrapper',
+
+	  regions: {
+	    sidebar: {
+	      el: '#sidebar',
+	      replaceEl: true
+	    },
+	    content: {
+	      el: '#page-content'
+	    }
+	  },
+
+	  onBeforeAttach: function onBeforeAttach() {
+	    this.showChildView('sidebar', new _component2.default());
+	  },
+	  navigate: function navigate(event) {
+	    var page = event.target.dataset.page;
+	    _main2.default.navigate(page, true);
+	  },
+	  logout: function logout() {
+	    _session2.default.logout();
+	  }
+	});
+
+/***/ },
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Handlebars = __webpack_require__(12);
+	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+	    return "<aside id=\"sidebar\">\n\n</aside>\n\n<article class=\"wrapped-page-content\" id=\"page-content\">\n\n</article>\n";
+	},"useData":true});
+
+/***/ },
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(7);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _template = __webpack_require__(19);
+
+	var _template2 = _interopRequireDefault(_template);
+
+	var _main = __webpack_require__(15);
+
+	var _main2 = _interopRequireDefault(_main);
+
+	var _session = __webpack_require__(1);
+
+	var _session2 = _interopRequireDefault(_session);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+
+	  template: _template2.default,
+
+	  tagName: 'aside',
+
+	  className: 'sidebar',
+
+	  attributes: {
+	    id: 'sidebar'
+	  },
+
+	  ui: {
+	    logoutButton: '.js-logout'
+	  },
+
+	  events: {
+	    'click @ui.logoutButton': 'logout',
+	    'click .js-navigate': 'navigate'
+	  },
+
+	  templateContext: function templateContext() {
+	    return {
+	      sidebarItems: [{
+	        label: this.currentUser.username,
+	        link: 'profile/' + this.currentUser.id
+	      }, {
+	        label: 'dashboard',
+	        link: 'dashboard'
+	      }, {
+	        label: 'forum',
+	        link: 'forum'
+	      }]
+	    };
+	  },
+	  initialize: function initialize() {
+	    this.currentUser = _session2.default.getCurrentUser();
+	  },
+	  navigate: function navigate(event) {
+	    var page = event.target.dataset.page;
+	    _main2.default.navigate(page, true);
+	  },
+	  logout: function logout() {
+	    _session2.default.logout();
+	  }
+	});
+
+/***/ },
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Handlebars = __webpack_require__(12);
+	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+	module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
+	    var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+	  return "    <div class=\"navigation__header js-navigate\" data-page=\""
+	    + alias4(((helper = (helper = helpers.link || (depth0 != null ? depth0.link : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"link","hash":{},"data":data}) : helper)))
+	    + "\">\n      "
+	    + alias4(((helper = (helper = helpers.label || (depth0 != null ? depth0.label : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"label","hash":{},"data":data}) : helper)))
+	    + "\n    </div>\n";
+	},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+	    var stack1, alias1=container.lambda, alias2=container.escapeExpression;
+
+	  return "<section class=\"navigation\">\n"
+	    + ((stack1 = helpers.each.call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.sidebarItems : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+	    + "  <!-- <div class=\"navigation__header js-navigate\" data-page=\"profile/"
+	    + alias2(alias1(((stack1 = (depth0 != null ? depth0.currentUser : depth0)) != null ? stack1.id : stack1), depth0))
+	    + "\">\n    "
+	    + alias2(alias1(((stack1 = (depth0 != null ? depth0.currentUser : depth0)) != null ? stack1.username : stack1), depth0))
+	    + "\n  </div>\n  <div class=\"navigation__header js-navigate\" data-page=\"dashboard\">\n    DASHBOARD\n  </div>\n  <div class=\"navigation__header js-navigate\" data-page=\"forum\">\n    FORUM\n  </div>\n  <div class=\"navigation__items\">\n    <div class=\"navigation__item\">\n      Aktualno\n    </div>\n    <div class=\"navigation__item\">\n      Moje teme\n    </div>\n    <div class=\"navigation__item\">\n      Jos nesto\n    </div>\n  </div> -->\n  <div class=\"navigation__header js-logout\">\n    LOGOUT\n  </div>\n</section>\n";
+	},"useData":true});
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(7);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _underscore = __webpack_require__(6);
+
+	var _underscore2 = _interopRequireDefault(_underscore);
+
+	var _main = __webpack_require__(15);
+
+	var _main2 = _interopRequireDefault(_main);
+
+	var _session = __webpack_require__(1);
+
+	var _session2 = _interopRequireDefault(_session);
+
+	var _template = __webpack_require__(21);
+
+	var _template2 = _interopRequireDefault(_template);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+	  tagName: 'article',
+
+	  className: 'page login-page',
+
+	  ui: {
+	    form: '.js-form',
+	    registerButton: '.js-register'
+	  },
+
+	  events: {
+	    'submit @ui.form': 'submit',
+	    'click @ui.registerButton': 'toRegister'
+	  },
+
+	  template: _template2.default,
+
+	  close: function close() {
+	    this.remove();
+	  },
+	  submit: function submit(event) {
+	    event.preventDefault();
+	    var $form = this.getUI('form');
+	    var identification = $form.find('.js-identification').val();
+	    var password = $form.find('.js-password').val();
+
+	    _session2.default.login(identification, password).then(function (user) {
+	      if (user.photos.length) {
+	        _main2.default.navigate('dashboard', true);
+	      } else {
+	        _main2.default.navigate('first-steps/photo', true);
+	      }
+	    }).catch(function (errors) {
+	      _underscore2.default.each(errors, function (error) {
+	        $form.find('.js-error-' + error.field).text(error.message);
+	      });
+	    });
+	  },
+	  toRegister: function toRegister() {
+	    _main2.default.navigate('register', true);
+	  }
+	});
+
+/***/ },
+/* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Handlebars = __webpack_require__(12);
+	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+	    return "<div class=\"card\">\n  <form class=\"js-form\">\n    <div class=\"card__content\">\n      <div class=\"input-box\">\n        <label for=\"login-input-identification\" class=\"input-box__label\">Email or username</label>\n        <input type=\"text\" class=\"input-box__input js-identification\" id=\"login-input-identification\"/>\n        <span class=\"input-box__message is-error js-error-identification\"></span>\n      </div>\n      <div class=\"input-box\">\n        <label for=\"login-input-password\" class=\"input-box__label\">Password</label>\n        <input type=\"password\" class=\"input-box__input js-password\" id=\"login-input-password\"/>\n        <span class=\"input-box__message is-error js-error-password\"></span>\n      </div>\n    </div>\n    <div class=\"card__actions align-right\">\n      <div class=\"button button--dialog js-register\">\n        REGISTER\n      </div>\n      <button class=\"button button--dialog\" type=\"submit\">\n        LOGIN\n      </button>\n    </div>\n  </form>\n</div>\n";
+	},"useData":true});
+
+/***/ },
+/* 22 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(7);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
 	var _underscore = __webpack_require__(6);
 
 	var _underscore2 = _interopRequireDefault(_underscore);
@@ -13758,84 +19285,276 @@
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
-	var _template = __webpack_require__(76);
+	var _config = __webpack_require__(3);
+
+	var _config2 = _interopRequireDefault(_config);
+
+	var _template = __webpack_require__(23);
 
 	var _template2 = _interopRequireDefault(_template);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	exports.default = _backbone2.default.View.extend({
-	  tagName: 'div',
+	  tagName: 'article',
 
-	  className: 'modal-dialog-container',
+	  className: 'page register-page',
+
+	  ui: {
+	    form: '.js-form'
+	  },
 
 	  events: {
-	    click: 'onDismissClick',
-	    'click .js-modal-dialog-confirm-action': 'onConfirmClick',
-	    'click .js-modal-dialog-cancel-action': 'onCancelClick'
+	    'submit @ui.form': 'submit'
 	  },
 
 	  template: _template2.default,
 
-	  initialize: function initialize(args) {
-	    this.title = args.title;
-	    this.content = args.content;
-
-	    this.confirmLabel = args.confirmLabel;
-	    this.confirmAction = args.confirmAction;
-
-	    this.cancelLabel = args.cancelLabel;
-	    this.cancelAction = args.cancelAction;
-
-	    this.headerColor = args.headerColor;
-	  },
-	  onConfirmClick: function onConfirmClick() {
-	    this.confirmAction();
-	  },
-	  onCancelClick: function onCancelClick() {
-	    this.cancelAction();
-	  },
-	  onDismissClick: function onDismissClick(event) {
-	    if ((0, _jquery2.default)(event.target).hasClass('modal-dialog-container')) {
-	      this.onCancelClick();
-	    }
-	  },
-	  render: function render() {
-	    this.$el.html(_underscore2.default.template(this.template({
-	      title: this.title,
-	      content: this.content,
-	      confirmLabel: this.confirmLabel,
-	      cancelLabel: this.cancelLabel,
-	      headerColor: this.headerColor
-	    })));
-
-	    (0, _jquery2.default)('body').append(this.$el);
-	    (0, _jquery2.default)('body').addClass('is-scrolling-disabled');
-
-	    return this;
-	  },
 	  close: function close() {
 	    this.remove();
-	    (0, _jquery2.default)('body').removeClass('is-scrolling-disabled');
+	  },
+	  submit: function submit(event) {
+	    event.preventDefault();
+	    var $form = this.getUI('form');
+	    var email = $form.find('.js-email').val();
+	    var password = $form.find('.js-password').val();
+
+	    _jquery2.default.ajax({
+	      url: _config2.default.apiEndpoint + '/users/register',
+	      method: 'POST',
+	      data: {
+	        email: email,
+	        password: password
+	      }
+	    }).done(function () {
+	      // TODO: Handle successful registration
+
+	    }).fail(function (jqXHR) {
+	      if (jqXHR.status >= 400) {
+	        var errors = jqXHR.responseJSON.errors;
+	        _underscore2.default.each(errors, function (error) {
+	          $form.find('.js-error-' + error.field).text(error.message);
+	        });
+	      }
+	    });
 	  }
 	});
 
 /***/ },
-/* 14 */,
-/* 15 */,
-/* 16 */,
-/* 17 */,
-/* 18 */,
-/* 19 */,
-/* 20 */,
-/* 21 */,
-/* 22 */,
-/* 23 */,
-/* 24 */,
-/* 25 */,
-/* 26 */,
-/* 27 */,
-/* 28 */,
+/* 23 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Handlebars = __webpack_require__(12);
+	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+	    return "<div class=\"card\">\n  <form class=\"js-form\">\n    <div class=\"card__content\">\n      <div class=\"input-box\">\n        <label for=\"register-input-email\" class=\"input-box__label\">Email</label>\n        <input type=\"email\" class=\"input-box__input js-email\" id=\"register-input-email\" required/>\n        <span class=\"input-box__message is-error js-error-email\"></span>\n      </div>\n      <div class=\"input-box\">\n        <label for=\"register-input-password\" class=\"input-box__label\">Password</label>\n        <input type=\"password\" class=\"input-box__input js-password\" id=\"register-input-password\" required/>\n        <span class=\"input-box__message is-error js-error-password\"></span>\n      </div>\n    </div>\n    <div class=\"card__actions align-right\">\n      <button class=\"button button--dialog\" type=\"submit\">\n        REGISTER\n      </button>\n    </div>\n  </form>\n</div>\n";
+	},"useData":true});
+
+/***/ },
+/* 24 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(7);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _main = __webpack_require__(15);
+
+	var _main2 = _interopRequireDefault(_main);
+
+	var _template = __webpack_require__(25);
+
+	var _template2 = _interopRequireDefault(_template);
+
+	var _component = __webpack_require__(26);
+
+	var _component2 = _interopRequireDefault(_component);
+
+	var _categories = __webpack_require__(42);
+
+	var _categories2 = _interopRequireDefault(_categories);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+	  tagName: 'article',
+
+	  className: 'page forum-page',
+
+	  template: _template2.default,
+
+	  regions: {
+	    forumCategories: '#forum-categories'
+	  },
+
+	  ui: {
+	    toForumEdit: '.js-forum-edit'
+	  },
+
+	  events: {
+	    'click @ui.toForumEdit': 'transitionToEditForum'
+	  },
+
+	  initialize: function initialize() {
+	    _categories2.default.fetch();
+	  },
+	  onBeforeAttach: function onBeforeAttach() {
+	    this.showChildView('forumCategories', new _component2.default({
+	      collection: _categories2.default
+	    }));
+	  },
+	  transitionToEditForum: function transitionToEditForum() {
+	    _main2.default.navigate('forum/edit', true);
+	  }
+	});
+
+/***/ },
+/* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Handlebars = __webpack_require__(12);
+	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+	    return "<div class=\"forum\">\n  <div class=\"forum__heading\">\n    <div class=\"forum__title\">\n      FORUM\n    </div>\n    <div class=\"forum__actions\">\n      <img class=\"forum__action js-forum-edit\" src=\"/public/images/edit-icon-white.svg\" alt=\"Edit\" />\n    </div>\n  </div>\n  <div class=\"forum__categories\" id=\"forum-categories\">\n\n  </div>\n</div>\n";
+	},"useData":true});
+
+/***/ },
+/* 26 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(7);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _component = __webpack_require__(27);
+
+	var _component2 = _interopRequireDefault(_component);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.CollectionView.extend({
+	  childView: _component2.default
+	});
+
+/***/ },
+/* 27 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(7);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _backbone3 = __webpack_require__(8);
+
+	var _backbone4 = _interopRequireDefault(_backbone3);
+
+	var _template = __webpack_require__(28);
+
+	var _template2 = _interopRequireDefault(_template);
+
+	var _thread = __webpack_require__(29);
+
+	var _thread2 = _interopRequireDefault(_thread);
+
+	var _thread3 = __webpack_require__(41);
+
+	var _thread4 = _interopRequireDefault(_thread3);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	var applicationChannel = _backbone4.default.channel('application');
+
+	exports.default = _backbone2.default.View.extend({
+	  template: _template2.default,
+
+	  tagName: 'div',
+
+	  className: 'card-list',
+
+	  ui: {
+	    createNewThreadButton: '.js-create-new-thread'
+	  },
+
+	  events: {
+	    'click @ui.createNewThreadButton': 'showNewThreadModal'
+	  },
+
+	  showNewThreadModal: function showNewThreadModal(event) {
+	    this.newThreadFormObject = new _thread2.default({
+	      model: new _thread4.default({
+	        categoryId: event.currentTarget.dataset.categoryId
+	      })
+	    });
+
+	    this.newThreadForm = this.newThreadFormObject.getForm();
+
+	    var modalOptions = {
+	      title: 'Create new thread',
+	      contentView: this.newThreadForm,
+	      cancelLabel: 'cancel',
+	      cancelAction: this.closeNewThreadModalDialog.bind(this),
+	      confirmLabel: 'create',
+	      confirmAction: this.createNewThread.bind(this)
+	    };
+
+	    applicationChannel.request('modal:show', modalOptions);
+	  },
+	  closeNewThreadModalDialog: function closeNewThreadModalDialog() {
+	    applicationChannel.trigger('modal:hide');
+	  },
+	  createNewThread: function createNewThread() {
+	    this.newThreadFormObject.submit();
+	    this.closeNewThreadModalDialog();
+	  }
+	});
+
+/***/ },
+/* 28 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Handlebars = __webpack_require__(12);
+	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+	module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
+	    var helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+	  return "    <div class=\"js-navigate-to-thread\" data-thread-id=\""
+	    + alias4(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"id","hash":{},"data":data}) : helper)))
+	    + "\">\n      "
+	    + alias4(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"title","hash":{},"data":data}) : helper)))
+	    + "\n    </div>\n";
+	},"3":function(container,depth0,helpers,partials,data) {
+	    return "    <div>\n      No threads in this category\n    </div>\n";
+	},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+	    var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+	  return "<div class=\"card-list__header\">\n  <div class=\"card-list__title\">\n    "
+	    + alias4(((helper = (helper = helpers.name || (depth0 != null ? depth0.name : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"name","hash":{},"data":data}) : helper)))
+	    + "\n  </div>\n  <div class=\"card-list__header-actions\">\n    <div class=\"card-list__header-icon-action js-create-new-thread\" data-category-id=\""
+	    + alias4(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"id","hash":{},"data":data}) : helper)))
+	    + "\">\n      <img src=\"/public/images/add-icon-white.svg\" alt=\"addNewThread\" />\n    </div>\n  </div>\n</div>\n<div class=\"card-list__items\">\n"
+	    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.threads : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.program(3, data, 0),"data":data})) != null ? stack1 : "")
+	    + "</div>\n";
+	},"useData":true});
+
+/***/ },
 /* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -13869,10 +19588,12 @@
 
 	    _this.properties = {
 	      title: {
+	        name: 'title',
 	        type: 'text'
 	      },
 
 	      content: {
+	        name: 'content',
 	        type: 'trix'
 	      }
 	    };
@@ -13896,81 +19617,75 @@
 
 	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
+	var _backbone = __webpack_require__(5);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
 	var _underscore = __webpack_require__(6);
 
 	var _underscore2 = _interopRequireDefault(_underscore);
 
-	var _component = __webpack_require__(77);
+	var _component = __webpack_require__(31);
 
 	var _component2 = _interopRequireDefault(_component);
-
-	var _form = __webpack_require__(78);
-
-	var _form2 = _interopRequireDefault(_form);
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	var createFormPropertyObject = _form2.default.createFormPropertyObject;
 
 	var BaseForm = function () {
 	  function BaseForm(attributes) {
 	    _classCallCheck(this, BaseForm);
 
 	    this.model = attributes.model;
+	    this.propertyModel = _backbone2.default.Model;
 	  }
 
 	  _createClass(BaseForm, [{
 	    key: 'getForm',
 	    value: function getForm() {
-	      if (!this.form) {
+	      if (!this.formView) {
 	        this._setupFormView();
 	      }
 
-	      return this.form;
+	      return this.formView;
 	    }
 	  }, {
 	    key: 'submit',
 	    value: function submit() {
 	      var _this = this;
 
-	      var propertyViews = this.form.propertyViews;
-	      _underscore2.default.each(propertyViews, function (view) {
-	        _this.model.set(view.name, view.getValue());
-	      });
+	      var formView = this.formView;
+	      if (formView) {
+	        formView.children.each(function (view) {
+	          _this.model.set(view.name, view.getValue());
+	        });
+	      } else {
+	        throw new Error('Cannot get form view');
+	      }
 
 	      this.model.save();
 	    }
 	  }, {
-	    key: 'close',
-	    value: function close() {
-	      if (this.form) {
-	        this.form.close();
-	      }
-	    }
-	  }, {
 	    key: '_setupFormView',
 	    value: function _setupFormView() {
-	      var _this2 = this;
-
-	      var propertyViews = [];
-
-	      var properties = _underscore2.default.keys(this.properties);
-	      _underscore2.default.each(properties, function (propertyName) {
-	        var propertyOptions = _this2.properties[propertyName];
-	        propertyOptions.value = propertyOptions.value || _this2.model.get(propertyName);
-	        var propertyView = createFormPropertyObject(propertyName, propertyOptions);
-	        propertyViews.push(propertyView);
+	      var PropertyModel = _backbone2.default.Model.extend({
+	        idAttribute: 'cid'
 	      });
 
-	      this.form = new _component2.default({
-	        propertyViews: propertyViews
+	      var PropertiesCollection = _backbone2.default.Collection.extend({
+	        model: PropertyModel
 	      });
 
-	      this.form.on('submit', this.submit);
+	      this.propertiesCollection = new PropertiesCollection(_underscore2.default.values(this.properties).map(function (property) {
+	        return new PropertyModel(property);
+	      }));
 
-	      this.form.render();
+	      this.formView = new _component2.default({
+	        collection: this.propertiesCollection
+	      });
+
+	      this.formView.on('submit', this.submit);
 	    }
 	  }]);
 
@@ -13980,7 +19695,70 @@
 	exports.default = BaseForm;
 
 /***/ },
-/* 31 */,
+/* 31 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(7);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _component = __webpack_require__(32);
+
+	var _component2 = _interopRequireDefault(_component);
+
+	var _component3 = __webpack_require__(34);
+
+	var _component4 = _interopRequireDefault(_component3);
+
+	var _component5 = __webpack_require__(36);
+
+	var _component6 = _interopRequireDefault(_component5);
+
+	var _component7 = __webpack_require__(38);
+
+	var _component8 = _interopRequireDefault(_component7);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.CollectionView.extend({
+	  tagName: 'form',
+
+	  className: '',
+
+	  events: {
+	    submit: 'onSubmit'
+	  },
+
+	  childView: function childView(item) {
+	    switch (item.get('type')) {
+	      case 'text':
+	        return _component2.default;
+	      case 'switch':
+	        return _component4.default;
+	      case 'trix':
+	        return _component6.default;
+	      case 'color-select':
+	        return _component8.default;
+	      default:
+	        throw new Error('unknown form property type');
+	    }
+	  },
+	  childViewOptions: function childViewOptions(model) {
+	    return model.toJSON();
+	  },
+	  onSubmit: function onSubmit(event) {
+	    event.preventDefault();
+	    this.trigger('submit');
+	  }
+	});
+
+/***/ },
 /* 32 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -13990,7 +19768,7 @@
 	  value: true
 	});
 
-	var _backbone = __webpack_require__(5);
+	var _backbone = __webpack_require__(7);
 
 	var _backbone2 = _interopRequireDefault(_backbone);
 
@@ -14002,7 +19780,7 @@
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
-	var _template = __webpack_require__(79);
+	var _template = __webpack_require__(33);
 
 	var _template2 = _interopRequireDefault(_template);
 
@@ -14023,18 +19801,13 @@
 
 	  template: _template2.default,
 
-	  render: function render() {
-	    this.$el.html(_underscore2.default.template(this.template({
+	  templateContext: function templateContext() {
+	    return {
 	      label: this.name,
 	      value: this.value,
 	      inputId: this.inputId,
 	      isRequired: this.isRequired
-	    })));
-
-	    return this;
-	  },
-	  close: function close() {
-	    this.remove();
+	    };
 	  },
 	  getValue: function getValue() {
 	    var value = (0, _jquery2.default)('#' + this.inputId).val();
@@ -14042,10 +19815,31 @@
 	  }
 	});
 
-	// template
+/***/ },
+/* 33 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Handlebars = __webpack_require__(12);
+	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+	module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
+	    return " required ";
+	},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+	    var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+	  return "<label for=\""
+	    + alias4(((helper = (helper = helpers.inputId || (depth0 != null ? depth0.inputId : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"inputId","hash":{},"data":data}) : helper)))
+	    + "\" class=\"input-box__label\">"
+	    + alias4(((helper = (helper = helpers.label || (depth0 != null ? depth0.label : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"label","hash":{},"data":data}) : helper)))
+	    + "</label>\n<input type=\"text\" class=\"input-box__input\" value=\""
+	    + alias4(((helper = (helper = helpers.value || (depth0 != null ? depth0.value : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"value","hash":{},"data":data}) : helper)))
+	    + "\" id=\""
+	    + alias4(((helper = (helper = helpers.inputId || (depth0 != null ? depth0.inputId : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"inputId","hash":{},"data":data}) : helper)))
+	    + "\" "
+	    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.isRequired : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+	    + " />\n<span class=\"input-box__message is-error\"></span>\n";
+	},"useData":true});
 
 /***/ },
-/* 33 */,
 /* 34 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -14055,7 +19849,7 @@
 	  value: true
 	});
 
-	var _backbone = __webpack_require__(5);
+	var _backbone = __webpack_require__(7);
 
 	var _backbone2 = _interopRequireDefault(_backbone);
 
@@ -14067,7 +19861,7 @@
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
-	var _template = __webpack_require__(80);
+	var _template = __webpack_require__(35);
 
 	var _template2 = _interopRequireDefault(_template);
 
@@ -14088,18 +19882,13 @@
 
 	  template: _template2.default,
 
-	  render: function render() {
-	    this.$el.html(_underscore2.default.template(this.template({
+	  templateContext: function templateContext() {
+	    return {
 	      label: this.name,
 	      value: this.value,
 	      inputId: this.inputId,
 	      isRequired: this.isRequired
-	    })));
-
-	    return this;
-	  },
-	  close: function close() {
-	    this.remove();
+	    };
 	  },
 	  getValue: function getValue() {
 	    var value = (0, _jquery2.default)('#' + this.inputId).val();
@@ -14107,10 +19896,29 @@
 	  }
 	});
 
-	// template
+/***/ },
+/* 35 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Handlebars = __webpack_require__(12);
+	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+	module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
+	    return " checked ";
+	},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+	    var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=helpers.helperMissing, alias3="function", alias4=container.escapeExpression;
+
+	  return "<div class=\"input-box__text\">"
+	    + alias4(((helper = (helper = helpers.label || (depth0 != null ? depth0.label : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"label","hash":{},"data":data}) : helper)))
+	    + "</div>\n<input class=\"input-box__switch-input\" type=\"checkbox\" id=\""
+	    + alias4(((helper = (helper = helpers.inputId || (depth0 != null ? depth0.inputId : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"inputId","hash":{},"data":data}) : helper)))
+	    + "\" hidden=\"hidden\" "
+	    + ((stack1 = helpers["if"].call(alias1,(depth0 != null ? depth0.value : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+	    + " />\n<label class=\"input-box__switch-label\" for=\""
+	    + alias4(((helper = (helper = helpers.inputId || (depth0 != null ? depth0.inputId : depth0)) != null ? helper : alias2),(typeof helper === alias3 ? helper.call(alias1,{"name":"inputId","hash":{},"data":data}) : helper)))
+	    + "\"></label>\n<span class=\"input-box__message is-error\"></span>\n";
+	},"useData":true});
 
 /***/ },
-/* 35 */,
 /* 36 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -14120,7 +19928,7 @@
 	  value: true
 	});
 
-	var _backbone = __webpack_require__(5);
+	var _backbone = __webpack_require__(7);
 
 	var _backbone2 = _interopRequireDefault(_backbone);
 
@@ -14132,7 +19940,7 @@
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
-	var _template = __webpack_require__(81);
+	var _template = __webpack_require__(37);
 
 	var _template2 = _interopRequireDefault(_template);
 
@@ -14151,15 +19959,10 @@
 
 	  template: _template2.default,
 
-	  render: function render() {
-	    this.$el.html(_underscore2.default.template(this.template({
+	  templateContext: function templateContext() {
+	    return {
 	      inputId: this.inputId
-	    })));
-
-	    return this;
-	  },
-	  close: function close() {
-	    this.remove();
+	    };
 	  },
 	  getValue: function getValue() {
 	    var value = (0, _jquery2.default)('#' + this.inputId).val();
@@ -14167,10 +19970,21 @@
 	  }
 	});
 
-	// template
+/***/ },
+/* 37 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Handlebars = __webpack_require__(12);
+	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+	    var helper;
+
+	  return "<trix-editor id=\""
+	    + container.escapeExpression(((helper = (helper = helpers.inputId || (depth0 != null ? depth0.inputId : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(depth0 != null ? depth0 : {},{"name":"inputId","hash":{},"data":data}) : helper)))
+	    + "\"></trix-editor>\n";
+	},"useData":true});
 
 /***/ },
-/* 37 */,
 /* 38 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -14180,7 +19994,7 @@
 	  value: true
 	});
 
-	var _backbone = __webpack_require__(5);
+	var _backbone = __webpack_require__(7);
 
 	var _backbone2 = _interopRequireDefault(_backbone);
 
@@ -14192,7 +20006,7 @@
 
 	var _jquery2 = _interopRequireDefault(_jquery);
 
-	var _template = __webpack_require__(82);
+	var _template = __webpack_require__(39);
 
 	var _template2 = _interopRequireDefault(_template);
 
@@ -14208,6 +20022,8 @@
 	  className: 'color-select',
 
 	  initialize: function initialize(args) {
+	    var _this = this;
+
 	    this.inputId = _underscore2.default.uniqueId();
 	    this.name = args.name;
 	    this.value = args.value || '1';
@@ -14215,7 +20031,8 @@
 	    this.colors = _underscore2.default.pairs(_colors2.default).map(function (colorArray) {
 	      return {
 	        id: colorArray[0],
-	        hexValue: colorArray[1].hexColor
+	        hexValue: colorArray[1].hexColor,
+	        isSelected: colorArray[0] === _this.value
 	      };
 	    });
 	  },
@@ -14223,18 +20040,13 @@
 
 	  template: _template2.default,
 
-	  render: function render() {
-	    this.$el.html(_underscore2.default.template(this.template({
+	  templateContext: function templateContext() {
+	    return {
 	      label: this.name,
 	      value: this.value,
 	      inputId: this.inputId,
 	      colors: this.colors
-	    })));
-
-	    return this;
-	  },
-	  close: function close() {
-	    this.remove();
+	    };
 	  },
 	  getValue: function getValue() {
 	    var value = (0, _jquery2.default)('.js-color-select-' + this.inputId + ':checked').val();
@@ -14243,7 +20055,37 @@
 	});
 
 /***/ },
-/* 39 */,
+/* 39 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Handlebars = __webpack_require__(12);
+	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+	module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data,blockParams,depths) {
+	    var stack1, helper, alias1=container.lambda, alias2=container.escapeExpression, alias3=depth0 != null ? depth0 : {}, alias4=helpers.helperMissing, alias5="function";
+
+	  return "  <input type=\"radio\" name=\""
+	    + alias2(alias1((depths[1] != null ? depths[1].inputId : depths[1]), depth0))
+	    + "\" value=\""
+	    + alias2(((helper = (helper = helpers.id || (depth0 != null ? depth0.id : depth0)) != null ? helper : alias4),(typeof helper === alias5 ? helper.call(alias3,{"name":"id","hash":{},"data":data}) : helper)))
+	    + "\" class=\"color-select__item js-color-select-"
+	    + alias2(alias1((depths[1] != null ? depths[1].inputId : depths[1]), depth0))
+	    + "\" style=\"background-color: "
+	    + alias2(((helper = (helper = helpers.hexValue || (depth0 != null ? depth0.hexValue : depth0)) != null ? helper : alias4),(typeof helper === alias5 ? helper.call(alias3,{"name":"hexValue","hash":{},"data":data}) : helper)))
+	    + "\" "
+	    + ((stack1 = helpers["if"].call(alias3,(depth0 != null ? depth0.isSelected : depth0),{"name":"if","hash":{},"fn":container.program(2, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+	    + "/>\n";
+	},"2":function(container,depth0,helpers,partials,data) {
+	    return " checked ";
+	},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data,blockParams,depths) {
+	    var stack1, helper, alias1=depth0 != null ? depth0 : {};
+
+	  return "<div class=\"color-select__label\">\n  "
+	    + container.escapeExpression(((helper = (helper = helpers.label || (depth0 != null ? depth0.label : depth0)) != null ? helper : helpers.helperMissing),(typeof helper === "function" ? helper.call(alias1,{"name":"label","hash":{},"data":data}) : helper)))
+	    + "\n</div>\n"
+	    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.colors : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0, blockParams, depths),"inverse":container.noop,"data":data})) != null ? stack1 : "");
+	},"useData":true,"useDepths":true});
+
+/***/ },
 /* 40 */
 /***/ function(module, exports) {
 
@@ -14318,12 +20160,12 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-	var Forum = _backbone2.default.Collection.extend({
+	var Categories = _backbone2.default.Collection.extend({
 	  model: _category2.default,
 	  url: _config2.default.apiEndpoint + '/categories'
 	});
 
-	exports.default = new Forum();
+	exports.default = new Categories();
 
 /***/ },
 /* 43 */
@@ -14350,11 +20192,192 @@
 	});
 
 /***/ },
-/* 44 */,
-/* 45 */,
-/* 46 */,
-/* 47 */,
-/* 48 */,
+/* 44 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(7);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _template = __webpack_require__(45);
+
+	var _template2 = _interopRequireDefault(_template);
+
+	var _session = __webpack_require__(1);
+
+	var _session2 = _interopRequireDefault(_session);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+	  tagName: 'article',
+
+	  className: 'page dashboard-page',
+
+	  template: _template2.default,
+
+	  initialize: function initialize() {
+	    this.currentUser = _session2.default.getCurrentUser();
+	  },
+	  templateContext: function templateContext() {
+	    return {
+	      currentUser: this.currentUser
+	    };
+	  }
+	});
+
+/***/ },
+/* 45 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Handlebars = __webpack_require__(12);
+	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+	module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
+	    var stack1;
+
+	  return "    CurrentUser: <b>"
+	    + container.escapeExpression(container.lambda(((stack1 = (depth0 != null ? depth0.currentUser : depth0)) != null ? stack1.username : stack1), depth0))
+	    + "</b>\n";
+	},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+	    var stack1;
+
+	  return "<section>\n"
+	    + ((stack1 = helpers["if"].call(depth0 != null ? depth0 : {},(depth0 != null ? depth0.currentUser : depth0),{"name":"if","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+	    + "</section>\n";
+	},"useData":true});
+
+/***/ },
+/* 46 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+
+	var _backbone = __webpack_require__(7);
+
+	var _backbone2 = _interopRequireDefault(_backbone);
+
+	var _jquery = __webpack_require__(2);
+
+	var _jquery2 = _interopRequireDefault(_jquery);
+
+	var _template2 = __webpack_require__(47);
+
+	var _template3 = _interopRequireDefault(_template2);
+
+	var _loading = __webpack_require__(48);
+
+	var _loading2 = _interopRequireDefault(_loading);
+
+	var _session = __webpack_require__(1);
+
+	var _session2 = _interopRequireDefault(_session);
+
+	var _thread = __webpack_require__(41);
+
+	var _thread2 = _interopRequireDefault(_thread);
+
+	var _comment = __webpack_require__(49);
+
+	var _comment2 = _interopRequireDefault(_comment);
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+	exports.default = _backbone2.default.View.extend({
+	  tagName: 'div',
+
+	  className: 'page thread-page',
+
+	  ui: {
+	    newCommentButton: '.js-new-comment'
+	  },
+
+	  events: {
+	    'click @ui.newCommentButton': 'postNewComment'
+	  },
+
+	  template: function template(data) {
+	    return false ? _loading2.default : (0, _template3.default)(data);
+	  },
+	  initialize: function initialize(args) {
+	    var self = this;
+	    this.loading = true;
+	    this.model = new _thread2.default({ id: args.threadId });
+
+	    this.model.fetch().then(function () {
+	      self.loading = false;
+	      self.render();
+	    });
+	  },
+	  postNewComment: function postNewComment() {
+	    var self = this;
+
+	    var commentContent = (0, _jquery2.default)('.js-new-comment-content').val();
+	    var newComment = new _comment2.default({
+	      content: commentContent,
+	      user: _session2.default.getCurrentUser().id,
+	      thread: this.model
+	    });
+
+	    newComment.save({}, {
+	      success: function success(model, response) {
+	        var comments = self.thread.get('comments');
+	        comments.push(response);
+	      }
+	    });
+	  }
+	});
+
+/***/ },
+/* 47 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Handlebars = __webpack_require__(12);
+	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+	module.exports = (Handlebars["default"] || Handlebars).template({"1":function(container,depth0,helpers,partials,data) {
+	    var stack1;
+
+	  return "      <div class=\"comment\">\n        <div class=\"comment__image\" style=\"background-image: url('"
+	    + container.escapeExpression(container.lambda(((stack1 = ((stack1 = ((stack1 = (depth0 != null ? depth0.comment : depth0)) != null ? stack1.user : stack1)) != null ? stack1.profilePhoto : stack1)) != null ? stack1.url : stack1), depth0))
+	    + "')\">\n\n        </div>\n        <div class=\"comment__card\">\n          <div class=\"comment__info\">\n            <%= comment.user.username %> u <%= comment.createdAt %>\n          </div>\n          <div class=\"comment__content\">\n            <%= comment.content %>\n          </div>\n        </div>\n      </div>\n";
+	},"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+	    var stack1, helper, alias1=depth0 != null ? depth0 : {}, alias2=container.escapeExpression, alias3=helpers.helperMissing, alias4="function";
+
+	  return "<div class=\"thread\">\n  <div class=\"thread__header\">\n    <div class=\"thread__title\">\n      "
+	    + alias2(helpers.log.call(alias1,depth0,{"name":"log","hash":{},"data":data}))
+	    + "\n      "
+	    + alias2(((helper = (helper = helpers.title || (depth0 != null ? depth0.title : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias1,{"name":"title","hash":{},"data":data}) : helper)))
+	    + "\n    </div>\n    <div class=\"thread__content\">\n      "
+	    + alias2(((helper = (helper = helpers.content || (depth0 != null ? depth0.content : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias1,{"name":"content","hash":{},"data":data}) : helper)))
+	    + "\n    </div>\n    <div class=\"thread__additional-info\">\n      <div class=\"thread__owner-photo\" style=\"background-image: url('<%= thread.get('owner').profilePhoto.url %>')\">\n\n      </div>\n      <div class=\"thread__owner-info\">\n        <div class=\"thread__owner-username\">\n          "
+	    + alias2(container.lambda(((stack1 = (depth0 != null ? depth0.owner : depth0)) != null ? stack1.username : stack1), depth0))
+	    + "\n        </div>\n        <div class=\"thread__date\">\n          "
+	    + alias2(((helper = (helper = helpers.createdAt || (depth0 != null ? depth0.createdAt : depth0)) != null ? helper : alias3),(typeof helper === alias4 ? helper.call(alias1,{"name":"createdAt","hash":{},"data":data}) : helper)))
+	    + "\n        </div>\n      </div>\n    </div>\n  </div>\n  <div class=\"thread__comments\">\n"
+	    + ((stack1 = helpers.each.call(alias1,(depth0 != null ? depth0.comments : depth0),{"name":"each","hash":{},"fn":container.program(1, data, 0),"inverse":container.noop,"data":data})) != null ? stack1 : "")
+	    + "  </div>\n  <div class=\"thread__new-comment-container\">\n    <div class=\"thread__new-comment\">\n      <div class=\"input-box\">\n        <label for=\"thread-new-comment\">Comment</label>\n        <textarea class=\"input-box__input js-new-comment-content\" id=\"thread-new-comment\"></textarea>\n      </div>\n      <div class=\"button button-raised js-new-comment\">\n        SUBMIT\n      </div>\n    </div>\n  </div>\n</div>\n";
+	},"useData":true});
+
+/***/ },
+/* 48 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Handlebars = __webpack_require__(12);
+	function __default(obj) { return obj && (obj.__esModule ? obj["default"] : obj); }
+	module.exports = (Handlebars["default"] || Handlebars).template({"compiler":[7,">= 4.0.0"],"main":function(container,depth0,helpers,partials,data) {
+	    return "<div class=\"loading\">\n  <div class=\"loading__icon\">\n\n  </div>\n</div>\n";
+	},"useData":true});
+
+/***/ },
 /* 49 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -14965,3506 +20988,6 @@
 		if(oldSrc)
 			URL.revokeObjectURL(oldSrc);
 	}
-
-
-/***/ },
-/* 58 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _backbone = __webpack_require__(5);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _jquery = __webpack_require__(2);
-
-	var _jquery2 = _interopRequireDefault(_jquery);
-
-	var _session = __webpack_require__(1);
-
-	var _session2 = _interopRequireDefault(_session);
-
-	var _pages = __webpack_require__(59);
-
-	var _pages2 = _interopRequireDefault(_pages);
-
-	var _contentWrapper = __webpack_require__(92);
-
-	var _contentWrapper2 = _interopRequireDefault(_contentWrapper);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	var Router = _backbone2.default.Router.extend({
-	  routes: {
-	    '': 'landing',
-	    register: 'register',
-	    login: 'login',
-	    'verify?userId=:userId&token=:token': 'verify',
-	    dashboard: 'dashboard',
-	    'first-steps/photo': 'firstStepsPhoto',
-	    forum: 'forum',
-	    'thread/:threadId': 'thread',
-	    'profile/:profileId': 'profile',
-	    'forum/edit': 'forumEdit'
-	  },
-
-	  pages: _pages2.default,
-	  currentView: null,
-	  $pageElement: (0, _jquery2.default)('.page-content'),
-
-	  changeView: function changeView(view) {
-	    if (this.currentView) {
-	      this.currentView.close();
-	    }
-
-	    if (!this.$pageElement.length) {
-	      this.$pageElement = (0, _jquery2.default)('.page-content');
-	    }
-
-	    this.currentView = view;
-	    view.render();
-	    this.$pageElement.html(view.el);
-
-	    console.log('changing view to ' + view.className);
-	  },
-	  changeWrappedView: function changeWrappedView(view) {
-	    if (!this.contentWrapperView) {
-	      this.contentWrapperView = new _contentWrapper2.default();
-	      this.changeView(this.contentWrapperView);
-	    }
-	    this.contentWrapperView.changeCurrentView(view);
-	  },
-	  changePage: function changePage(pageName, args) {
-	    var pageObject = this.pages[pageName];
-	    if (pageObject) {
-	      if (pageObject.authenticated && !_session2.default.isAuthenticated()) {
-	        this.navigate('login', true);
-	        return;
-	      }
-	      var pageView = new pageObject.View(args);
-	      if (pageObject.wrapped) {
-	        this.changeWrappedView(pageView);
-	      } else {
-	        this.changeView(pageView);
-	      }
-	    } else {
-	      // TODO: 404
-	    }
-	  },
-	  landing: function landing() {
-	    this.changePage('landing');
-	  },
-	  register: function register() {
-	    this.changePage('register');
-	  },
-	  login: function login() {
-	    this.changePage('login');
-	  },
-	  verify: function verify(userId, token) {
-	    this.changePage('verify', { userId: userId, token: token });
-	  },
-	  dashboard: function dashboard() {
-	    this.changePage('dashboard');
-	  },
-	  firstStepsPhoto: function firstStepsPhoto() {
-	    this.changePage('firstStepsPhoto');
-	  },
-	  forum: function forum() {
-	    this.changePage('forum');
-	  },
-	  thread: function thread(threadId) {
-	    this.changePage('thread', { threadId: threadId });
-	  },
-	  profile: function profile(profileId) {
-	    this.changePage('profile', { userId: profileId });
-	  },
-	  forumEdit: function forumEdit() {
-	    this.changePage('forumEdit');
-	  }
-	});
-
-	exports.default = new Router();
-
-/***/ },
-/* 59 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _register = __webpack_require__(60);
-
-	var _register2 = _interopRequireDefault(_register);
-
-	var _login = __webpack_require__(62);
-
-	var _login2 = _interopRequireDefault(_login);
-
-	var _verify = __webpack_require__(64);
-
-	var _verify2 = _interopRequireDefault(_verify);
-
-	var _photo = __webpack_require__(68);
-
-	var _photo2 = _interopRequireDefault(_photo);
-
-	var _dashboard = __webpack_require__(72);
-
-	var _dashboard2 = _interopRequireDefault(_dashboard);
-
-	var _forum = __webpack_require__(74);
-
-	var _forum2 = _interopRequireDefault(_forum);
-
-	var _thread = __webpack_require__(83);
-
-	var _thread2 = _interopRequireDefault(_thread);
-
-	var _profile = __webpack_require__(86);
-
-	var _profile2 = _interopRequireDefault(_profile);
-
-	var _edit = __webpack_require__(89);
-
-	var _edit2 = _interopRequireDefault(_edit);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = {
-	  landing: {
-	    View: _login2.default,
-	    authenticated: false,
-	    wrapped: false
-	  },
-	  login: {
-	    View: _login2.default,
-	    authenticated: false,
-	    wrapped: false
-	  },
-	  register: {
-	    View: _register2.default,
-	    authenticated: false,
-	    wrapped: false
-	  },
-	  verify: {
-	    View: _verify2.default,
-	    authenticated: false,
-	    wrapped: false
-	  },
-	  dashboard: {
-	    View: _dashboard2.default,
-	    authenticated: true,
-	    wrapped: true
-	  },
-	  firstStepsPhoto: {
-	    View: _photo2.default,
-	    authenticated: true,
-	    wrapped: false
-	  },
-	  forum: {
-	    View: _forum2.default,
-	    authenticated: true,
-	    wrapped: true
-	  },
-	  thread: {
-	    View: _thread2.default,
-	    authenticated: true,
-	    wrapped: true
-	  },
-	  profile: {
-	    View: _profile2.default,
-	    authenticated: true,
-	    wrapped: true
-	  },
-	  forumEdit: {
-	    View: _edit2.default,
-	    authenticated: true,
-	    wrapped: true
-	  }
-	};
-
-/***/ },
-/* 60 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _backbone = __webpack_require__(5);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _underscore = __webpack_require__(6);
-
-	var _underscore2 = _interopRequireDefault(_underscore);
-
-	var _jquery = __webpack_require__(2);
-
-	var _jquery2 = _interopRequireDefault(_jquery);
-
-	var _config = __webpack_require__(3);
-
-	var _config2 = _interopRequireDefault(_config);
-
-	var _register = __webpack_require__(61);
-
-	var _register2 = _interopRequireDefault(_register);
-
-	var _router = __webpack_require__(58);
-
-	var _router2 = _interopRequireDefault(_router);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _backbone2.default.View.extend({
-	  tagName: 'div',
-
-	  className: 'page register-page',
-
-	  events: {
-	    'submit .js-form': 'submit'
-	  },
-
-	  template: _underscore2.default.template((0, _register2.default)()),
-
-	  render: function render() {
-	    this.$el.html(this.template());
-
-	    return this;
-	  },
-	  close: function close() {
-	    this.remove();
-	  },
-	  submit: function submit(event) {
-	    event.preventDefault();
-	    var $form = this.$('.js-form');
-	    var email = $form.find('.js-email').val();
-	    var password = $form.find('.js-password').val();
-
-	    _jquery2.default.ajax({
-	      url: _config2.default.apiEndpoint + '/users/register',
-	      method: 'POST',
-	      data: {
-	        email: email,
-	        password: password
-	      }
-	    }).done(function () {}).fail(function (jqXHR) {
-	      if (jqXHR.status >= 400) {
-	        var errors = jqXHR.responseJSON.errors;
-	        _underscore2.default.each(errors, function (error) {
-	          $form.find('.js-error-' + error.field).text(error.message);
-	        });
-	      }
-	    });
-	  }
-	});
-
-/***/ },
-/* 61 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _ = __webpack_require__(6);
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='<div class="card">\n  <form class="js-form">\n    <div class="card__content">\n      <div class="input-box">\n        <label for="register-input-email" class="input-box__label">Email</label>\n        <input type="email" class="input-box__input js-email" id="register-input-email" required/>\n        <span class="input-box__message is-error js-error-email"></span>\n      </div>\n      <div class="input-box">\n        <label for="register-input-password" class="input-box__label">Password</label>\n        <input type="password" class="input-box__input js-password" id="register-input-password" required/>\n        <span class="input-box__message is-error js-error-password"></span>\n      </div>\n    </div>\n    <div class="card__actions align-right">\n      <button class="button button--dialog" type="submit">\n        REGISTER\n      </button>\n    </div>\n  </form>\n</div>\n';
-	}
-	return __p;
-	};
-
-
-/***/ },
-/* 62 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _backbone = __webpack_require__(5);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _underscore = __webpack_require__(6);
-
-	var _underscore2 = _interopRequireDefault(_underscore);
-
-	var _login = __webpack_require__(63);
-
-	var _login2 = _interopRequireDefault(_login);
-
-	var _router = __webpack_require__(58);
-
-	var _router2 = _interopRequireDefault(_router);
-
-	var _session = __webpack_require__(1);
-
-	var _session2 = _interopRequireDefault(_session);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _backbone2.default.View.extend({
-	  tagName: 'div',
-
-	  className: 'page login-page',
-
-	  events: {
-	    'submit .js-form': 'submit',
-	    'click .js-register': 'toRegister'
-	  },
-
-	  template: _underscore2.default.template((0, _login2.default)()),
-
-	  render: function render() {
-	    this.$el.html(this.template());
-
-	    return this;
-	  },
-	  close: function close() {
-	    this.remove();
-	  },
-	  submit: function submit(event) {
-	    event.preventDefault();
-	    var $form = this.$('.js-form');
-	    var identification = $form.find('.js-identification').val();
-	    var password = $form.find('.js-password').val();
-
-	    _session2.default.login(identification, password).then(function (user) {
-	      console.log(user);
-	      if (user.photos.length) {
-	        _router2.default.navigate('dashboard', true);
-	      } else {
-	        _router2.default.navigate('first-steps/photo', true);
-	      }
-	    }).catch(function (errors) {
-	      _underscore2.default.each(errors, function (error) {
-	        $form.find('.js-error-' + error.field).text(error.message);
-	      });
-	    });
-	  },
-	  toRegister: function toRegister() {
-	    _router2.default.navigate('register', true);
-	  }
-	});
-
-/***/ },
-/* 63 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _ = __webpack_require__(6);
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='<div class="card">\n  <form class="js-form">\n    <div class="card__content">\n      <div class="input-box">\n        <label for="login-input-identification" class="input-box__label">Email or username</label>\n        <input type="text" class="input-box__input js-identification" id="login-input-identification"/>\n        <span class="input-box__message is-error js-error-identification"></span>\n      </div>\n      <div class="input-box">\n        <label for="login-input-password" class="input-box__label">Password</label>\n        <input type="password" class="input-box__input js-password" id="login-input-password"/>\n        <span class="input-box__message is-error js-error-password"></span>\n      </div>\n    </div>\n    <div class="card__actions align-right">\n      <div class="button button--dialog js-register">\n        REGISTER\n      </div>\n      <button class="button button--dialog" type="submit">\n        LOGIN\n      </button>\n    </div>\n  </form>\n</div>\n';
-	}
-	return __p;
-	};
-
-
-/***/ },
-/* 64 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _backbone = __webpack_require__(5);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _underscore = __webpack_require__(6);
-
-	var _underscore2 = _interopRequireDefault(_underscore);
-
-	var _jquery = __webpack_require__(2);
-
-	var _jquery2 = _interopRequireDefault(_jquery);
-
-	var _config = __webpack_require__(3);
-
-	var _config2 = _interopRequireDefault(_config);
-
-	var _router = __webpack_require__(58);
-
-	var _router2 = _interopRequireDefault(_router);
-
-	var _verify = __webpack_require__(65);
-
-	var _verify2 = _interopRequireDefault(_verify);
-
-	var _terms = __webpack_require__(66);
-
-	var _terms2 = _interopRequireDefault(_terms);
-
-	var _username = __webpack_require__(67);
-
-	var _username2 = _interopRequireDefault(_username);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _backbone2.default.View.extend({
-	  tagName: 'div',
-
-	  className: 'page verify-page',
-
-	  events: {
-	    'click .js-action': 'buttonClicked'
-	  },
-
-	  template: _underscore2.default.template((0, _verify2.default)()),
-
-	  initialize: function initialize(args) {
-	    this.step = 1;
-	    this.userId = args.userId;
-	    this.token = args.token;
-	  },
-	  render: function render() {
-	    this.$el.html(this.template());
-
-	    var $card = this.$('.js-verify-card');
-	    var $content = $card.find('.js-content');
-	    var $action = $card.find('.js-action');
-
-	    switch (this.step) {
-	      case 1:
-	        $content.html((0, _terms2.default)());
-	        $action.text('ACCEPT');
-	        break;
-	      case 2:
-	        $content.html((0, _username2.default)());
-	        $action.text('DONE');
-	        break;
-	      default:
-	        $content.html((0, _terms2.default)());
-	        $action.text('ACCEPT');
-	        break;
-	    }
-
-	    return this;
-	  },
-	  close: function close() {
-	    this.remove();
-	  },
-	  buttonClicked: function buttonClicked() {
-	    var _this = this;
-
-	    if (this.step === 1) {
-	      this.step = 2;
-	      this.render();
-	    } else if (this.step === 2) {
-	      (function () {
-	        var self = _this;
-	        var username = _this.$('.js-username').val();
-	        var userId = _this.userId;
-	        var token = _this.token;
-
-	        _jquery2.default.ajax({
-	          url: _config2.default.apiEndpoint + '/users/verify',
-	          method: 'POST',
-	          data: {
-	            username: username,
-	            userId: userId,
-	            token: token
-	          }
-	        }).done(function () {
-	          _router2.default.navigate('login', true);
-	        }).fail(function (jqXHR) {
-	          if (jqXHR.status >= 400) {
-	            var errors = jqXHR.responseJSON.errors;
-	            _underscore2.default.each(errors, function (error) {
-	              self.$('.js-error-' + error.field).text(error.message);
-	            });
-	          }
-	        });
-	      })();
-	    }
-	  }
-	});
-
-/***/ },
-/* 65 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _ = __webpack_require__(6);
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='<div class="card js-verify-card">\n  <div class="card__content js-content">\n\n  </div>\n  <div class="card__actions align-right">\n    <button class="button button--dialog js-action" type="submit">\n      REGISTER\n    </button>\n  </div>\n</div>\n';
-	}
-	return __p;
-	};
-
-
-/***/ },
-/* 66 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _ = __webpack_require__(6);
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='<div class="tos-container">\n  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.\n</div>\n';
-	}
-	return __p;
-	};
-
-
-/***/ },
-/* 67 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _ = __webpack_require__(6);
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='<div class="input-box">\n  <label for="select-username-input-username" class="input-box__label">Username</label>\n  <input type="text" class="input-box__input js-username" id="select-username-input-username" required/>\n  <span class="input-box__message is-error js-error-username"></span>\n</div>\n';
-	}
-	return __p;
-	};
-
-
-/***/ },
-/* 68 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _backbone = __webpack_require__(5);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _underscore = __webpack_require__(6);
-
-	var _underscore2 = _interopRequireDefault(_underscore);
-
-	var _dropzone = __webpack_require__(69);
-
-	var _dropzone2 = _interopRequireDefault(_dropzone);
-
-	var _photo = __webpack_require__(71);
-
-	var _photo2 = _interopRequireDefault(_photo);
-
-	var _session = __webpack_require__(1);
-
-	var _session2 = _interopRequireDefault(_session);
-
-	var _router = __webpack_require__(58);
-
-	var _router2 = _interopRequireDefault(_router);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _backbone2.default.View.extend({
-	  tagName: 'div',
-
-	  className: 'page first-steps-photo-page',
-
-	  events: {
-	    'click .js-action-skip': 'skip',
-	    'click .js-action-upload-again': 'resetUpload',
-	    'click .js-action-next': 'submit'
-	  },
-
-	  template: _photo2.default,
-
-	  render: function render() {
-	    this.$el.html(_underscore2.default.template(this.template({
-	      currentUser: _session2.default.getCurrentUser()
-	    })));
-
-	    this.initDropzone();
-
-	    return this;
-	  },
-	  close: function close() {
-	    this.remove();
-	  },
-	  initDropzone: function initDropzone() {
-	    var _this = this;
-
-	    var self = this;
-	    var $dropzoneDontainer = this.$('.dropzone-container');
-
-	    _dropzone2.default.autoDiscover = false;
-
-	    this.dropzone = new _dropzone2.default($dropzoneDontainer.get(0), {
-	      url: '/api/users/upload-photo',
-	      createImageThumbnails: false,
-	      previewTemplate: '<div></div>'
-	    });
-
-	    this.dropzone.on('success', function (file, response) {
-	      var photo = response.photo;
-	      self.$('.js-preview-image').css('background-image', 'url(\'' + photo.url + '\')');
-
-	      self.$('.js-select-photo-container').addClass('has-photo');
-	      _this.$('.js-action-skip').addClass('is-hidden');
-	      _this.$('.js-action-upload-again').removeClass('is-hidden');
-	      _this.$('.js-action-next').removeClass('is-hidden');
-	    });
-	  },
-	  skip: function skip() {
-	    _router2.default.navigate('dashboard', true);
-	  },
-	  resetUpload: function resetUpload() {
-	    this.$('.js-select-photo-container').removeClass('has-photo');
-	    this.$('.js-action-skip').removeClass('is-hidden');
-	    this.$('.js-action-upload-again').addClass('is-hidden');
-	    this.$('.js-action-next').addClass('is-hidden');
-	  },
-	  submit: function submit() {
-	    _router2.default.navigate('dashboard', true);
-	  }
-	});
-
-/***/ },
-/* 69 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(module) {
-	/*
-	 *
-	 * More info at [www.dropzonejs.com](http://www.dropzonejs.com)
-	 *
-	 * Copyright (c) 2012, Matias Meno
-	 *
-	 * Permission is hereby granted, free of charge, to any person obtaining a copy
-	 * of this software and associated documentation files (the "Software"), to deal
-	 * in the Software without restriction, including without limitation the rights
-	 * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-	 * copies of the Software, and to permit persons to whom the Software is
-	 * furnished to do so, subject to the following conditions:
-	 *
-	 * The above copyright notice and this permission notice shall be included in
-	 * all copies or substantial portions of the Software.
-	 *
-	 * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-	 * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-	 * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-	 * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-	 * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-	 * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-	 * THE SOFTWARE.
-	 *
-	 */
-
-	(function() {
-	  var Dropzone, Emitter, camelize, contentLoaded, detectVerticalSquash, drawImageIOSFix, noop, without,
-	    __slice = [].slice,
-	    __hasProp = {}.hasOwnProperty,
-	    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
-
-	  noop = function() {};
-
-	  Emitter = (function() {
-	    function Emitter() {}
-
-	    Emitter.prototype.addEventListener = Emitter.prototype.on;
-
-	    Emitter.prototype.on = function(event, fn) {
-	      this._callbacks = this._callbacks || {};
-	      if (!this._callbacks[event]) {
-	        this._callbacks[event] = [];
-	      }
-	      this._callbacks[event].push(fn);
-	      return this;
-	    };
-
-	    Emitter.prototype.emit = function() {
-	      var args, callback, callbacks, event, _i, _len;
-	      event = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-	      this._callbacks = this._callbacks || {};
-	      callbacks = this._callbacks[event];
-	      if (callbacks) {
-	        for (_i = 0, _len = callbacks.length; _i < _len; _i++) {
-	          callback = callbacks[_i];
-	          callback.apply(this, args);
-	        }
-	      }
-	      return this;
-	    };
-
-	    Emitter.prototype.removeListener = Emitter.prototype.off;
-
-	    Emitter.prototype.removeAllListeners = Emitter.prototype.off;
-
-	    Emitter.prototype.removeEventListener = Emitter.prototype.off;
-
-	    Emitter.prototype.off = function(event, fn) {
-	      var callback, callbacks, i, _i, _len;
-	      if (!this._callbacks || arguments.length === 0) {
-	        this._callbacks = {};
-	        return this;
-	      }
-	      callbacks = this._callbacks[event];
-	      if (!callbacks) {
-	        return this;
-	      }
-	      if (arguments.length === 1) {
-	        delete this._callbacks[event];
-	        return this;
-	      }
-	      for (i = _i = 0, _len = callbacks.length; _i < _len; i = ++_i) {
-	        callback = callbacks[i];
-	        if (callback === fn) {
-	          callbacks.splice(i, 1);
-	          break;
-	        }
-	      }
-	      return this;
-	    };
-
-	    return Emitter;
-
-	  })();
-
-	  Dropzone = (function(_super) {
-	    var extend, resolveOption;
-
-	    __extends(Dropzone, _super);
-
-	    Dropzone.prototype.Emitter = Emitter;
-
-
-	    /*
-	    This is a list of all available events you can register on a dropzone object.
-	    
-	    You can register an event handler like this:
-	    
-	        dropzone.on("dragEnter", function() { });
-	     */
-
-	    Dropzone.prototype.events = ["drop", "dragstart", "dragend", "dragenter", "dragover", "dragleave", "addedfile", "addedfiles", "removedfile", "thumbnail", "error", "errormultiple", "processing", "processingmultiple", "uploadprogress", "totaluploadprogress", "sending", "sendingmultiple", "success", "successmultiple", "canceled", "canceledmultiple", "complete", "completemultiple", "reset", "maxfilesexceeded", "maxfilesreached", "queuecomplete"];
-
-	    Dropzone.prototype.defaultOptions = {
-	      url: null,
-	      method: "post",
-	      withCredentials: false,
-	      parallelUploads: 2,
-	      uploadMultiple: false,
-	      maxFilesize: 256,
-	      paramName: "file",
-	      createImageThumbnails: true,
-	      maxThumbnailFilesize: 10,
-	      thumbnailWidth: 120,
-	      thumbnailHeight: 120,
-	      filesizeBase: 1000,
-	      maxFiles: null,
-	      params: {},
-	      clickable: true,
-	      ignoreHiddenFiles: true,
-	      acceptedFiles: null,
-	      acceptedMimeTypes: null,
-	      autoProcessQueue: true,
-	      autoQueue: true,
-	      addRemoveLinks: false,
-	      previewsContainer: null,
-	      hiddenInputContainer: "body",
-	      capture: null,
-	      renameFilename: null,
-	      dictDefaultMessage: "Drop files here to upload",
-	      dictFallbackMessage: "Your browser does not support drag'n'drop file uploads.",
-	      dictFallbackText: "Please use the fallback form below to upload your files like in the olden days.",
-	      dictFileTooBig: "File is too big ({{filesize}}MiB). Max filesize: {{maxFilesize}}MiB.",
-	      dictInvalidFileType: "You can't upload files of this type.",
-	      dictResponseError: "Server responded with {{statusCode}} code.",
-	      dictCancelUpload: "Cancel upload",
-	      dictCancelUploadConfirmation: "Are you sure you want to cancel this upload?",
-	      dictRemoveFile: "Remove file",
-	      dictRemoveFileConfirmation: null,
-	      dictMaxFilesExceeded: "You can not upload any more files.",
-	      accept: function(file, done) {
-	        return done();
-	      },
-	      init: function() {
-	        return noop;
-	      },
-	      forceFallback: false,
-	      fallback: function() {
-	        var child, messageElement, span, _i, _len, _ref;
-	        this.element.className = "" + this.element.className + " dz-browser-not-supported";
-	        _ref = this.element.getElementsByTagName("div");
-	        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-	          child = _ref[_i];
-	          if (/(^| )dz-message($| )/.test(child.className)) {
-	            messageElement = child;
-	            child.className = "dz-message";
-	            continue;
-	          }
-	        }
-	        if (!messageElement) {
-	          messageElement = Dropzone.createElement("<div class=\"dz-message\"><span></span></div>");
-	          this.element.appendChild(messageElement);
-	        }
-	        span = messageElement.getElementsByTagName("span")[0];
-	        if (span) {
-	          if (span.textContent != null) {
-	            span.textContent = this.options.dictFallbackMessage;
-	          } else if (span.innerText != null) {
-	            span.innerText = this.options.dictFallbackMessage;
-	          }
-	        }
-	        return this.element.appendChild(this.getFallbackForm());
-	      },
-	      resize: function(file) {
-	        var info, srcRatio, trgRatio;
-	        info = {
-	          srcX: 0,
-	          srcY: 0,
-	          srcWidth: file.width,
-	          srcHeight: file.height
-	        };
-	        srcRatio = file.width / file.height;
-	        info.optWidth = this.options.thumbnailWidth;
-	        info.optHeight = this.options.thumbnailHeight;
-	        if ((info.optWidth == null) && (info.optHeight == null)) {
-	          info.optWidth = info.srcWidth;
-	          info.optHeight = info.srcHeight;
-	        } else if (info.optWidth == null) {
-	          info.optWidth = srcRatio * info.optHeight;
-	        } else if (info.optHeight == null) {
-	          info.optHeight = (1 / srcRatio) * info.optWidth;
-	        }
-	        trgRatio = info.optWidth / info.optHeight;
-	        if (file.height < info.optHeight || file.width < info.optWidth) {
-	          info.trgHeight = info.srcHeight;
-	          info.trgWidth = info.srcWidth;
-	        } else {
-	          if (srcRatio > trgRatio) {
-	            info.srcHeight = file.height;
-	            info.srcWidth = info.srcHeight * trgRatio;
-	          } else {
-	            info.srcWidth = file.width;
-	            info.srcHeight = info.srcWidth / trgRatio;
-	          }
-	        }
-	        info.srcX = (file.width - info.srcWidth) / 2;
-	        info.srcY = (file.height - info.srcHeight) / 2;
-	        return info;
-	      },
-
-	      /*
-	      Those functions register themselves to the events on init and handle all
-	      the user interface specific stuff. Overwriting them won't break the upload
-	      but can break the way it's displayed.
-	      You can overwrite them if you don't like the default behavior. If you just
-	      want to add an additional event handler, register it on the dropzone object
-	      and don't overwrite those options.
-	       */
-	      drop: function(e) {
-	        return this.element.classList.remove("dz-drag-hover");
-	      },
-	      dragstart: noop,
-	      dragend: function(e) {
-	        return this.element.classList.remove("dz-drag-hover");
-	      },
-	      dragenter: function(e) {
-	        return this.element.classList.add("dz-drag-hover");
-	      },
-	      dragover: function(e) {
-	        return this.element.classList.add("dz-drag-hover");
-	      },
-	      dragleave: function(e) {
-	        return this.element.classList.remove("dz-drag-hover");
-	      },
-	      paste: noop,
-	      reset: function() {
-	        return this.element.classList.remove("dz-started");
-	      },
-	      addedfile: function(file) {
-	        var node, removeFileEvent, removeLink, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _results;
-	        if (this.element === this.previewsContainer) {
-	          this.element.classList.add("dz-started");
-	        }
-	        if (this.previewsContainer) {
-	          file.previewElement = Dropzone.createElement(this.options.previewTemplate.trim());
-	          file.previewTemplate = file.previewElement;
-	          this.previewsContainer.appendChild(file.previewElement);
-	          _ref = file.previewElement.querySelectorAll("[data-dz-name]");
-	          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-	            node = _ref[_i];
-	            node.textContent = this._renameFilename(file.name);
-	          }
-	          _ref1 = file.previewElement.querySelectorAll("[data-dz-size]");
-	          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-	            node = _ref1[_j];
-	            node.innerHTML = this.filesize(file.size);
-	          }
-	          if (this.options.addRemoveLinks) {
-	            file._removeLink = Dropzone.createElement("<a class=\"dz-remove\" href=\"javascript:undefined;\" data-dz-remove>" + this.options.dictRemoveFile + "</a>");
-	            file.previewElement.appendChild(file._removeLink);
-	          }
-	          removeFileEvent = (function(_this) {
-	            return function(e) {
-	              e.preventDefault();
-	              e.stopPropagation();
-	              if (file.status === Dropzone.UPLOADING) {
-	                return Dropzone.confirm(_this.options.dictCancelUploadConfirmation, function() {
-	                  return _this.removeFile(file);
-	                });
-	              } else {
-	                if (_this.options.dictRemoveFileConfirmation) {
-	                  return Dropzone.confirm(_this.options.dictRemoveFileConfirmation, function() {
-	                    return _this.removeFile(file);
-	                  });
-	                } else {
-	                  return _this.removeFile(file);
-	                }
-	              }
-	            };
-	          })(this);
-	          _ref2 = file.previewElement.querySelectorAll("[data-dz-remove]");
-	          _results = [];
-	          for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
-	            removeLink = _ref2[_k];
-	            _results.push(removeLink.addEventListener("click", removeFileEvent));
-	          }
-	          return _results;
-	        }
-	      },
-	      removedfile: function(file) {
-	        var _ref;
-	        if (file.previewElement) {
-	          if ((_ref = file.previewElement) != null) {
-	            _ref.parentNode.removeChild(file.previewElement);
-	          }
-	        }
-	        return this._updateMaxFilesReachedClass();
-	      },
-	      thumbnail: function(file, dataUrl) {
-	        var thumbnailElement, _i, _len, _ref;
-	        if (file.previewElement) {
-	          file.previewElement.classList.remove("dz-file-preview");
-	          _ref = file.previewElement.querySelectorAll("[data-dz-thumbnail]");
-	          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-	            thumbnailElement = _ref[_i];
-	            thumbnailElement.alt = file.name;
-	            thumbnailElement.src = dataUrl;
-	          }
-	          return setTimeout(((function(_this) {
-	            return function() {
-	              return file.previewElement.classList.add("dz-image-preview");
-	            };
-	          })(this)), 1);
-	        }
-	      },
-	      error: function(file, message) {
-	        var node, _i, _len, _ref, _results;
-	        if (file.previewElement) {
-	          file.previewElement.classList.add("dz-error");
-	          if (typeof message !== "String" && message.error) {
-	            message = message.error;
-	          }
-	          _ref = file.previewElement.querySelectorAll("[data-dz-errormessage]");
-	          _results = [];
-	          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-	            node = _ref[_i];
-	            _results.push(node.textContent = message);
-	          }
-	          return _results;
-	        }
-	      },
-	      errormultiple: noop,
-	      processing: function(file) {
-	        if (file.previewElement) {
-	          file.previewElement.classList.add("dz-processing");
-	          if (file._removeLink) {
-	            return file._removeLink.textContent = this.options.dictCancelUpload;
-	          }
-	        }
-	      },
-	      processingmultiple: noop,
-	      uploadprogress: function(file, progress, bytesSent) {
-	        var node, _i, _len, _ref, _results;
-	        if (file.previewElement) {
-	          _ref = file.previewElement.querySelectorAll("[data-dz-uploadprogress]");
-	          _results = [];
-	          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-	            node = _ref[_i];
-	            if (node.nodeName === 'PROGRESS') {
-	              _results.push(node.value = progress);
-	            } else {
-	              _results.push(node.style.width = "" + progress + "%");
-	            }
-	          }
-	          return _results;
-	        }
-	      },
-	      totaluploadprogress: noop,
-	      sending: noop,
-	      sendingmultiple: noop,
-	      success: function(file) {
-	        if (file.previewElement) {
-	          return file.previewElement.classList.add("dz-success");
-	        }
-	      },
-	      successmultiple: noop,
-	      canceled: function(file) {
-	        return this.emit("error", file, "Upload canceled.");
-	      },
-	      canceledmultiple: noop,
-	      complete: function(file) {
-	        if (file._removeLink) {
-	          file._removeLink.textContent = this.options.dictRemoveFile;
-	        }
-	        if (file.previewElement) {
-	          return file.previewElement.classList.add("dz-complete");
-	        }
-	      },
-	      completemultiple: noop,
-	      maxfilesexceeded: noop,
-	      maxfilesreached: noop,
-	      queuecomplete: noop,
-	      addedfiles: noop,
-	      previewTemplate: "<div class=\"dz-preview dz-file-preview\">\n  <div class=\"dz-image\"><img data-dz-thumbnail /></div>\n  <div class=\"dz-details\">\n    <div class=\"dz-size\"><span data-dz-size></span></div>\n    <div class=\"dz-filename\"><span data-dz-name></span></div>\n  </div>\n  <div class=\"dz-progress\"><span class=\"dz-upload\" data-dz-uploadprogress></span></div>\n  <div class=\"dz-error-message\"><span data-dz-errormessage></span></div>\n  <div class=\"dz-success-mark\">\n    <svg width=\"54px\" height=\"54px\" viewBox=\"0 0 54 54\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:sketch=\"http://www.bohemiancoding.com/sketch/ns\">\n      <title>Check</title>\n      <defs></defs>\n      <g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\" sketch:type=\"MSPage\">\n        <path d=\"M23.5,31.8431458 L17.5852419,25.9283877 C16.0248253,24.3679711 13.4910294,24.366835 11.9289322,25.9289322 C10.3700136,27.4878508 10.3665912,30.0234455 11.9283877,31.5852419 L20.4147581,40.0716123 C20.5133999,40.1702541 20.6159315,40.2626649 20.7218615,40.3488435 C22.2835669,41.8725651 24.794234,41.8626202 26.3461564,40.3106978 L43.3106978,23.3461564 C44.8771021,21.7797521 44.8758057,19.2483887 43.3137085,17.6862915 C41.7547899,16.1273729 39.2176035,16.1255422 37.6538436,17.6893022 L23.5,31.8431458 Z M27,53 C41.3594035,53 53,41.3594035 53,27 C53,12.6405965 41.3594035,1 27,1 C12.6405965,1 1,12.6405965 1,27 C1,41.3594035 12.6405965,53 27,53 Z\" id=\"Oval-2\" stroke-opacity=\"0.198794158\" stroke=\"#747474\" fill-opacity=\"0.816519475\" fill=\"#FFFFFF\" sketch:type=\"MSShapeGroup\"></path>\n      </g>\n    </svg>\n  </div>\n  <div class=\"dz-error-mark\">\n    <svg width=\"54px\" height=\"54px\" viewBox=\"0 0 54 54\" version=\"1.1\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:sketch=\"http://www.bohemiancoding.com/sketch/ns\">\n      <title>Error</title>\n      <defs></defs>\n      <g id=\"Page-1\" stroke=\"none\" stroke-width=\"1\" fill=\"none\" fill-rule=\"evenodd\" sketch:type=\"MSPage\">\n        <g id=\"Check-+-Oval-2\" sketch:type=\"MSLayerGroup\" stroke=\"#747474\" stroke-opacity=\"0.198794158\" fill=\"#FFFFFF\" fill-opacity=\"0.816519475\">\n          <path d=\"M32.6568542,29 L38.3106978,23.3461564 C39.8771021,21.7797521 39.8758057,19.2483887 38.3137085,17.6862915 C36.7547899,16.1273729 34.2176035,16.1255422 32.6538436,17.6893022 L27,23.3431458 L21.3461564,17.6893022 C19.7823965,16.1255422 17.2452101,16.1273729 15.6862915,17.6862915 C14.1241943,19.2483887 14.1228979,21.7797521 15.6893022,23.3461564 L21.3431458,29 L15.6893022,34.6538436 C14.1228979,36.2202479 14.1241943,38.7516113 15.6862915,40.3137085 C17.2452101,41.8726271 19.7823965,41.8744578 21.3461564,40.3106978 L27,34.6568542 L32.6538436,40.3106978 C34.2176035,41.8744578 36.7547899,41.8726271 38.3137085,40.3137085 C39.8758057,38.7516113 39.8771021,36.2202479 38.3106978,34.6538436 L32.6568542,29 Z M27,53 C41.3594035,53 53,41.3594035 53,27 C53,12.6405965 41.3594035,1 27,1 C12.6405965,1 1,12.6405965 1,27 C1,41.3594035 12.6405965,53 27,53 Z\" id=\"Oval-2\" sketch:type=\"MSShapeGroup\"></path>\n        </g>\n      </g>\n    </svg>\n  </div>\n</div>"
-	    };
-
-	    extend = function() {
-	      var key, object, objects, target, val, _i, _len;
-	      target = arguments[0], objects = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-	      for (_i = 0, _len = objects.length; _i < _len; _i++) {
-	        object = objects[_i];
-	        for (key in object) {
-	          val = object[key];
-	          target[key] = val;
-	        }
-	      }
-	      return target;
-	    };
-
-	    function Dropzone(element, options) {
-	      var elementOptions, fallback, _ref;
-	      this.element = element;
-	      this.version = Dropzone.version;
-	      this.defaultOptions.previewTemplate = this.defaultOptions.previewTemplate.replace(/\n*/g, "");
-	      this.clickableElements = [];
-	      this.listeners = [];
-	      this.files = [];
-	      if (typeof this.element === "string") {
-	        this.element = document.querySelector(this.element);
-	      }
-	      if (!(this.element && (this.element.nodeType != null))) {
-	        throw new Error("Invalid dropzone element.");
-	      }
-	      if (this.element.dropzone) {
-	        throw new Error("Dropzone already attached.");
-	      }
-	      Dropzone.instances.push(this);
-	      this.element.dropzone = this;
-	      elementOptions = (_ref = Dropzone.optionsForElement(this.element)) != null ? _ref : {};
-	      this.options = extend({}, this.defaultOptions, elementOptions, options != null ? options : {});
-	      if (this.options.forceFallback || !Dropzone.isBrowserSupported()) {
-	        return this.options.fallback.call(this);
-	      }
-	      if (this.options.url == null) {
-	        this.options.url = this.element.getAttribute("action");
-	      }
-	      if (!this.options.url) {
-	        throw new Error("No URL provided.");
-	      }
-	      if (this.options.acceptedFiles && this.options.acceptedMimeTypes) {
-	        throw new Error("You can't provide both 'acceptedFiles' and 'acceptedMimeTypes'. 'acceptedMimeTypes' is deprecated.");
-	      }
-	      if (this.options.acceptedMimeTypes) {
-	        this.options.acceptedFiles = this.options.acceptedMimeTypes;
-	        delete this.options.acceptedMimeTypes;
-	      }
-	      this.options.method = this.options.method.toUpperCase();
-	      if ((fallback = this.getExistingFallback()) && fallback.parentNode) {
-	        fallback.parentNode.removeChild(fallback);
-	      }
-	      if (this.options.previewsContainer !== false) {
-	        if (this.options.previewsContainer) {
-	          this.previewsContainer = Dropzone.getElement(this.options.previewsContainer, "previewsContainer");
-	        } else {
-	          this.previewsContainer = this.element;
-	        }
-	      }
-	      if (this.options.clickable) {
-	        if (this.options.clickable === true) {
-	          this.clickableElements = [this.element];
-	        } else {
-	          this.clickableElements = Dropzone.getElements(this.options.clickable, "clickable");
-	        }
-	      }
-	      this.init();
-	    }
-
-	    Dropzone.prototype.getAcceptedFiles = function() {
-	      var file, _i, _len, _ref, _results;
-	      _ref = this.files;
-	      _results = [];
-	      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-	        file = _ref[_i];
-	        if (file.accepted) {
-	          _results.push(file);
-	        }
-	      }
-	      return _results;
-	    };
-
-	    Dropzone.prototype.getRejectedFiles = function() {
-	      var file, _i, _len, _ref, _results;
-	      _ref = this.files;
-	      _results = [];
-	      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-	        file = _ref[_i];
-	        if (!file.accepted) {
-	          _results.push(file);
-	        }
-	      }
-	      return _results;
-	    };
-
-	    Dropzone.prototype.getFilesWithStatus = function(status) {
-	      var file, _i, _len, _ref, _results;
-	      _ref = this.files;
-	      _results = [];
-	      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-	        file = _ref[_i];
-	        if (file.status === status) {
-	          _results.push(file);
-	        }
-	      }
-	      return _results;
-	    };
-
-	    Dropzone.prototype.getQueuedFiles = function() {
-	      return this.getFilesWithStatus(Dropzone.QUEUED);
-	    };
-
-	    Dropzone.prototype.getUploadingFiles = function() {
-	      return this.getFilesWithStatus(Dropzone.UPLOADING);
-	    };
-
-	    Dropzone.prototype.getAddedFiles = function() {
-	      return this.getFilesWithStatus(Dropzone.ADDED);
-	    };
-
-	    Dropzone.prototype.getActiveFiles = function() {
-	      var file, _i, _len, _ref, _results;
-	      _ref = this.files;
-	      _results = [];
-	      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-	        file = _ref[_i];
-	        if (file.status === Dropzone.UPLOADING || file.status === Dropzone.QUEUED) {
-	          _results.push(file);
-	        }
-	      }
-	      return _results;
-	    };
-
-	    Dropzone.prototype.init = function() {
-	      var eventName, noPropagation, setupHiddenFileInput, _i, _len, _ref, _ref1;
-	      if (this.element.tagName === "form") {
-	        this.element.setAttribute("enctype", "multipart/form-data");
-	      }
-	      if (this.element.classList.contains("dropzone") && !this.element.querySelector(".dz-message")) {
-	        this.element.appendChild(Dropzone.createElement("<div class=\"dz-default dz-message\"><span>" + this.options.dictDefaultMessage + "</span></div>"));
-	      }
-	      if (this.clickableElements.length) {
-	        setupHiddenFileInput = (function(_this) {
-	          return function() {
-	            if (_this.hiddenFileInput) {
-	              _this.hiddenFileInput.parentNode.removeChild(_this.hiddenFileInput);
-	            }
-	            _this.hiddenFileInput = document.createElement("input");
-	            _this.hiddenFileInput.setAttribute("type", "file");
-	            if ((_this.options.maxFiles == null) || _this.options.maxFiles > 1) {
-	              _this.hiddenFileInput.setAttribute("multiple", "multiple");
-	            }
-	            _this.hiddenFileInput.className = "dz-hidden-input";
-	            if (_this.options.acceptedFiles != null) {
-	              _this.hiddenFileInput.setAttribute("accept", _this.options.acceptedFiles);
-	            }
-	            if (_this.options.capture != null) {
-	              _this.hiddenFileInput.setAttribute("capture", _this.options.capture);
-	            }
-	            _this.hiddenFileInput.style.visibility = "hidden";
-	            _this.hiddenFileInput.style.position = "absolute";
-	            _this.hiddenFileInput.style.top = "0";
-	            _this.hiddenFileInput.style.left = "0";
-	            _this.hiddenFileInput.style.height = "0";
-	            _this.hiddenFileInput.style.width = "0";
-	            document.querySelector(_this.options.hiddenInputContainer).appendChild(_this.hiddenFileInput);
-	            return _this.hiddenFileInput.addEventListener("change", function() {
-	              var file, files, _i, _len;
-	              files = _this.hiddenFileInput.files;
-	              if (files.length) {
-	                for (_i = 0, _len = files.length; _i < _len; _i++) {
-	                  file = files[_i];
-	                  _this.addFile(file);
-	                }
-	              }
-	              _this.emit("addedfiles", files);
-	              return setupHiddenFileInput();
-	            });
-	          };
-	        })(this);
-	        setupHiddenFileInput();
-	      }
-	      this.URL = (_ref = window.URL) != null ? _ref : window.webkitURL;
-	      _ref1 = this.events;
-	      for (_i = 0, _len = _ref1.length; _i < _len; _i++) {
-	        eventName = _ref1[_i];
-	        this.on(eventName, this.options[eventName]);
-	      }
-	      this.on("uploadprogress", (function(_this) {
-	        return function() {
-	          return _this.updateTotalUploadProgress();
-	        };
-	      })(this));
-	      this.on("removedfile", (function(_this) {
-	        return function() {
-	          return _this.updateTotalUploadProgress();
-	        };
-	      })(this));
-	      this.on("canceled", (function(_this) {
-	        return function(file) {
-	          return _this.emit("complete", file);
-	        };
-	      })(this));
-	      this.on("complete", (function(_this) {
-	        return function(file) {
-	          if (_this.getAddedFiles().length === 0 && _this.getUploadingFiles().length === 0 && _this.getQueuedFiles().length === 0) {
-	            return setTimeout((function() {
-	              return _this.emit("queuecomplete");
-	            }), 0);
-	          }
-	        };
-	      })(this));
-	      noPropagation = function(e) {
-	        e.stopPropagation();
-	        if (e.preventDefault) {
-	          return e.preventDefault();
-	        } else {
-	          return e.returnValue = false;
-	        }
-	      };
-	      this.listeners = [
-	        {
-	          element: this.element,
-	          events: {
-	            "dragstart": (function(_this) {
-	              return function(e) {
-	                return _this.emit("dragstart", e);
-	              };
-	            })(this),
-	            "dragenter": (function(_this) {
-	              return function(e) {
-	                noPropagation(e);
-	                return _this.emit("dragenter", e);
-	              };
-	            })(this),
-	            "dragover": (function(_this) {
-	              return function(e) {
-	                var efct;
-	                try {
-	                  efct = e.dataTransfer.effectAllowed;
-	                } catch (_error) {}
-	                e.dataTransfer.dropEffect = 'move' === efct || 'linkMove' === efct ? 'move' : 'copy';
-	                noPropagation(e);
-	                return _this.emit("dragover", e);
-	              };
-	            })(this),
-	            "dragleave": (function(_this) {
-	              return function(e) {
-	                return _this.emit("dragleave", e);
-	              };
-	            })(this),
-	            "drop": (function(_this) {
-	              return function(e) {
-	                noPropagation(e);
-	                return _this.drop(e);
-	              };
-	            })(this),
-	            "dragend": (function(_this) {
-	              return function(e) {
-	                return _this.emit("dragend", e);
-	              };
-	            })(this)
-	          }
-	        }
-	      ];
-	      this.clickableElements.forEach((function(_this) {
-	        return function(clickableElement) {
-	          return _this.listeners.push({
-	            element: clickableElement,
-	            events: {
-	              "click": function(evt) {
-	                if ((clickableElement !== _this.element) || (evt.target === _this.element || Dropzone.elementInside(evt.target, _this.element.querySelector(".dz-message")))) {
-	                  _this.hiddenFileInput.click();
-	                }
-	                return true;
-	              }
-	            }
-	          });
-	        };
-	      })(this));
-	      this.enable();
-	      return this.options.init.call(this);
-	    };
-
-	    Dropzone.prototype.destroy = function() {
-	      var _ref;
-	      this.disable();
-	      this.removeAllFiles(true);
-	      if ((_ref = this.hiddenFileInput) != null ? _ref.parentNode : void 0) {
-	        this.hiddenFileInput.parentNode.removeChild(this.hiddenFileInput);
-	        this.hiddenFileInput = null;
-	      }
-	      delete this.element.dropzone;
-	      return Dropzone.instances.splice(Dropzone.instances.indexOf(this), 1);
-	    };
-
-	    Dropzone.prototype.updateTotalUploadProgress = function() {
-	      var activeFiles, file, totalBytes, totalBytesSent, totalUploadProgress, _i, _len, _ref;
-	      totalBytesSent = 0;
-	      totalBytes = 0;
-	      activeFiles = this.getActiveFiles();
-	      if (activeFiles.length) {
-	        _ref = this.getActiveFiles();
-	        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-	          file = _ref[_i];
-	          totalBytesSent += file.upload.bytesSent;
-	          totalBytes += file.upload.total;
-	        }
-	        totalUploadProgress = 100 * totalBytesSent / totalBytes;
-	      } else {
-	        totalUploadProgress = 100;
-	      }
-	      return this.emit("totaluploadprogress", totalUploadProgress, totalBytes, totalBytesSent);
-	    };
-
-	    Dropzone.prototype._getParamName = function(n) {
-	      if (typeof this.options.paramName === "function") {
-	        return this.options.paramName(n);
-	      } else {
-	        return "" + this.options.paramName + (this.options.uploadMultiple ? "[" + n + "]" : "");
-	      }
-	    };
-
-	    Dropzone.prototype._renameFilename = function(name) {
-	      if (typeof this.options.renameFilename !== "function") {
-	        return name;
-	      }
-	      return this.options.renameFilename(name);
-	    };
-
-	    Dropzone.prototype.getFallbackForm = function() {
-	      var existingFallback, fields, fieldsString, form;
-	      if (existingFallback = this.getExistingFallback()) {
-	        return existingFallback;
-	      }
-	      fieldsString = "<div class=\"dz-fallback\">";
-	      if (this.options.dictFallbackText) {
-	        fieldsString += "<p>" + this.options.dictFallbackText + "</p>";
-	      }
-	      fieldsString += "<input type=\"file\" name=\"" + (this._getParamName(0)) + "\" " + (this.options.uploadMultiple ? 'multiple="multiple"' : void 0) + " /><input type=\"submit\" value=\"Upload!\"></div>";
-	      fields = Dropzone.createElement(fieldsString);
-	      if (this.element.tagName !== "FORM") {
-	        form = Dropzone.createElement("<form action=\"" + this.options.url + "\" enctype=\"multipart/form-data\" method=\"" + this.options.method + "\"></form>");
-	        form.appendChild(fields);
-	      } else {
-	        this.element.setAttribute("enctype", "multipart/form-data");
-	        this.element.setAttribute("method", this.options.method);
-	      }
-	      return form != null ? form : fields;
-	    };
-
-	    Dropzone.prototype.getExistingFallback = function() {
-	      var fallback, getFallback, tagName, _i, _len, _ref;
-	      getFallback = function(elements) {
-	        var el, _i, _len;
-	        for (_i = 0, _len = elements.length; _i < _len; _i++) {
-	          el = elements[_i];
-	          if (/(^| )fallback($| )/.test(el.className)) {
-	            return el;
-	          }
-	        }
-	      };
-	      _ref = ["div", "form"];
-	      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-	        tagName = _ref[_i];
-	        if (fallback = getFallback(this.element.getElementsByTagName(tagName))) {
-	          return fallback;
-	        }
-	      }
-	    };
-
-	    Dropzone.prototype.setupEventListeners = function() {
-	      var elementListeners, event, listener, _i, _len, _ref, _results;
-	      _ref = this.listeners;
-	      _results = [];
-	      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-	        elementListeners = _ref[_i];
-	        _results.push((function() {
-	          var _ref1, _results1;
-	          _ref1 = elementListeners.events;
-	          _results1 = [];
-	          for (event in _ref1) {
-	            listener = _ref1[event];
-	            _results1.push(elementListeners.element.addEventListener(event, listener, false));
-	          }
-	          return _results1;
-	        })());
-	      }
-	      return _results;
-	    };
-
-	    Dropzone.prototype.removeEventListeners = function() {
-	      var elementListeners, event, listener, _i, _len, _ref, _results;
-	      _ref = this.listeners;
-	      _results = [];
-	      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-	        elementListeners = _ref[_i];
-	        _results.push((function() {
-	          var _ref1, _results1;
-	          _ref1 = elementListeners.events;
-	          _results1 = [];
-	          for (event in _ref1) {
-	            listener = _ref1[event];
-	            _results1.push(elementListeners.element.removeEventListener(event, listener, false));
-	          }
-	          return _results1;
-	        })());
-	      }
-	      return _results;
-	    };
-
-	    Dropzone.prototype.disable = function() {
-	      var file, _i, _len, _ref, _results;
-	      this.clickableElements.forEach(function(element) {
-	        return element.classList.remove("dz-clickable");
-	      });
-	      this.removeEventListeners();
-	      _ref = this.files;
-	      _results = [];
-	      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-	        file = _ref[_i];
-	        _results.push(this.cancelUpload(file));
-	      }
-	      return _results;
-	    };
-
-	    Dropzone.prototype.enable = function() {
-	      this.clickableElements.forEach(function(element) {
-	        return element.classList.add("dz-clickable");
-	      });
-	      return this.setupEventListeners();
-	    };
-
-	    Dropzone.prototype.filesize = function(size) {
-	      var cutoff, i, selectedSize, selectedUnit, unit, units, _i, _len;
-	      selectedSize = 0;
-	      selectedUnit = "b";
-	      if (size > 0) {
-	        units = ['TB', 'GB', 'MB', 'KB', 'b'];
-	        for (i = _i = 0, _len = units.length; _i < _len; i = ++_i) {
-	          unit = units[i];
-	          cutoff = Math.pow(this.options.filesizeBase, 4 - i) / 10;
-	          if (size >= cutoff) {
-	            selectedSize = size / Math.pow(this.options.filesizeBase, 4 - i);
-	            selectedUnit = unit;
-	            break;
-	          }
-	        }
-	        selectedSize = Math.round(10 * selectedSize) / 10;
-	      }
-	      return "<strong>" + selectedSize + "</strong> " + selectedUnit;
-	    };
-
-	    Dropzone.prototype._updateMaxFilesReachedClass = function() {
-	      if ((this.options.maxFiles != null) && this.getAcceptedFiles().length >= this.options.maxFiles) {
-	        if (this.getAcceptedFiles().length === this.options.maxFiles) {
-	          this.emit('maxfilesreached', this.files);
-	        }
-	        return this.element.classList.add("dz-max-files-reached");
-	      } else {
-	        return this.element.classList.remove("dz-max-files-reached");
-	      }
-	    };
-
-	    Dropzone.prototype.drop = function(e) {
-	      var files, items;
-	      if (!e.dataTransfer) {
-	        return;
-	      }
-	      this.emit("drop", e);
-	      files = e.dataTransfer.files;
-	      this.emit("addedfiles", files);
-	      if (files.length) {
-	        items = e.dataTransfer.items;
-	        if (items && items.length && (items[0].webkitGetAsEntry != null)) {
-	          this._addFilesFromItems(items);
-	        } else {
-	          this.handleFiles(files);
-	        }
-	      }
-	    };
-
-	    Dropzone.prototype.paste = function(e) {
-	      var items, _ref;
-	      if ((e != null ? (_ref = e.clipboardData) != null ? _ref.items : void 0 : void 0) == null) {
-	        return;
-	      }
-	      this.emit("paste", e);
-	      items = e.clipboardData.items;
-	      if (items.length) {
-	        return this._addFilesFromItems(items);
-	      }
-	    };
-
-	    Dropzone.prototype.handleFiles = function(files) {
-	      var file, _i, _len, _results;
-	      _results = [];
-	      for (_i = 0, _len = files.length; _i < _len; _i++) {
-	        file = files[_i];
-	        _results.push(this.addFile(file));
-	      }
-	      return _results;
-	    };
-
-	    Dropzone.prototype._addFilesFromItems = function(items) {
-	      var entry, item, _i, _len, _results;
-	      _results = [];
-	      for (_i = 0, _len = items.length; _i < _len; _i++) {
-	        item = items[_i];
-	        if ((item.webkitGetAsEntry != null) && (entry = item.webkitGetAsEntry())) {
-	          if (entry.isFile) {
-	            _results.push(this.addFile(item.getAsFile()));
-	          } else if (entry.isDirectory) {
-	            _results.push(this._addFilesFromDirectory(entry, entry.name));
-	          } else {
-	            _results.push(void 0);
-	          }
-	        } else if (item.getAsFile != null) {
-	          if ((item.kind == null) || item.kind === "file") {
-	            _results.push(this.addFile(item.getAsFile()));
-	          } else {
-	            _results.push(void 0);
-	          }
-	        } else {
-	          _results.push(void 0);
-	        }
-	      }
-	      return _results;
-	    };
-
-	    Dropzone.prototype._addFilesFromDirectory = function(directory, path) {
-	      var dirReader, errorHandler, readEntries;
-	      dirReader = directory.createReader();
-	      errorHandler = function(error) {
-	        return typeof console !== "undefined" && console !== null ? typeof console.log === "function" ? console.log(error) : void 0 : void 0;
-	      };
-	      readEntries = (function(_this) {
-	        return function() {
-	          return dirReader.readEntries(function(entries) {
-	            var entry, _i, _len;
-	            if (entries.length > 0) {
-	              for (_i = 0, _len = entries.length; _i < _len; _i++) {
-	                entry = entries[_i];
-	                if (entry.isFile) {
-	                  entry.file(function(file) {
-	                    if (_this.options.ignoreHiddenFiles && file.name.substring(0, 1) === '.') {
-	                      return;
-	                    }
-	                    file.fullPath = "" + path + "/" + file.name;
-	                    return _this.addFile(file);
-	                  });
-	                } else if (entry.isDirectory) {
-	                  _this._addFilesFromDirectory(entry, "" + path + "/" + entry.name);
-	                }
-	              }
-	              readEntries();
-	            }
-	            return null;
-	          }, errorHandler);
-	        };
-	      })(this);
-	      return readEntries();
-	    };
-
-	    Dropzone.prototype.accept = function(file, done) {
-	      if (file.size > this.options.maxFilesize * 1024 * 1024) {
-	        return done(this.options.dictFileTooBig.replace("{{filesize}}", Math.round(file.size / 1024 / 10.24) / 100).replace("{{maxFilesize}}", this.options.maxFilesize));
-	      } else if (!Dropzone.isValidFile(file, this.options.acceptedFiles)) {
-	        return done(this.options.dictInvalidFileType);
-	      } else if ((this.options.maxFiles != null) && this.getAcceptedFiles().length >= this.options.maxFiles) {
-	        done(this.options.dictMaxFilesExceeded.replace("{{maxFiles}}", this.options.maxFiles));
-	        return this.emit("maxfilesexceeded", file);
-	      } else {
-	        return this.options.accept.call(this, file, done);
-	      }
-	    };
-
-	    Dropzone.prototype.addFile = function(file) {
-	      file.upload = {
-	        progress: 0,
-	        total: file.size,
-	        bytesSent: 0
-	      };
-	      this.files.push(file);
-	      file.status = Dropzone.ADDED;
-	      this.emit("addedfile", file);
-	      this._enqueueThumbnail(file);
-	      return this.accept(file, (function(_this) {
-	        return function(error) {
-	          if (error) {
-	            file.accepted = false;
-	            _this._errorProcessing([file], error);
-	          } else {
-	            file.accepted = true;
-	            if (_this.options.autoQueue) {
-	              _this.enqueueFile(file);
-	            }
-	          }
-	          return _this._updateMaxFilesReachedClass();
-	        };
-	      })(this));
-	    };
-
-	    Dropzone.prototype.enqueueFiles = function(files) {
-	      var file, _i, _len;
-	      for (_i = 0, _len = files.length; _i < _len; _i++) {
-	        file = files[_i];
-	        this.enqueueFile(file);
-	      }
-	      return null;
-	    };
-
-	    Dropzone.prototype.enqueueFile = function(file) {
-	      if (file.status === Dropzone.ADDED && file.accepted === true) {
-	        file.status = Dropzone.QUEUED;
-	        if (this.options.autoProcessQueue) {
-	          return setTimeout(((function(_this) {
-	            return function() {
-	              return _this.processQueue();
-	            };
-	          })(this)), 0);
-	        }
-	      } else {
-	        throw new Error("This file can't be queued because it has already been processed or was rejected.");
-	      }
-	    };
-
-	    Dropzone.prototype._thumbnailQueue = [];
-
-	    Dropzone.prototype._processingThumbnail = false;
-
-	    Dropzone.prototype._enqueueThumbnail = function(file) {
-	      if (this.options.createImageThumbnails && file.type.match(/image.*/) && file.size <= this.options.maxThumbnailFilesize * 1024 * 1024) {
-	        this._thumbnailQueue.push(file);
-	        return setTimeout(((function(_this) {
-	          return function() {
-	            return _this._processThumbnailQueue();
-	          };
-	        })(this)), 0);
-	      }
-	    };
-
-	    Dropzone.prototype._processThumbnailQueue = function() {
-	      if (this._processingThumbnail || this._thumbnailQueue.length === 0) {
-	        return;
-	      }
-	      this._processingThumbnail = true;
-	      return this.createThumbnail(this._thumbnailQueue.shift(), (function(_this) {
-	        return function() {
-	          _this._processingThumbnail = false;
-	          return _this._processThumbnailQueue();
-	        };
-	      })(this));
-	    };
-
-	    Dropzone.prototype.removeFile = function(file) {
-	      if (file.status === Dropzone.UPLOADING) {
-	        this.cancelUpload(file);
-	      }
-	      this.files = without(this.files, file);
-	      this.emit("removedfile", file);
-	      if (this.files.length === 0) {
-	        return this.emit("reset");
-	      }
-	    };
-
-	    Dropzone.prototype.removeAllFiles = function(cancelIfNecessary) {
-	      var file, _i, _len, _ref;
-	      if (cancelIfNecessary == null) {
-	        cancelIfNecessary = false;
-	      }
-	      _ref = this.files.slice();
-	      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-	        file = _ref[_i];
-	        if (file.status !== Dropzone.UPLOADING || cancelIfNecessary) {
-	          this.removeFile(file);
-	        }
-	      }
-	      return null;
-	    };
-
-	    Dropzone.prototype.createThumbnail = function(file, callback) {
-	      var fileReader;
-	      fileReader = new FileReader;
-	      fileReader.onload = (function(_this) {
-	        return function() {
-	          if (file.type === "image/svg+xml") {
-	            _this.emit("thumbnail", file, fileReader.result);
-	            if (callback != null) {
-	              callback();
-	            }
-	            return;
-	          }
-	          return _this.createThumbnailFromUrl(file, fileReader.result, callback);
-	        };
-	      })(this);
-	      return fileReader.readAsDataURL(file);
-	    };
-
-	    Dropzone.prototype.createThumbnailFromUrl = function(file, imageUrl, callback, crossOrigin) {
-	      var img;
-	      img = document.createElement("img");
-	      if (crossOrigin) {
-	        img.crossOrigin = crossOrigin;
-	      }
-	      img.onload = (function(_this) {
-	        return function() {
-	          var canvas, ctx, resizeInfo, thumbnail, _ref, _ref1, _ref2, _ref3;
-	          file.width = img.width;
-	          file.height = img.height;
-	          resizeInfo = _this.options.resize.call(_this, file);
-	          if (resizeInfo.trgWidth == null) {
-	            resizeInfo.trgWidth = resizeInfo.optWidth;
-	          }
-	          if (resizeInfo.trgHeight == null) {
-	            resizeInfo.trgHeight = resizeInfo.optHeight;
-	          }
-	          canvas = document.createElement("canvas");
-	          ctx = canvas.getContext("2d");
-	          canvas.width = resizeInfo.trgWidth;
-	          canvas.height = resizeInfo.trgHeight;
-	          drawImageIOSFix(ctx, img, (_ref = resizeInfo.srcX) != null ? _ref : 0, (_ref1 = resizeInfo.srcY) != null ? _ref1 : 0, resizeInfo.srcWidth, resizeInfo.srcHeight, (_ref2 = resizeInfo.trgX) != null ? _ref2 : 0, (_ref3 = resizeInfo.trgY) != null ? _ref3 : 0, resizeInfo.trgWidth, resizeInfo.trgHeight);
-	          thumbnail = canvas.toDataURL("image/png");
-	          _this.emit("thumbnail", file, thumbnail);
-	          if (callback != null) {
-	            return callback();
-	          }
-	        };
-	      })(this);
-	      if (callback != null) {
-	        img.onerror = callback;
-	      }
-	      return img.src = imageUrl;
-	    };
-
-	    Dropzone.prototype.processQueue = function() {
-	      var i, parallelUploads, processingLength, queuedFiles;
-	      parallelUploads = this.options.parallelUploads;
-	      processingLength = this.getUploadingFiles().length;
-	      i = processingLength;
-	      if (processingLength >= parallelUploads) {
-	        return;
-	      }
-	      queuedFiles = this.getQueuedFiles();
-	      if (!(queuedFiles.length > 0)) {
-	        return;
-	      }
-	      if (this.options.uploadMultiple) {
-	        return this.processFiles(queuedFiles.slice(0, parallelUploads - processingLength));
-	      } else {
-	        while (i < parallelUploads) {
-	          if (!queuedFiles.length) {
-	            return;
-	          }
-	          this.processFile(queuedFiles.shift());
-	          i++;
-	        }
-	      }
-	    };
-
-	    Dropzone.prototype.processFile = function(file) {
-	      return this.processFiles([file]);
-	    };
-
-	    Dropzone.prototype.processFiles = function(files) {
-	      var file, _i, _len;
-	      for (_i = 0, _len = files.length; _i < _len; _i++) {
-	        file = files[_i];
-	        file.processing = true;
-	        file.status = Dropzone.UPLOADING;
-	        this.emit("processing", file);
-	      }
-	      if (this.options.uploadMultiple) {
-	        this.emit("processingmultiple", files);
-	      }
-	      return this.uploadFiles(files);
-	    };
-
-	    Dropzone.prototype._getFilesWithXhr = function(xhr) {
-	      var file, files;
-	      return files = (function() {
-	        var _i, _len, _ref, _results;
-	        _ref = this.files;
-	        _results = [];
-	        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-	          file = _ref[_i];
-	          if (file.xhr === xhr) {
-	            _results.push(file);
-	          }
-	        }
-	        return _results;
-	      }).call(this);
-	    };
-
-	    Dropzone.prototype.cancelUpload = function(file) {
-	      var groupedFile, groupedFiles, _i, _j, _len, _len1, _ref;
-	      if (file.status === Dropzone.UPLOADING) {
-	        groupedFiles = this._getFilesWithXhr(file.xhr);
-	        for (_i = 0, _len = groupedFiles.length; _i < _len; _i++) {
-	          groupedFile = groupedFiles[_i];
-	          groupedFile.status = Dropzone.CANCELED;
-	        }
-	        file.xhr.abort();
-	        for (_j = 0, _len1 = groupedFiles.length; _j < _len1; _j++) {
-	          groupedFile = groupedFiles[_j];
-	          this.emit("canceled", groupedFile);
-	        }
-	        if (this.options.uploadMultiple) {
-	          this.emit("canceledmultiple", groupedFiles);
-	        }
-	      } else if ((_ref = file.status) === Dropzone.ADDED || _ref === Dropzone.QUEUED) {
-	        file.status = Dropzone.CANCELED;
-	        this.emit("canceled", file);
-	        if (this.options.uploadMultiple) {
-	          this.emit("canceledmultiple", [file]);
-	        }
-	      }
-	      if (this.options.autoProcessQueue) {
-	        return this.processQueue();
-	      }
-	    };
-
-	    resolveOption = function() {
-	      var args, option;
-	      option = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-	      if (typeof option === 'function') {
-	        return option.apply(this, args);
-	      }
-	      return option;
-	    };
-
-	    Dropzone.prototype.uploadFile = function(file) {
-	      return this.uploadFiles([file]);
-	    };
-
-	    Dropzone.prototype.uploadFiles = function(files) {
-	      var file, formData, handleError, headerName, headerValue, headers, i, input, inputName, inputType, key, method, option, progressObj, response, updateProgress, url, value, xhr, _i, _j, _k, _l, _len, _len1, _len2, _len3, _m, _ref, _ref1, _ref2, _ref3, _ref4, _ref5;
-	      xhr = new XMLHttpRequest();
-	      for (_i = 0, _len = files.length; _i < _len; _i++) {
-	        file = files[_i];
-	        file.xhr = xhr;
-	      }
-	      method = resolveOption(this.options.method, files);
-	      url = resolveOption(this.options.url, files);
-	      xhr.open(method, url, true);
-	      xhr.withCredentials = !!this.options.withCredentials;
-	      response = null;
-	      handleError = (function(_this) {
-	        return function() {
-	          var _j, _len1, _results;
-	          _results = [];
-	          for (_j = 0, _len1 = files.length; _j < _len1; _j++) {
-	            file = files[_j];
-	            _results.push(_this._errorProcessing(files, response || _this.options.dictResponseError.replace("{{statusCode}}", xhr.status), xhr));
-	          }
-	          return _results;
-	        };
-	      })(this);
-	      updateProgress = (function(_this) {
-	        return function(e) {
-	          var allFilesFinished, progress, _j, _k, _l, _len1, _len2, _len3, _results;
-	          if (e != null) {
-	            progress = 100 * e.loaded / e.total;
-	            for (_j = 0, _len1 = files.length; _j < _len1; _j++) {
-	              file = files[_j];
-	              file.upload = {
-	                progress: progress,
-	                total: e.total,
-	                bytesSent: e.loaded
-	              };
-	            }
-	          } else {
-	            allFilesFinished = true;
-	            progress = 100;
-	            for (_k = 0, _len2 = files.length; _k < _len2; _k++) {
-	              file = files[_k];
-	              if (!(file.upload.progress === 100 && file.upload.bytesSent === file.upload.total)) {
-	                allFilesFinished = false;
-	              }
-	              file.upload.progress = progress;
-	              file.upload.bytesSent = file.upload.total;
-	            }
-	            if (allFilesFinished) {
-	              return;
-	            }
-	          }
-	          _results = [];
-	          for (_l = 0, _len3 = files.length; _l < _len3; _l++) {
-	            file = files[_l];
-	            _results.push(_this.emit("uploadprogress", file, progress, file.upload.bytesSent));
-	          }
-	          return _results;
-	        };
-	      })(this);
-	      xhr.onload = (function(_this) {
-	        return function(e) {
-	          var _ref;
-	          if (files[0].status === Dropzone.CANCELED) {
-	            return;
-	          }
-	          if (xhr.readyState !== 4) {
-	            return;
-	          }
-	          response = xhr.responseText;
-	          if (xhr.getResponseHeader("content-type") && ~xhr.getResponseHeader("content-type").indexOf("application/json")) {
-	            try {
-	              response = JSON.parse(response);
-	            } catch (_error) {
-	              e = _error;
-	              response = "Invalid JSON response from server.";
-	            }
-	          }
-	          updateProgress();
-	          if (!((200 <= (_ref = xhr.status) && _ref < 300))) {
-	            return handleError();
-	          } else {
-	            return _this._finished(files, response, e);
-	          }
-	        };
-	      })(this);
-	      xhr.onerror = (function(_this) {
-	        return function() {
-	          if (files[0].status === Dropzone.CANCELED) {
-	            return;
-	          }
-	          return handleError();
-	        };
-	      })(this);
-	      progressObj = (_ref = xhr.upload) != null ? _ref : xhr;
-	      progressObj.onprogress = updateProgress;
-	      headers = {
-	        "Accept": "application/json",
-	        "Cache-Control": "no-cache",
-	        "X-Requested-With": "XMLHttpRequest"
-	      };
-	      if (this.options.headers) {
-	        extend(headers, this.options.headers);
-	      }
-	      for (headerName in headers) {
-	        headerValue = headers[headerName];
-	        if (headerValue) {
-	          xhr.setRequestHeader(headerName, headerValue);
-	        }
-	      }
-	      formData = new FormData();
-	      if (this.options.params) {
-	        _ref1 = this.options.params;
-	        for (key in _ref1) {
-	          value = _ref1[key];
-	          formData.append(key, value);
-	        }
-	      }
-	      for (_j = 0, _len1 = files.length; _j < _len1; _j++) {
-	        file = files[_j];
-	        this.emit("sending", file, xhr, formData);
-	      }
-	      if (this.options.uploadMultiple) {
-	        this.emit("sendingmultiple", files, xhr, formData);
-	      }
-	      if (this.element.tagName === "FORM") {
-	        _ref2 = this.element.querySelectorAll("input, textarea, select, button");
-	        for (_k = 0, _len2 = _ref2.length; _k < _len2; _k++) {
-	          input = _ref2[_k];
-	          inputName = input.getAttribute("name");
-	          inputType = input.getAttribute("type");
-	          if (input.tagName === "SELECT" && input.hasAttribute("multiple")) {
-	            _ref3 = input.options;
-	            for (_l = 0, _len3 = _ref3.length; _l < _len3; _l++) {
-	              option = _ref3[_l];
-	              if (option.selected) {
-	                formData.append(inputName, option.value);
-	              }
-	            }
-	          } else if (!inputType || ((_ref4 = inputType.toLowerCase()) !== "checkbox" && _ref4 !== "radio") || input.checked) {
-	            formData.append(inputName, input.value);
-	          }
-	        }
-	      }
-	      for (i = _m = 0, _ref5 = files.length - 1; 0 <= _ref5 ? _m <= _ref5 : _m >= _ref5; i = 0 <= _ref5 ? ++_m : --_m) {
-	        formData.append(this._getParamName(i), files[i], this._renameFilename(files[i].name));
-	      }
-	      return this.submitRequest(xhr, formData, files);
-	    };
-
-	    Dropzone.prototype.submitRequest = function(xhr, formData, files) {
-	      return xhr.send(formData);
-	    };
-
-	    Dropzone.prototype._finished = function(files, responseText, e) {
-	      var file, _i, _len;
-	      for (_i = 0, _len = files.length; _i < _len; _i++) {
-	        file = files[_i];
-	        file.status = Dropzone.SUCCESS;
-	        this.emit("success", file, responseText, e);
-	        this.emit("complete", file);
-	      }
-	      if (this.options.uploadMultiple) {
-	        this.emit("successmultiple", files, responseText, e);
-	        this.emit("completemultiple", files);
-	      }
-	      if (this.options.autoProcessQueue) {
-	        return this.processQueue();
-	      }
-	    };
-
-	    Dropzone.prototype._errorProcessing = function(files, message, xhr) {
-	      var file, _i, _len;
-	      for (_i = 0, _len = files.length; _i < _len; _i++) {
-	        file = files[_i];
-	        file.status = Dropzone.ERROR;
-	        this.emit("error", file, message, xhr);
-	        this.emit("complete", file);
-	      }
-	      if (this.options.uploadMultiple) {
-	        this.emit("errormultiple", files, message, xhr);
-	        this.emit("completemultiple", files);
-	      }
-	      if (this.options.autoProcessQueue) {
-	        return this.processQueue();
-	      }
-	    };
-
-	    return Dropzone;
-
-	  })(Emitter);
-
-	  Dropzone.version = "4.3.0";
-
-	  Dropzone.options = {};
-
-	  Dropzone.optionsForElement = function(element) {
-	    if (element.getAttribute("id")) {
-	      return Dropzone.options[camelize(element.getAttribute("id"))];
-	    } else {
-	      return void 0;
-	    }
-	  };
-
-	  Dropzone.instances = [];
-
-	  Dropzone.forElement = function(element) {
-	    if (typeof element === "string") {
-	      element = document.querySelector(element);
-	    }
-	    if ((element != null ? element.dropzone : void 0) == null) {
-	      throw new Error("No Dropzone found for given element. This is probably because you're trying to access it before Dropzone had the time to initialize. Use the `init` option to setup any additional observers on your Dropzone.");
-	    }
-	    return element.dropzone;
-	  };
-
-	  Dropzone.autoDiscover = true;
-
-	  Dropzone.discover = function() {
-	    var checkElements, dropzone, dropzones, _i, _len, _results;
-	    if (document.querySelectorAll) {
-	      dropzones = document.querySelectorAll(".dropzone");
-	    } else {
-	      dropzones = [];
-	      checkElements = function(elements) {
-	        var el, _i, _len, _results;
-	        _results = [];
-	        for (_i = 0, _len = elements.length; _i < _len; _i++) {
-	          el = elements[_i];
-	          if (/(^| )dropzone($| )/.test(el.className)) {
-	            _results.push(dropzones.push(el));
-	          } else {
-	            _results.push(void 0);
-	          }
-	        }
-	        return _results;
-	      };
-	      checkElements(document.getElementsByTagName("div"));
-	      checkElements(document.getElementsByTagName("form"));
-	    }
-	    _results = [];
-	    for (_i = 0, _len = dropzones.length; _i < _len; _i++) {
-	      dropzone = dropzones[_i];
-	      if (Dropzone.optionsForElement(dropzone) !== false) {
-	        _results.push(new Dropzone(dropzone));
-	      } else {
-	        _results.push(void 0);
-	      }
-	    }
-	    return _results;
-	  };
-
-	  Dropzone.blacklistedBrowsers = [/opera.*Macintosh.*version\/12/i];
-
-	  Dropzone.isBrowserSupported = function() {
-	    var capableBrowser, regex, _i, _len, _ref;
-	    capableBrowser = true;
-	    if (window.File && window.FileReader && window.FileList && window.Blob && window.FormData && document.querySelector) {
-	      if (!("classList" in document.createElement("a"))) {
-	        capableBrowser = false;
-	      } else {
-	        _ref = Dropzone.blacklistedBrowsers;
-	        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-	          regex = _ref[_i];
-	          if (regex.test(navigator.userAgent)) {
-	            capableBrowser = false;
-	            continue;
-	          }
-	        }
-	      }
-	    } else {
-	      capableBrowser = false;
-	    }
-	    return capableBrowser;
-	  };
-
-	  without = function(list, rejectedItem) {
-	    var item, _i, _len, _results;
-	    _results = [];
-	    for (_i = 0, _len = list.length; _i < _len; _i++) {
-	      item = list[_i];
-	      if (item !== rejectedItem) {
-	        _results.push(item);
-	      }
-	    }
-	    return _results;
-	  };
-
-	  camelize = function(str) {
-	    return str.replace(/[\-_](\w)/g, function(match) {
-	      return match.charAt(1).toUpperCase();
-	    });
-	  };
-
-	  Dropzone.createElement = function(string) {
-	    var div;
-	    div = document.createElement("div");
-	    div.innerHTML = string;
-	    return div.childNodes[0];
-	  };
-
-	  Dropzone.elementInside = function(element, container) {
-	    if (element === container) {
-	      return true;
-	    }
-	    while (element = element.parentNode) {
-	      if (element === container) {
-	        return true;
-	      }
-	    }
-	    return false;
-	  };
-
-	  Dropzone.getElement = function(el, name) {
-	    var element;
-	    if (typeof el === "string") {
-	      element = document.querySelector(el);
-	    } else if (el.nodeType != null) {
-	      element = el;
-	    }
-	    if (element == null) {
-	      throw new Error("Invalid `" + name + "` option provided. Please provide a CSS selector or a plain HTML element.");
-	    }
-	    return element;
-	  };
-
-	  Dropzone.getElements = function(els, name) {
-	    var e, el, elements, _i, _j, _len, _len1, _ref;
-	    if (els instanceof Array) {
-	      elements = [];
-	      try {
-	        for (_i = 0, _len = els.length; _i < _len; _i++) {
-	          el = els[_i];
-	          elements.push(this.getElement(el, name));
-	        }
-	      } catch (_error) {
-	        e = _error;
-	        elements = null;
-	      }
-	    } else if (typeof els === "string") {
-	      elements = [];
-	      _ref = document.querySelectorAll(els);
-	      for (_j = 0, _len1 = _ref.length; _j < _len1; _j++) {
-	        el = _ref[_j];
-	        elements.push(el);
-	      }
-	    } else if (els.nodeType != null) {
-	      elements = [els];
-	    }
-	    if (!((elements != null) && elements.length)) {
-	      throw new Error("Invalid `" + name + "` option provided. Please provide a CSS selector, a plain HTML element or a list of those.");
-	    }
-	    return elements;
-	  };
-
-	  Dropzone.confirm = function(question, accepted, rejected) {
-	    if (window.confirm(question)) {
-	      return accepted();
-	    } else if (rejected != null) {
-	      return rejected();
-	    }
-	  };
-
-	  Dropzone.isValidFile = function(file, acceptedFiles) {
-	    var baseMimeType, mimeType, validType, _i, _len;
-	    if (!acceptedFiles) {
-	      return true;
-	    }
-	    acceptedFiles = acceptedFiles.split(",");
-	    mimeType = file.type;
-	    baseMimeType = mimeType.replace(/\/.*$/, "");
-	    for (_i = 0, _len = acceptedFiles.length; _i < _len; _i++) {
-	      validType = acceptedFiles[_i];
-	      validType = validType.trim();
-	      if (validType.charAt(0) === ".") {
-	        if (file.name.toLowerCase().indexOf(validType.toLowerCase(), file.name.length - validType.length) !== -1) {
-	          return true;
-	        }
-	      } else if (/\/\*$/.test(validType)) {
-	        if (baseMimeType === validType.replace(/\/.*$/, "")) {
-	          return true;
-	        }
-	      } else {
-	        if (mimeType === validType) {
-	          return true;
-	        }
-	      }
-	    }
-	    return false;
-	  };
-
-	  if (typeof jQuery !== "undefined" && jQuery !== null) {
-	    jQuery.fn.dropzone = function(options) {
-	      return this.each(function() {
-	        return new Dropzone(this, options);
-	      });
-	    };
-	  }
-
-	  if (typeof module !== "undefined" && module !== null) {
-	    module.exports = Dropzone;
-	  } else {
-	    window.Dropzone = Dropzone;
-	  }
-
-	  Dropzone.ADDED = "added";
-
-	  Dropzone.QUEUED = "queued";
-
-	  Dropzone.ACCEPTED = Dropzone.QUEUED;
-
-	  Dropzone.UPLOADING = "uploading";
-
-	  Dropzone.PROCESSING = Dropzone.UPLOADING;
-
-	  Dropzone.CANCELED = "canceled";
-
-	  Dropzone.ERROR = "error";
-
-	  Dropzone.SUCCESS = "success";
-
-
-	  /*
-	  
-	  Bugfix for iOS 6 and 7
-	  Source: http://stackoverflow.com/questions/11929099/html5-canvas-drawimage-ratio-bug-ios
-	  based on the work of https://github.com/stomita/ios-imagefile-megapixel
-	   */
-
-	  detectVerticalSquash = function(img) {
-	    var alpha, canvas, ctx, data, ey, ih, iw, py, ratio, sy;
-	    iw = img.naturalWidth;
-	    ih = img.naturalHeight;
-	    canvas = document.createElement("canvas");
-	    canvas.width = 1;
-	    canvas.height = ih;
-	    ctx = canvas.getContext("2d");
-	    ctx.drawImage(img, 0, 0);
-	    data = ctx.getImageData(0, 0, 1, ih).data;
-	    sy = 0;
-	    ey = ih;
-	    py = ih;
-	    while (py > sy) {
-	      alpha = data[(py - 1) * 4 + 3];
-	      if (alpha === 0) {
-	        ey = py;
-	      } else {
-	        sy = py;
-	      }
-	      py = (ey + sy) >> 1;
-	    }
-	    ratio = py / ih;
-	    if (ratio === 0) {
-	      return 1;
-	    } else {
-	      return ratio;
-	    }
-	  };
-
-	  drawImageIOSFix = function(ctx, img, sx, sy, sw, sh, dx, dy, dw, dh) {
-	    var vertSquashRatio;
-	    vertSquashRatio = detectVerticalSquash(img);
-	    return ctx.drawImage(img, sx, sy, sw, sh, dx, dy, dw, dh / vertSquashRatio);
-	  };
-
-
-	  /*
-	   * contentloaded.js
-	   *
-	   * Author: Diego Perini (diego.perini at gmail.com)
-	   * Summary: cross-browser wrapper for DOMContentLoaded
-	   * Updated: 20101020
-	   * License: MIT
-	   * Version: 1.2
-	   *
-	   * URL:
-	   * http://javascript.nwbox.com/ContentLoaded/
-	   * http://javascript.nwbox.com/ContentLoaded/MIT-LICENSE
-	   */
-
-	  contentLoaded = function(win, fn) {
-	    var add, doc, done, init, poll, pre, rem, root, top;
-	    done = false;
-	    top = true;
-	    doc = win.document;
-	    root = doc.documentElement;
-	    add = (doc.addEventListener ? "addEventListener" : "attachEvent");
-	    rem = (doc.addEventListener ? "removeEventListener" : "detachEvent");
-	    pre = (doc.addEventListener ? "" : "on");
-	    init = function(e) {
-	      if (e.type === "readystatechange" && doc.readyState !== "complete") {
-	        return;
-	      }
-	      (e.type === "load" ? win : doc)[rem](pre + e.type, init, false);
-	      if (!done && (done = true)) {
-	        return fn.call(win, e.type || e);
-	      }
-	    };
-	    poll = function() {
-	      var e;
-	      try {
-	        root.doScroll("left");
-	      } catch (_error) {
-	        e = _error;
-	        setTimeout(poll, 50);
-	        return;
-	      }
-	      return init("poll");
-	    };
-	    if (doc.readyState !== "complete") {
-	      if (doc.createEventObject && root.doScroll) {
-	        try {
-	          top = !win.frameElement;
-	        } catch (_error) {}
-	        if (top) {
-	          poll();
-	        }
-	      }
-	      doc[add](pre + "DOMContentLoaded", init, false);
-	      doc[add](pre + "readystatechange", init, false);
-	      return win[add](pre + "load", init, false);
-	    }
-	  };
-
-	  Dropzone._autoDiscoverFunction = function() {
-	    if (Dropzone.autoDiscover) {
-	      return Dropzone.discover();
-	    }
-	  };
-
-	  contentLoaded(window, Dropzone._autoDiscoverFunction);
-
-	}).call(this);
-
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(70)(module)))
-
-/***/ },
-/* 70 */
-/***/ function(module, exports) {
-
-	module.exports = function(module) {
-		if(!module.webpackPolyfill) {
-			module.deprecate = function() {};
-			module.paths = [];
-			// module.parent = undefined by default
-			module.children = [];
-			module.webpackPolyfill = 1;
-		}
-		return module;
-	}
-
-
-/***/ },
-/* 71 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _ = __webpack_require__(6);
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='<div class="card">\n  <div class="card__content">\n    <section class="select-photo-container js-select-photo-container">\n      <div class="dropzone-container js-dropzone-container">\n\n      </div>\n      <div class="image-preview-container js-image-preview-container">\n        <div class="js-preview-image image-preview">\n\n        </div>\n      </div>\n    </section>\n  </div>\n  <div class="card__actions align-right">\n    <div class="button js-action-skip">\n      SKIP\n    </div>\n    <div class="button js-action-upload-again is-hidden">\n      UPLOAD AGAIN\n    </div>\n    <div class="button js-action-next is-hidden">\n      NEXT\n    </div>\n  </div>\n</div>\n';
-	}
-	return __p;
-	};
-
-
-/***/ },
-/* 72 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _backbone = __webpack_require__(5);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _underscore = __webpack_require__(6);
-
-	var _underscore2 = _interopRequireDefault(_underscore);
-
-	var _dashboard = __webpack_require__(73);
-
-	var _dashboard2 = _interopRequireDefault(_dashboard);
-
-	var _session = __webpack_require__(1);
-
-	var _session2 = _interopRequireDefault(_session);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _backbone2.default.View.extend({
-	  tagName: 'div',
-
-	  className: 'page dashboard-page',
-
-	  events: {},
-
-	  template: _dashboard2.default,
-
-	  render: function render() {
-	    // console.log('AAADAA');
-	    // console.log(session.getCurrentUser());
-	    // console.log(session.getCurrentUser().get('username'));
-
-	    this.$el.html(_underscore2.default.template(this.template({
-	      currentUser: _session2.default.getCurrentUser()
-	    })));
-
-	    return this;
-	  },
-	  close: function close() {
-	    this.remove();
-	  }
-	});
-
-/***/ },
-/* 73 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _ = __webpack_require__(6);
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='<article>\n  <section>\n    ';
-	 if (currentUser) { 
-	__p+='\n      CurrentUser: <b>'+
-	((__t=( currentUser.username ))==null?'':__t)+
-	'</b>\n    ';
-	 } 
-	__p+='\n  </section>\n\n</article>\n';
-	}
-	return __p;
-	};
-
-
-/***/ },
-/* 74 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _backbone = __webpack_require__(5);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _underscore = __webpack_require__(6);
-
-	var _underscore2 = _interopRequireDefault(_underscore);
-
-	var _forum = __webpack_require__(75);
-
-	var _forum2 = _interopRequireDefault(_forum);
-
-	var _component = __webpack_require__(13);
-
-	var _component2 = _interopRequireDefault(_component);
-
-	var _thread = __webpack_require__(29);
-
-	var _thread2 = _interopRequireDefault(_thread);
-
-	var _categories = __webpack_require__(42);
-
-	var _categories2 = _interopRequireDefault(_categories);
-
-	var _thread3 = __webpack_require__(41);
-
-	var _thread4 = _interopRequireDefault(_thread3);
-
-	var _router = __webpack_require__(58);
-
-	var _router2 = _interopRequireDefault(_router);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _backbone2.default.View.extend({
-	  tagName: 'div',
-
-	  className: 'page forum-page',
-
-	  events: {
-	    'click .js-create-new-thread': 'showNewThreadModal',
-	    'click .js-forum-edit': 'transitionToEditForum'
-	  },
-
-	  template: _forum2.default,
-
-	  initialize: function initialize() {
-	    _categories2.default.fetch();
-	    this.listenTo(_categories2.default, 'change reset add remove', this.render);
-	  },
-	  render: function render() {
-	    this.$el.html(_underscore2.default.template(this.template({
-	      categories: _categories2.default
-	    })));
-
-	    return this;
-	  },
-	  close: function close() {
-	    this.remove();
-
-	    if (this.newThreadModalDialog) {
-	      this.newThreadModalDialog.close();
-	    }
-
-	    if (this.newThreadFormObject) {
-	      this.newThreadFormObject.close();
-	    }
-	  },
-	  showNewThreadModal: function showNewThreadModal(event) {
-	    this.newThreadFormObject = new _thread2.default({
-	      model: new _thread4.default({
-	        categoryId: event.currentTarget.dataset.categoryId
-	      })
-	    });
-
-	    this.newThreadForm = this.newThreadFormObject.getForm();
-	    this.newThreadForm.render();
-
-	    this.newThreadForm.on('submit', this.closeNewThreadModalDialog);
-
-	    this.newThreadModalDialog = new _component2.default({
-	      title: 'Create new thread',
-	      content: this.newThreadForm.el.outerHTML,
-	      cancelLabel: 'cancel',
-	      cancelAction: this.closeNewThreadModalDialog.bind(this),
-	      confirmLabel: 'create',
-	      confirmAction: this.createNewThread.bind(this)
-	    });
-
-	    this.newThreadModalDialog.render();
-	  },
-	  closeNewThreadModalDialog: function closeNewThreadModalDialog() {
-	    this.newThreadForm.off();
-	    this.newThreadModalDialog.close();
-	    this.newThreadModalDialog = null;
-	  },
-	  createNewThread: function createNewThread() {
-	    this.newThreadFormObject.submit();
-	    this.closeNewThreadModalDialog();
-	  },
-	  transitionToEditForum: function transitionToEditForum() {
-	    _router2.default.navigate('forum/edit', true);
-	  }
-	});
-
-/***/ },
-/* 75 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _ = __webpack_require__(6);
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='<div class="forum">\n  <div class="forum__heading">\n    <div class="forum__title">\n      FORUM\n    </div>\n    <div class="forum__actions">\n      <img class="forum__action js-forum-edit" src="/public/images/edit-icon-white.svg" alt="Edit" />\n    </div>\n  </div>\n  ';
-	 categories.each(function(category) { 
-	__p+='\n    <div class="card-list">\n      <div class="card-list__header">\n        <div class="card-list__title">\n          '+
-	((__t=( category.get('name') ))==null?'':__t)+
-	'\n        </div>\n        <div class="card-list__header-actions">\n          <div class="card-list__header-icon-action js-create-new-thread" data-category-id="'+
-	((__t=( category.get('id') ))==null?'':__t)+
-	'">\n            <img src="/public/images/add-icon-white.svg" alt="addNewThread" />\n          </div>\n        </div>\n      </div>\n      <div class="card-list__items">\n        ';
-	 if (category.get('threads')) { 
-	__p+='\n          ';
-	 _.each(category.get('threads'), function(thread) { 
-	__p+='\n            <div class="js-navigate-to-thread" data-thread-id="'+
-	((__t=( thread.id ))==null?'':__t)+
-	'">\n              '+
-	((__t=( thread.title ))==null?'':__t)+
-	'\n            </div>\n          ';
-	 }); 
-	__p+='\n        ';
-	 } else { 
-	__p+='\n          <div>\n            No threads in this category\n          </div>\n        ';
-	 } 
-	__p+='\n      </div>\n    </div>\n  ';
-	 }); 
-	__p+='\n</div>';
-	}
-	return __p;
-	};
-
-
-/***/ },
-/* 76 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _ = __webpack_require__(6);
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='<div class="modal-dialog">\n  <div class="modal-dialog__header" ';
-	 if (headerColor) { 
-	__p+=' style="background-color: '+
-	((__t=( headerColor ))==null?'':__t)+
-	'"';
-	 } 
-	__p+='>\n    '+
-	((__t=( title ))==null?'':__t)+
-	'\n  </div>\n\n  <div class="modal-dialog__content">\n    '+
-	((__t=( content ))==null?'':__t)+
-	'\n  </div>\n\n  <div class="modal-dialog__actions">\n    ';
-	 if (cancelLabel) { 
-	__p+='\n      <div class="button button--dialog js-modal-dialog-cancel-action">\n        '+
-	((__t=( cancelLabel ))==null?'':__t)+
-	'\n      </div>\n    ';
-	 } 
-	__p+='\n\n    ';
-	 if (confirmLabel) { 
-	__p+='\n      <div class="button button--dialog js-modal-dialog-confirm-action">\n        '+
-	((__t=( confirmLabel ))==null?'':__t)+
-	'\n      </div>\n    ';
-	 } 
-	__p+='\n  </div>\n</div>\n';
-	}
-	return __p;
-	};
-
-
-/***/ },
-/* 77 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _backbone = __webpack_require__(5);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _underscore = __webpack_require__(6);
-
-	var _underscore2 = _interopRequireDefault(_underscore);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _backbone2.default.View.extend({
-	  tagName: 'form',
-
-	  className: '',
-
-	  events: {
-	    'click .js-form': 'onSubmit'
-	  },
-
-	  initialize: function initialize(args) {
-	    this.propertyViews = args.propertyViews;
-	  },
-	  render: function render() {
-	    var _this = this;
-
-	    _underscore2.default.each(this.propertyViews, function (view) {
-	      view.render();
-	      _this.$el.append(view.$el);
-	    });
-
-	    return this;
-	  },
-	  close: function close() {
-	    this.remove();
-	  },
-	  onSubmit: function onSubmit(event) {
-	    event.preventDefault();
-	    this.trigger('submit');
-	  }
-	});
-
-/***/ },
-/* 78 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _component = __webpack_require__(32);
-
-	var _component2 = _interopRequireDefault(_component);
-
-	var _component3 = __webpack_require__(34);
-
-	var _component4 = _interopRequireDefault(_component3);
-
-	var _component5 = __webpack_require__(36);
-
-	var _component6 = _interopRequireDefault(_component5);
-
-	var _component7 = __webpack_require__(38);
-
-	var _component8 = _interopRequireDefault(_component7);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = {
-	  createFormPropertyObject: function createFormPropertyObject(propertyName, propertyOptions) {
-	    switch (propertyOptions.type) {
-	      case 'text':
-	        return new _component2.default({
-	          name: propertyName,
-	          value: propertyOptions.value,
-	          required: propertyOptions.required
-	        });
-	      case 'switch':
-	        return new _component4.default({
-	          name: propertyName,
-	          value: propertyOptions.value
-	        });
-	      case 'trix':
-	        return new _component6.default({
-	          name: propertyName,
-	          value: propertyOptions.value
-	        });
-	      case 'color-select':
-	        return new _component8.default({
-	          name: propertyName,
-	          value: propertyOptions.value
-	        });
-	      default:
-	        throw new Error('unknown form property type');
-	    }
-	  }
-	};
-
-/***/ },
-/* 79 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _ = __webpack_require__(6);
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='<label for="'+
-	((__t=( inputId ))==null?'':__t)+
-	'" class="input-box__label">'+
-	((__t=( label ))==null?'':__t)+
-	'</label>\n<input type="text" class="input-box__input" value="'+
-	((__t=( value ))==null?'':__t)+
-	'" id="'+
-	((__t=( inputId ))==null?'':__t)+
-	'" ';
-	 if (isRequired) { 
-	__p+=' required ';
-	 }; 
-	__p+=' />\n<span class="input-box__message is-error"></span>\n';
-	}
-	return __p;
-	};
-
-
-/***/ },
-/* 80 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _ = __webpack_require__(6);
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='<div class="input-box__text">'+
-	((__t=( label ))==null?'':__t)+
-	'</div>\n<input class="input-box__switch-input" type="checkbox" id="'+
-	((__t=( inputId ))==null?'':__t)+
-	'" hidden="hidden" ';
-	 if (value) { 
-	__p+=' checked ';
-	 }; 
-	__p+='/>\n<label class="input-box__switch-label" for="'+
-	((__t=( inputId ))==null?'':__t)+
-	'"></label>\n<span class="input-box__message is-error"></span>\n';
-	}
-	return __p;
-	};
-
-
-/***/ },
-/* 81 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _ = __webpack_require__(6);
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='<trix-editor id="'+
-	((__t=( inputId ))==null?'':__t)+
-	'"></trix-editor>\n';
-	}
-	return __p;
-	};
-
-
-/***/ },
-/* 82 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _ = __webpack_require__(6);
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='<div class="color-select__label">\n'+
-	((__t=( label ))==null?'':__t)+
-	'\n</div>\n';
-	 _.each(colors, function(color) { 
-	__p+='\n  <input type="radio" name="'+
-	((__t=( inputId ))==null?'':__t)+
-	'" value="'+
-	((__t=( color.id ))==null?'':__t)+
-	'" class="color-select__item js-color-select-'+
-	((__t=( inputId ))==null?'':__t)+
-	'" style="background-color: '+
-	((__t=( color.hexValue ))==null?'':__t)+
-	'" ';
-	 if (value === color.id) { 
-	__p+=' checked ';
-	 }; 
-	__p+='/>\n';
-	 }); 
-	__p+='\n';
-	}
-	return __p;
-	};
-
-
-/***/ },
-/* 83 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _backbone = __webpack_require__(5);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _underscore = __webpack_require__(6);
-
-	var _underscore2 = _interopRequireDefault(_underscore);
-
-	var _jquery = __webpack_require__(2);
-
-	var _jquery2 = _interopRequireDefault(_jquery);
-
-	var _thread = __webpack_require__(84);
-
-	var _thread2 = _interopRequireDefault(_thread);
-
-	var _loading = __webpack_require__(85);
-
-	var _loading2 = _interopRequireDefault(_loading);
-
-	var _session = __webpack_require__(1);
-
-	var _session2 = _interopRequireDefault(_session);
-
-	var _thread3 = __webpack_require__(41);
-
-	var _thread4 = _interopRequireDefault(_thread3);
-
-	var _comment = __webpack_require__(49);
-
-	var _comment2 = _interopRequireDefault(_comment);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _backbone2.default.View.extend({
-	  tagName: 'div',
-
-	  className: 'page thread-page',
-
-	  events: {
-	    'click .js-new-comment': 'postNewComment'
-	  },
-
-	  template: _thread2.default,
-	  loadingTemplate: _loading2.default,
-
-	  initialize: function initialize(args) {
-	    var self = this;
-	    this.loading = true;
-	    this.thread = new _thread4.default({ id: args.threadId });
-
-	    this.thread.fetch().then(function () {
-	      self.loading = false;
-	      self.render();
-	    });
-
-	    // this.listenTo(this.thread, 'change', this.render);
-	  },
-	  render: function render() {
-	    if (!this.loading) {
-	      this.$el.html(_underscore2.default.template(this.template({
-	        thread: this.thread
-	      })));
-	    } else {
-	      this.$el.html(this.loadingTemplate());
-	    }
-
-	    return this;
-	  },
-	  close: function close() {
-	    this.remove();
-	  },
-	  postNewComment: function postNewComment() {
-	    var self = this;
-
-	    var commentContent = (0, _jquery2.default)('.js-new-comment-content').val();
-	    var newComment = new _comment2.default({
-	      content: commentContent,
-	      user: _session2.default.getCurrentUser().id,
-	      thread: this.thread
-	    });
-
-	    newComment.save({}, {
-	      success: function success(model, response) {
-	        var comments = self.thread.get('comments');
-	        comments.push(response);
-	        self.thread.set('comments', comments);
-	        // self.thread.trigger('change');
-	        self.render();
-	      }
-	    });
-	  }
-	});
-
-/***/ },
-/* 84 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _ = __webpack_require__(6);
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='<div class="thread">\n  <div class="thread__header">\n    <div class="thread__title">\n      '+
-	((__t=( thread.get('title') ))==null?'':__t)+
-	'\n    </div>\n    <div class="thread__content">\n      '+
-	((__t=( thread.get('content') ))==null?'':__t)+
-	'\n    </div>\n    <div class="thread__additional-info">\n      <div class="thread__owner-photo" style="background-image: url(\''+
-	((__t=( thread.get('owner').profilePhoto.url ))==null?'':__t)+
-	'\')">\n\n      </div>\n      <div class="thread__owner-info">\n        <div class="thread__owner-username">\n          '+
-	((__t=( thread.get('owner').username ))==null?'':__t)+
-	'\n        </div>\n        <div class="thread__date">\n          '+
-	((__t=( thread.get('createdAt') ))==null?'':__t)+
-	'\n        </div>\n      </div>\n    </div>\n  </div>\n  <div class="thread__comments">\n    ';
-	 thread.get('comments').forEach(function(comment) { 
-	__p+='\n      <div class="comment">\n        <div class="comment__image" style="background-image: url(\''+
-	((__t=( comment.user.profilePhoto.url ))==null?'':__t)+
-	'\')">\n\n        </div>\n        <div class="comment__card">\n          <div class="comment__info">\n            '+
-	((__t=( comment.user.username ))==null?'':__t)+
-	' u '+
-	((__t=( comment.createdAt ))==null?'':__t)+
-	'\n          </div>\n          <div class="comment__content">\n            '+
-	((__t=( comment.content ))==null?'':__t)+
-	'\n          </div>\n        </div>\n      </div>\n    ';
-	 }); 
-	__p+='\n  </div>\n  <div class="thread__new-comment-container">\n    <div class="thread__new-comment">\n      <div class="input-box">\n        <label for="thread-new-comment">Comment</label>\n        <textarea class="input-box__input js-new-comment-content" id="thread-new-comment"></textarea>\n      </div>\n      <div class="button button-raised js-new-comment">\n        SUBMIT\n      </div>\n    </div>\n  </div>\n</div>\n';
-	}
-	return __p;
-	};
-
-
-/***/ },
-/* 85 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _ = __webpack_require__(6);
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='<div class="loading">\n  <div class="loading__icon">\n    \n  </div>\n</div>\n';
-	}
-	return __p;
-	};
-
-
-/***/ },
-/* 86 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _backbone = __webpack_require__(5);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _underscore = __webpack_require__(6);
-
-	var _underscore2 = _interopRequireDefault(_underscore);
-
-	var _profile = __webpack_require__(87);
-
-	var _profile2 = _interopRequireDefault(_profile);
-
-	var _loading = __webpack_require__(85);
-
-	var _loading2 = _interopRequireDefault(_loading);
-
-	var _session = __webpack_require__(1);
-
-	var _session2 = _interopRequireDefault(_session);
-
-	var _user = __webpack_require__(88);
-
-	var _user2 = _interopRequireDefault(_user);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _backbone2.default.View.extend({
-	  tagName: 'div',
-
-	  className: 'page profile-page',
-
-	  events: {},
-
-	  template: _profile2.default,
-	  loadingTemplate: _loading2.default,
-
-	  initialize: function initialize(args) {
-	    var self = this;
-	    this.loading = true;
-
-	    this.profile = new _user2.default({ id: args.userId });
-	    this.profile.fetch().then(function () {
-	      self.loading = false;
-	      self.render();
-	    });
-
-	    this.isCurrentUser = this.profile.id === _session2.default.getCurrentUser().id;
-
-	    // this.listenTo(this.profile, 'change reset add remove', this.render);
-	  },
-	  render: function render() {
-	    if (!this.loading) {
-	      this.$el.html(_underscore2.default.template(this.template({
-	        profile: this.profile,
-	        isCurrentUser: this.isCurrentUser
-	      })));
-	    } else {
-	      this.$el.html(this.loadingTemplate());
-	    }
-
-	    return this;
-	  },
-	  close: function close() {
-	    this.remove();
-	  }
-	});
-
-/***/ },
-/* 87 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _ = __webpack_require__(6);
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='';
-	 if (isCurrentUser) { 
-	__p+='\n  <div class="">\n    CURRENT\n  </div>\n';
-	 }; 
-	__p+='\n\n\n<div class="profile__header">\n  <div class="profile__info">\n    <div class="profile__image">\n\n    </div>\n    <div class="profile__">\n      <div class="profile__username">\n        ';
-	 profile.get('username') 
-	__p+='\n      </div>\n      <div class="profile__location">\n\n      </div>\n    </div>\n  </div>\n  <div class="profile__tabs">\n\n  </div>\n</div>\n';
-	}
-	return __p;
-	};
-
-
-/***/ },
-/* 88 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _backbone = __webpack_require__(5);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _config = __webpack_require__(3);
-
-	var _config2 = _interopRequireDefault(_config);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _backbone2.default.Model.extend({
-	  urlRoot: _config2.default.apiEndpoint + '/users'
-	});
-
-/***/ },
-/* 89 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _backbone = __webpack_require__(5);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _underscore = __webpack_require__(6);
-
-	var _underscore2 = _interopRequireDefault(_underscore);
-
-	var _edit = __webpack_require__(90);
-
-	var _edit2 = _interopRequireDefault(_edit);
-
-	var _component = __webpack_require__(13);
-
-	var _component2 = _interopRequireDefault(_component);
-
-	var _category = __webpack_require__(91);
-
-	var _category2 = _interopRequireDefault(_category);
-
-	var _category3 = __webpack_require__(43);
-
-	var _category4 = _interopRequireDefault(_category3);
-
-	var _categories = __webpack_require__(42);
-
-	var _categories2 = _interopRequireDefault(_categories);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _backbone2.default.View.extend({
-	  tagName: 'div',
-
-	  className: 'page forum-edit-page',
-
-	  events: {
-	    'click .js-create-new-category': 'showNewCategoryModal'
-	  },
-
-	  template: _edit2.default,
-
-	  initialize: function initialize() {
-	    _categories2.default.fetch();
-	    this.listenTo(_categories2.default, 'change reset add remove', this.render);
-	  },
-	  render: function render() {
-	    this.$el.html(_underscore2.default.template(this.template({
-	      categories: _categories2.default
-	    })));
-
-	    return this;
-	  },
-	  close: function close() {
-	    this.remove();
-	    if (this.newCategoryFormObject) {
-	      this.newCategoryFormObject.close();
-	    }
-	    if (this.newCategoryModalDialog) {
-	      this.newCategoryModalDialog.close();
-	    }
-	  },
-	  showNewCategoryModal: function showNewCategoryModal() {
-	    this.newCategoryFormObject = new _category2.default({
-	      model: new _category4.default()
-	    });
-
-	    this.newCategoryForm = this.newCategoryFormObject.getForm();
-	    this.newCategoryForm.render();
-
-	    this.newCategoryForm.on('submit', this.closeNewCategoryModalDialog);
-
-	    this.newCategoryModalDialog = new _component2.default({
-	      title: 'Create new category',
-	      content: this.newCategoryForm.el.outerHTML,
-	      cancelLabel: 'cancel',
-	      cancelAction: this.closeNewCategoryModalDialog.bind(this),
-	      confirmLabel: 'create',
-	      confirmAction: this.createNewCategory.bind(this)
-	    });
-
-	    this.newCategoryModalDialog.render();
-	  },
-	  closeNewCategoryModalDialog: function closeNewCategoryModalDialog() {
-	    this.newCategoryForm.off();
-	    this.newCategoryModalDialog.close();
-	    this.newCategoryModalDialog = null;
-	  },
-	  createNewCategory: function createNewCategory() {
-	    this.newCategoryFormObject.submit();
-	    this.closeNewCategoryModalDialog();
-	  }
-	});
-
-/***/ },
-/* 90 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _ = __webpack_require__(6);
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='<div class="forum">\n  <div class="forum__heading">\n    <div class="forum__title">\n      FORUM CONFIG\n    </div>\n    <div class="forum__actions">\n      <img class="forum__action js-forum-edit" src="/public/images/edit-icon-white.svg" alt="Edit" />\n    </div>\n  </div>\n  <div class="card-list">\n    <div class="card-list__header">\n      <div class="card-list__title">\n        Categories\n      </div>\n      <div class="card-list__header-actions">\n        <div class="card-list__header-icon-action js-create-new-category">\n          <img src="/public/images/add-icon-white.svg" alt="addNewCategory" />\n        </div>\n      </div>\n    </div>\n    <div class="card-list__items">\n      ';
-	 categories.each(function(category) { 
-	__p+='\n        <div class="js-navigate-to-category" data-category-id="'+
-	((__t=( category.id ))==null?'':__t)+
-	'">\n          '+
-	((__t=( category.get('name') ))==null?'':__t)+
-	'\n        </div>\n      ';
-	 }); 
-	__p+='\n    </div>\n  </div>\n</div>';
-	}
-	return __p;
-	};
-
-
-/***/ },
-/* 91 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _baseForm = __webpack_require__(30);
-
-	var _baseForm2 = _interopRequireDefault(_baseForm);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-
-	var CategoryForm = function (_BaseForm) {
-	  _inherits(CategoryForm, _BaseForm);
-
-	  function CategoryForm() {
-	    _classCallCheck(this, CategoryForm);
-
-	    var _this = _possibleConstructorReturn(this, Object.getPrototypeOf(CategoryForm).apply(this, arguments));
-
-	    _this.modelName = 'category';
-
-	    _this.properties = {
-	      name: {
-	        type: 'text'
-	      },
-
-	      allowNewThreads: {
-	        type: 'switch'
-	      },
-
-	      color: {
-	        type: 'color-select'
-	      }
-	    };
-	    return _this;
-	  }
-
-	  return CategoryForm;
-	}(_baseForm2.default);
-
-	exports.default = CategoryForm;
-
-/***/ },
-/* 92 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, "__esModule", {
-	  value: true
-	});
-
-	var _backbone = __webpack_require__(5);
-
-	var _backbone2 = _interopRequireDefault(_backbone);
-
-	var _underscore = __webpack_require__(6);
-
-	var _underscore2 = _interopRequireDefault(_underscore);
-
-	var _jquery = __webpack_require__(2);
-
-	var _jquery2 = _interopRequireDefault(_jquery);
-
-	var _contentWrapper = __webpack_require__(93);
-
-	var _contentWrapper2 = _interopRequireDefault(_contentWrapper);
-
-	var _router = __webpack_require__(58);
-
-	var _router2 = _interopRequireDefault(_router);
-
-	var _session = __webpack_require__(1);
-
-	var _session2 = _interopRequireDefault(_session);
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-	exports.default = _backbone2.default.View.extend({
-	  tagName: 'div',
-
-	  className: 'content-wrapper',
-
-	  events: {
-	    'click .js-logout': 'logout',
-	    'click .js-navigate': 'navigate'
-	  },
-
-	  template: _contentWrapper2.default,
-
-	  $pageContent: (0, _jquery2.default)('.js-wrapped-page-content'),
-
-	  render: function render() {
-
-	    this.$el.html(_underscore2.default.template(this.template({
-	      currentUser: _session2.default.getCurrentUser()
-	    })));
-
-	    return this;
-	  },
-	  close: function close() {
-	    this.currentView.close();
-	    this.remove();
-	  },
-	  changeCurrentView: function changeCurrentView(view) {
-	    if (this.currentView) {
-	      this.currentView.close();
-	    }
-
-	    if (!this.$pageContent.length) {
-	      this.$pageContent = (0, _jquery2.default)('.js-wrapped-page-content');
-	    }
-
-	    this.currentView = view;
-	    view.render();
-
-	    this.$pageContent.html(view.el);
-
-	    console.log('changing wrapped view to ' + view.className);
-	  },
-	  navigate: function navigate(event) {
-	    var page = event.target.dataset.page;
-	    _router2.default.navigate(page, true);
-	  },
-	  logout: function logout() {
-	    _session2.default.logout();
-	  }
-	});
-
-/***/ },
-/* 93 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var _ = __webpack_require__(6);
-	module.exports = function(obj){
-	var __t,__p='',__j=Array.prototype.join,print=function(){__p+=__j.call(arguments,'');};
-	with(obj||{}){
-	__p+='<aside class="sidebar">\n\n  <section class="navigation">\n    <div class="navigation__header js-navigate" data-page="profile/'+
-	((__t=( currentUser.id ))==null?'':__t)+
-	'">\n      '+
-	((__t=( currentUser.username ))==null?'':__t)+
-	'\n    </div>\n    <div class="navigation__header js-navigate" data-page="dashboard">\n      DASHBOARD\n    </div>\n    <div class="navigation__header js-navigate" data-page="forum">\n      FORUM\n    </div>\n    <div class="navigation__items">\n      <div class="navigation__item">\n        Aktualno\n      </div>\n      <div class="navigation__item">\n        Moje teme\n      </div>\n      <div class="navigation__item">\n        Jos nesto\n      </div>\n    </div>\n    <div class="navigation__header js-logout">\n      LOGOUT\n    </div>\n  </section>\n\n</aside>\n\n<article class="js-wrapped-page-content wrapped-page-content">\n\n</article>\n';
-	}
-	return __p;
-	};
 
 
 /***/ }

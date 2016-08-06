@@ -1,0 +1,21 @@
+<div class="card-list__header">
+  <div class="card-list__title">
+    {{name}}
+  </div>
+  <div class="card-list__header-actions">
+    <div class="card-list__header-icon-action js-create-new-thread" data-category-id="{{id}}">
+      <img src="/public/images/add-icon-white.svg" alt="addNewThread" />
+    </div>
+  </div>
+</div>
+<div class="card-list__items">
+  {{#each threads}}
+    <div class="js-navigate-to-thread" data-thread-id="{{id}}">
+      {{title}}
+    </div>
+  {{else}}
+    <div>
+      No threads in this category
+    </div>
+  {{/each}}
+</div>
