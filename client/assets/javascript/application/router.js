@@ -42,7 +42,7 @@ const Router = Backbone.Router.extend({
       return;
     }
     if (options.loading) {
-      applicationChannel.trigger('modal:show');
+      applicationChannel.trigger('loading:show');
     }
     if (options.wrapped) {
       this.showContentWrappedPage(page);
