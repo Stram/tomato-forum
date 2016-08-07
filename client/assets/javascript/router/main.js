@@ -1,4 +1,5 @@
 import Backbone from 'backbone';
+import Radio from 'backbone.radio';
 import app from 'application/app';
 import session from 'session';
 
@@ -11,6 +12,8 @@ import RegisterView from 'pages/register/component';
 import ForumView from 'pages/forum/component';
 import DashboardView from 'pages/dashboard/component';
 import ThreadView from 'pages/thread/component';
+
+const applicationChannel = Radio.channel('application');
 
 const Router = Backbone.Router.extend({
 
@@ -39,7 +42,7 @@ const Router = Backbone.Router.extend({
       return;
     }
     if (options.loading) {
-      app.showLoading();
+      applicationChannel.trigger('modal:show');
     }
     if (options.wrapped) {
       this.showContentWrappedPage(page);
@@ -89,7 +92,7 @@ const Router = Backbone.Router.extend({
         id: threadId
       })
     });
-    
+
     this.changePage(threadView, {
       authenticated: true,
       wrapped: true,
