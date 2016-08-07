@@ -5,25 +5,22 @@ import fs from 'fs';
 import path from 'path';
 import User from '../models/user';
 import Photo from '../models/photo';
-import validate from '../services/validate';
 import mailer from '../services/mailer';
 import applicationConfig from '../config/application';
 
 const router = new express.Router();
 
-// REGISTRATION
+/**
+ * @api {post} /users/register Register new user
+ * @apiName CreateUser
+ * @apiGroup User
+ *
+ * @apiParam {String} email User's unique name.
+ * @apiParam {String} password User's password.
+ *
+ */
 
 router.post('/register', (req, res, next) => {
-  const errors = validate({
-    email: req.body.email,
-    password: req.body.password
-  });
-  if (errors.length) {
-    res.status(400);
-    res.json({errors});
-    return;
-  }
-
   passport.authenticate('local-register', (error, user, info) => {
     if (error) {
       next(error);

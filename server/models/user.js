@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt-nodejs';
 import randToken from 'rand-token';
+import {validateEmail, validatePassword} from '../services/validate';
 
 import applicationConfig from '../config/application';
 
@@ -11,8 +12,22 @@ const userSchema = new Schema({
   username: String,
 
   local: {
-    email: String,
-    password: String
+    email: {
+      type: String,
+      validate: {
+        validator: validateEmail,
+        message: 'Email is not valid'
+      },
+      required: [true, 'User email required']
+    },
+    password: {
+      type: String,
+      validate: {
+        validator: validatePassword,
+        message: 'Password should be between 3 and 8 characters'
+      },
+      required: [true, 'User password required']
+    }
   },
 
   facebook: {
@@ -95,8 +110,6 @@ userSchema.methods.getVerificationLink = function() {
       reject(error);
     });
   });
-
-
 };
 
 userSchema.options.toObject = userSchema.options.toObject ? userSchema.options.toObject : {};
