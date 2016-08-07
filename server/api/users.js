@@ -10,6 +10,12 @@ import applicationConfig from '../config/application';
 
 const router = new express.Router();
 
+function generateError(res, code = 400, message) {
+  res.status(code).json({
+    errors: [message]
+  });
+}
+
 /**
  * @api {post} /users/register Register new user
  * @apiName CreateUser
@@ -26,10 +32,7 @@ router.post('/register', (req, res, next) => {
       next(error);
     }
     if (!user) {
-      res.status(400);
-      res.json({
-        errors: [info.error]
-      });
+      generateError(res, 400, info.error);
       return;
     }
 
@@ -52,21 +55,11 @@ router.post('/verify', (req, res, next) => {
       next(error);
     }
     if (!user) {
-      res.status(404);
-      res.json({
-        errors: [{
-          message: 'User not found'
-        }]
-      });
+      generateError(res, 404, 'User not found');
       return;
     }
     if (user.token !== token) {
-      res.status(400);
-      res.json({
-        errors: [{
-          message: 'Token is not valid'
-        }]
-      });
+      generateError(res, 400, 'Token is not valid');
       return;
     }
     User.findOne({username}, (sameUsernameError, sameUsernameUser) => {
@@ -74,12 +67,7 @@ router.post('/verify', (req, res, next) => {
         next(sameUsernameError);
       }
       if (sameUsernameUser) {
-        res.status(400);
-        res.json({
-          errors: [{
-            message: 'Username is already taken'
-          }]
-        });
+        generateError(res, 400, 'Username is already taken');
         return;
       }
 
@@ -102,10 +90,7 @@ router.post('/login', (req, res, next) => {
       return;
     }
     if (!user) {
-      res.status(400);
-      res.json({
-        errors: [info.error]
-      });
+      generateError(res, 400, info.error);
       return;
     }
 
@@ -196,7 +181,7 @@ router.get('/:userId', (req, res, next) => {
     }
 
     if (!user) {
-      res.status(404);
+      generateError(res, 404, 'USer not found');
       return;
     }
 
