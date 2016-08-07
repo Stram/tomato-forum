@@ -1,7 +1,7 @@
 import session from 'session';
 import app from 'application/app';
 
-import 'router/main';
+import 'application/router';
 
 import '../stylesheet/app.scss';
 

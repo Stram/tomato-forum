@@ -9,11 +9,8 @@ const Application = Marionette.Application.extend({
 
   channelName: 'application',
 
-  radioRequests: {
-    'modal:show': 'showModal'
-  },
-
   radioEvents: {
+    'modal:show': 'showModal',
     'modal:hide': 'hideModal',
     'loading:show': 'showLoading',
     'loading:hide': 'hideLoading'
@@ -38,37 +35,54 @@ const Application = Marionette.Application.extend({
     return this.getView();
   },
 
-  showModal(options) {
-    const modalOptions = options || {};
-    const modalView = new ModalView(modalOptions);
+  showSubView(options = {}) {
     const applicationView = this.getView();
 
-    applicationView.showChildView('modal', modalView);
-    applicationView.$el.addClass('is-scrolling-disabled');
-
-    return modalView;
+    applicationView.showChildView(options.region, options.view);
+    if (options.disableScroll) {
+      applicationView.$el.addClass('is-scrolling-disabled');
+    }
   },
 
-  hideModal() {
+  hideSubView(options = {}) {
     const applicationView = this.getView();
 
     applicationView.$el.removeClass('is-scrolling-disabled');
-    applicationView.getChildView('modal').destroy();
+    applicationView.getChildView(options.region).destroy();
+  },
+
+  showModal(options) {
+    const modalOptions = options || {};
+    const modalView = new ModalView(modalOptions);
+
+    this.showSubView({
+      region: 'modal',
+      view: modalView,
+      disableScroll: true
+    });
+  },
+
+  hideModal() {
+    this.hideSubView({
+      region: 'modal'
+    });
   },
 
   showLoading() {
     const loadingView = new LoadingView();
-    const applicationView = this.getView();
 
-    applicationView.showChildView('loading', loadingView);
-    applicationView.$el.addClass('is-scrolling-disabled');
+    this.showSubView({
+      region: 'loading',
+      view: loadingView,
+      disableScroll: true
+    });
+
   },
 
   hideLoading() {
-    const applicationView = this.getView();
-
-    applicationView.$el.removeClass('is-scrolling-disabled');
-    applicationView.getChildView('loading').destroy();
+    this.hideSubView({
+      region: 'loading'
+    });
   }
 });
 

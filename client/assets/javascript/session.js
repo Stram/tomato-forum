@@ -2,7 +2,7 @@ import $ from 'jquery';
 import config from 'config';
 import app from 'application/app';
 
-import router from 'router/main';
+import router from 'application/router';
 
 export default {
   _currentUser: null,

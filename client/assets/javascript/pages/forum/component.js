@@ -1,6 +1,6 @@
 import Marionette from 'backbone.marionette';
 import Radio from 'backbone.radio';
-import router from 'router/main';
+import router from 'application/router';
 
 import template from './template.hbs';
 import CategoriesView from 'collection-views/categories/component';
