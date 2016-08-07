@@ -18,7 +18,8 @@ export default Marionette.View.extend({
     header: '#header',
     main: '#main',
     footer: '#footer',
-    modal: '#modal'
+    modal: '#modal',
+    loading: '#loading'
   },
 
   updateTheme(theme) {

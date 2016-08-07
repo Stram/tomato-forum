@@ -1,10 +1,13 @@
 import Marionette from 'backbone.marionette';
+import Radio from 'backbone.radio';
 import router from 'router/main';
 
 import template from './template.hbs';
 import CategoriesView from 'collection-views/categories/component';
 
 import categories from 'collections/categories';
+
+const applicationChannel = Radio.channel('application');
 
 export default Marionette.View.extend({
   tagName: 'article',
@@ -26,7 +29,9 @@ export default Marionette.View.extend({
   },
 
   initialize() {
-    categories.fetch();
+    categories.fetch().then(() => {
+      applicationChannel.trigger('loading:hide');
+    });
   },
 
   onBeforeAttach() {

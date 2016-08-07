@@ -2,6 +2,7 @@ import Backbone from 'backbone';
 import Marionette from 'backbone.marionette';
 import ApplicationView from 'pages/application/component';
 import ModalView from 'components/modal-dialog/component';
+import LoadingView from 'components/loading/component';
 
 const Application = Marionette.Application.extend({
   region: '#body',
@@ -13,7 +14,9 @@ const Application = Marionette.Application.extend({
   },
 
   radioEvents: {
-    'modal:hide': 'hideModal'
+    'modal:hide': 'hideModal',
+    'loading:show': 'showLoading',
+    'loading:hide': 'hideLoading'
   },
 
   initialize() {
@@ -51,6 +54,21 @@ const Application = Marionette.Application.extend({
 
     applicationView.$el.removeClass('is-scrolling-disabled');
     applicationView.getChildView('modal').destroy();
+  },
+
+  showLoading() {
+    const loadingView = new LoadingView();
+    const applicationView = this.getView();
+
+    applicationView.showChildView('loading', loadingView);
+    applicationView.$el.addClass('is-scrolling-disabled');
+  },
+
+  hideLoading() {
+    const applicationView = this.getView();
+
+    applicationView.$el.removeClass('is-scrolling-disabled');
+    applicationView.getChildView('loading').destroy();
   }
 });
 

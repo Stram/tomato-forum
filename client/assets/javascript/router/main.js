@@ -2,6 +2,8 @@ import Backbone from 'backbone';
 import app from 'application/app';
 import session from 'session';
 
+import Thread from 'models/thread';
+
 import ContentWrapperView from 'pages/content-wrapper/component';
 
 import LoginView from 'pages/login/component';
@@ -35,6 +37,9 @@ const Router = Backbone.Router.extend({
     if (options.authenticated && !session.isAuthenticated()) {
       this.navigate('login', true);
       return;
+    }
+    if (options.loading) {
+      app.showLoading();
     }
     if (options.wrapped) {
       this.showContentWrappedPage(page);
@@ -73,15 +78,22 @@ const Router = Backbone.Router.extend({
     const forumView = new ForumView();
     this.changePage(forumView, {
       authenticated: true,
-      wrapped: true
+      wrapped: true,
+      loading: true
     });
   },
 
   thread(threadId) {
-    const threadView = new ThreadView({threadId});
+    const threadView = new ThreadView({
+      model: new Thread({
+        id: threadId
+      })
+    });
+    
     this.changePage(threadView, {
       authenticated: true,
-      wrapped: true
+      wrapped: true,
+      loading: true
     });
   }
 });

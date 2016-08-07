@@ -1,13 +1,14 @@
 import Marionette from 'backbone.marionette';
+import Radio from 'backbone.radio';
 import $ from 'jquery';
 
 import template from './template.hbs';
-import loadingTemplate from 'templates/loading.hbs';
 
 import session from 'session';
 
-import Thread from 'models/thread';
 import Comment from 'models/comment';
+
+const applicationChannel = Radio.channel('application');
 
 export default Marionette.View.extend({
   tagName: 'div',
@@ -22,17 +23,14 @@ export default Marionette.View.extend({
     'click @ui.newCommentButton': 'postNewComment'
   },
 
-  template(data) {
-    return false ? loadingTemplate : template(data);
-  },
+  template,
 
   initialize(args) {
     const self = this;
-    this.loading = true;
-    this.model = new Thread({id: args.threadId});
+    this.model = args.model;
 
     this.model.fetch().then(() => {
-      self.loading = false;
+      applicationChannel.trigger('loading:hide');
       self.render();
     });
   },
