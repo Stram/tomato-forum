@@ -5,3 +5,4 @@ uploads
 server/config
 public/app.js
 dist
+coverage

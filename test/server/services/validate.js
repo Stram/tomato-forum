@@ -1,7 +1,7 @@
 import { describe, it } from 'mocha';
 import { expect } from 'chai';
 
-import {validateEmail} from '../../../server/services/validate';
+import { validateEmail, validatePassword } from '../../../server/services/validate';
 
 describe('Validators', function() {
   describe('should validate email', function() {
@@ -23,6 +23,28 @@ describe('Validators', function() {
     it('should return false when empty string is given', function() {
       const email = '';
       expect(validateEmail(email)).to.equal(false);
+    });
+  });
+
+  describe('should validate password', function() {
+    it('should return true when valid password is given', function() {
+      const password = 'password';
+      expect(validatePassword(password)).to.equal(true);
+    });
+
+    it('should return false when too short password is given', function() {
+      const password = 'fo';
+      expect(validatePassword(password)).to.equal(false);
+    });
+
+    it('should return false when too long password is given', function() {
+      const password = '1234567890123';
+      expect(validatePassword(password)).to.equal(false);
+    });
+
+    it('should return false when empty string is given', function() {
+      const password = '';
+      expect(validatePassword(password)).to.equal(false);
     });
   });
 });
