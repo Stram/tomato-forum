@@ -5,7 +5,7 @@ module.exports = {
   entry: './client/assets/javascript/app.js',
 
   output: {
-    path: `${__dirname}/public`,
+    path: path.join(__dirname, 'public'),
     filename: 'app.js'
   },
 
