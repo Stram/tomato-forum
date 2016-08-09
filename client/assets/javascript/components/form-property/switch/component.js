@@ -1,6 +1,7 @@
 import Marionette from 'backbone.marionette';
-import _ from 'underscore';
+
 import $ from 'jquery';
+import _ from 'underscore';
 
 import template from './template.hbs';
 

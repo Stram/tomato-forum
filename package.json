@@ -9,7 +9,7 @@
     "webpackDev": "webpack --progress --colors --watch",
     "build": "webpack --optimize-minimize --optimize-dedupe",
     "docs": "apidoc -i server/",
-    "test": "istanbul cover node_modules/.bin/_mocha -- --require babel-register -R spec test/**/*.js"
+    "test": "istanbul cover node_modules/.bin/_mocha -- --require babel-register -R spec server/**/test.js"
   },
   "author": "Stjepan Petrusa",
   "license": "ISC",

@@ -1,7 +1,7 @@
 import { describe, it } from 'mocha';
 import { expect } from 'chai';
 
-import { validateEmail, validatePassword } from '../../../server/services/validate';
+import { validateEmail, validatePassword } from './index';
 
 describe('Validators', function() {
   describe('should validate email', function() {
