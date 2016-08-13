@@ -38,7 +38,7 @@ describe('Validators', function() {
     });
 
     it('should return false when too long password is given', function() {
-      const password = '1234567890123';
+      const password = '12345678901231234123';
       expect(validatePassword(password)).to.equal(false);
     });
 

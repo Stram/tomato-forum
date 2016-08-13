@@ -11,14 +11,19 @@ import fileUpload from 'express-fileupload';
 import fs from 'fs';
 
 import applicationConfig from './config/application';
-import databaseConfig from './config/database';
 import passportConfig from './config/passport';
 
-import api from './api/api';
+import api from './api';
 
 const app = express();
 
-mongoose.connect(databaseConfig.url);
+if (process.env.NODE_ENV !== 'testing') {
+  app.use(morgan('dev'));
+  
+  mongoose.connect(process.env.DATABASE_URL || 'localhost:27017');
+}
+
+mongoose.Promise = Promise;
 
 const MongoStore = connectMongo(session);
 
@@ -28,7 +33,6 @@ app.use('/doc', express.static(path.resolve('doc')));
 app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(morgan('dev'));
 
 app.use(session({
   secret: 'myUserSuperSecret',
@@ -44,11 +48,6 @@ app.use(passport.session());
 app.use(fileUpload());
 
 passportConfig(passport);
-
-// app.use('*', (req, res, next) => {
-//   console.log(req.session);
-//   next();
-// });
 
 app.use('/api', api);
 
@@ -76,6 +75,13 @@ app.use('/uploads/photos', (req, res) => {
   res.sendFile(path.resolve(`uploads/photos${req.path}`));
 });
 
+app.use((err, req, res, next) => {
+  res.status(err.statusCode || 500);
+  res.send(err.message || 'Error occured');
+});
+
 app.listen(applicationConfig.port, function() {
   console.log(`Example app listening on port ${applicationConfig.port}!`);
 });
+
+module.exports = app;

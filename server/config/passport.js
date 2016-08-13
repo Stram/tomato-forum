@@ -42,7 +42,7 @@ module.exports = function(passport) {
 
         newUser.save((error) => {
           if (error) {
-            throw error;
+            return done(error)
           }
           return done(null, newUser);
         });

@@ -1,23 +1,12 @@
-function checkLenght(value, options) {
-  const fieldLength = value.length;
+import validator from 'validator';
 
-  return !(options.min && fieldLength < options.min || options.max && fieldLength > options.max);
+export function validateEmail(value) {
+  return validator.isEmail(value);
 }
 
-function validateEmail(value) {
-  const emailRegex = new RegExp(`^(([^<>()\\[\\]\\\\.,;:\\s@\"]+(\\.[^<>()\\[\\]\\\\.,;:\\s@\"]+)*)|(\".+\"))@((\\[[0-9]
-    {1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}\\.[0-9]{1,3}])|(([a-zA-Z\\-0-9]+\\.)+[a-zA-Z]{2,}))$`);
-  return emailRegex.test(value);
-}
-
-function validatePassword(value) {
-  return checkLenght(value, {
+export function validatePassword(value) {
+  return validator.isLength(value, {
     min: 3,
-    max: 10
+    max: 8
   });
 }
-
-module.exports = {
-  validateEmail,
-  validatePassword
-};
