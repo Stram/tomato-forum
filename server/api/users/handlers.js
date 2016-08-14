@@ -25,7 +25,7 @@ module.exports = {
         return;
       }
       if (!user) {
-        generateError(res, 400, info.error);
+        next(new errors.BadRequest(info));
         return;
       }
 
@@ -44,14 +44,19 @@ module.exports = {
     User.findOne({_id: userId}, (error, user) => {
       if (error) {
         next(error);
-      }
-      if (!user) {
-        next(new errors.NotFound('User not found'));
-      }
-      if (user.token !== token) {
-        generateError(res, 400, 'Token is not valid');
         return;
       }
+
+      if (!user) {
+        next(new errors.NotFound('User not found'));
+        return;
+      }
+
+      if (user.token !== token) {
+        next(new errors.BadRequest('Token is not valid'));
+        return;
+      }
+
       User.findOne({username}, (sameUsernameError, sameUsernameUser) => {
         if (sameUsernameError) {
           next(sameUsernameError);
@@ -66,6 +71,9 @@ module.exports = {
 
         user.save().then((changedUser) => {
           res.json({user: changedUser.toObject()});
+        }, (err) => {
+          next(err);
+          return;
         });
       });
     });

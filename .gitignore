@@ -2,7 +2,6 @@ node_modules
 .DS_Store
 
 uploads
-server/config/mailer.js
 public/app.js
 dist
 coverage

@@ -29,10 +29,8 @@ module.exports = function(passport) {
 
         if (user) {
           return done(null, false, {
-            error: {
-              message: 'That email is already taken.',
-              field: 'email'
-            }
+            message: 'Email is already taken.',
+            field: 'email'
           });
         }
         const newUser = new User();
@@ -42,7 +40,7 @@ module.exports = function(passport) {
 
         newUser.save((error) => {
           if (error) {
-            return done(error)
+            return done(error);
           }
           return done(null, newUser);
         });

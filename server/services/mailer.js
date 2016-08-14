@@ -1,10 +1,13 @@
 import nodemailer from 'nodemailer';
-import mailerConfig from '../config/mailer';
+import applicationConfig from '../config/application';
 
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: mailerConfig.auth
-});
+let transporter;
+if (applicationConfig.mailer.auth.user !== '') {
+  transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: applicationConfig.mailer.auth
+  });
+}
 
 function sendVerification(user) {
   user.getVerificationLink().then((verificationLink) => {
@@ -18,12 +21,14 @@ function sendVerification(user) {
       </span>`
     };
 
-    transporter.sendMail(mailOptions, (error, info) => {
-      if (error) {
-        return console.log(error);
-      }
-      return console.log('Message sent: ' + info.response);
-    });
+    if (transporter) {
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          return console.log(error);
+        }
+        return console.log('Message sent: ' + info.response);
+      });
+    }
   });
 }
 

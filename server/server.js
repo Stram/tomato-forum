@@ -13,13 +13,15 @@ import fs from 'fs';
 import applicationConfig from './config/application';
 import passportConfig from './config/passport';
 
+import handleError from './services/handle-error';
+
 import api from './api';
 
 const app = express();
 
 if (process.env.NODE_ENV !== 'testing') {
   app.use(morgan('dev'));
-  
+
   mongoose.connect(process.env.DATABASE_URL || 'localhost:27017');
 }
 
@@ -75,10 +77,7 @@ app.use('/uploads/photos', (req, res) => {
   res.sendFile(path.resolve(`uploads/photos${req.path}`));
 });
 
-app.use((err, req, res, next) => {
-  res.status(err.statusCode || 500);
-  res.send(err.message || 'Error occured');
-});
+app.use(handleError);
 
 app.listen(applicationConfig.port, function() {
   console.log(`Example app listening on port ${applicationConfig.port}!`);

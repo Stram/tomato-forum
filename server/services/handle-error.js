@@ -1,18 +1,41 @@
-module.exports = function(error, response) {
-  switch (error.name) {
+import _ from 'lodash';
+import errors from './errors';
+
+function saniteizeError(errorObject) {
+  switch (errorObject.name) {
   case 'ValidationError':
-    response.json({
-      error: {
-        message: error.errors.name.message,
-        field: error.errors.name.path
+    return _.keys(errorObject.errors).map((errorKey) => {
+      if (errorObject.errors.hasOwnProperty(errorKey)) {
+        return new errors.BadRequest({
+          message: errorObject.errors[errorKey].message,
+          field: errorObject.errors[errorKey].path
+        });
       }
+      return {};
     });
-    break;
   default:
-    response.json({
-      error: {
-        message: 'An error occured'
-      }
-    });
+    console.warn('Unknown error type', errorObject);
+    return null;
   }
+}
+
+module.exports = function(err, req, res, next) {
+  let error = err;
+  if (!error.statusCode) {
+    error = saniteizeError(err);
+  }
+
+  let status;
+  let message;
+
+  if (_.isArray(error)) {
+    status = _.maxBy(error, 'statusCode').statusCode;
+    message = error.map((errorDesc) => _.omit(errorDesc, ['statusCode']));
+  } else {
+    status = error.statusCode;
+    message = _.omit(error, ['statusCode']);
+  }
+
+  res.status(status || 500);
+  res.send(message || 'An error occured!');
 };

@@ -1,12 +1,23 @@
-function NotFound(message) {
-  Error.captureStackTrace(this);
+function generateCustomError(code) {
+  const CustomError = function(options) {
+    Error.captureStackTrace(this);
 
-  this.statusCode = 404;
-  this.message = message;
+    this.statusCode = code;
+
+    if (typeof options === 'string') {
+      this.message = options;
+    } else {
+      this.message = options.message;
+      this.field = options.field;
+    }
+  };
+
+  CustomError.prototype = Object.create(Error.prototype);
+
+  return CustomError;
 }
 
-NotFound.prototype = Object.create(Error.prototype);
-
-module.export = {
-  NotFound
+module.exports = {
+  BadRequest: generateCustomError(400),
+  NotFound: generateCustomError(404)
 };

@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt-nodejs';
 import randToken from 'rand-token';
-import {validateEmail} from '../services/validate';
+import {validateEmail, validateUsername} from '../services/validate';
 
 import applicationConfig from '../config/application';
 
@@ -9,7 +9,13 @@ const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
 const userSchema = new Schema({
-  username: String,
+  username: {
+    type: String,
+    validate: {
+      validator: validateUsername,
+      message: 'Username is not valid'
+    }
+  },
 
   local: {
     email: {
@@ -18,7 +24,8 @@ const userSchema = new Schema({
         validator: validateEmail,
         message: 'Email is not valid'
       },
-      required: [true, 'User email required']
+      required: [true, 'User email required'],
+      unique: [true, 'Email is already in use']
     },
     password: {
       type: String,
