@@ -1,5 +1,7 @@
 import mongoose from 'mongoose';
 
+import objectTransformation from '../helpers/standard-transformation';
+
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
@@ -10,7 +12,10 @@ const threadSchema = new Schema({
     ref: 'User'
   },
   content: String,
-  createdAt: Date,
+  createdAt: {
+    type: Date,
+    default: new Date()
+  },
   comments: [{
     type: ObjectId,
     ref: 'Comment'
@@ -18,11 +23,6 @@ const threadSchema = new Schema({
 });
 
 threadSchema.options.toObject = threadSchema.options.toObject ? threadSchema.options.toObject : {};
-threadSchema.options.toObject.transform = function(doc, ret) {
-  ret.id = ret._id;
-  delete ret._id;
-  delete ret.__v;
-  return ret;
-};
+threadSchema.options.toObject.transform = objectTransformation;
 
 module.exports = mongoose.model('Thread', threadSchema);

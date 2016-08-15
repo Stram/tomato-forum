@@ -1,13 +1,20 @@
 import request from 'supertest';
 import session from 'supertest-session';
+import mongoose from 'mongoose';
+import { describe, it, before, beforeEach, afterEach } from 'mocha';
+
 import app from '../../server';
-import { describe, it, before, after } from 'mocha';
-
 import User from '../../models/user';
+import Category from '../../models/category';
 
-describe('API Categories', function() {
+const Schema = mongoose.Schema;
+const objectId = Schema.ObjectId;
+
+
+describe('API Threads', function() {
 
   let sessionRequest;
+  let dummyCategoryId;
 
   before((done) => {
     const dummyUserEmail = 'session@example.com';
@@ -39,18 +46,32 @@ describe('API Categories', function() {
     });
   });
 
-  after((done) => {
-    User.remove({}).then(() => {
+  beforeEach((done) => {
+    const categoryName = 'category';
+
+    const dummyCategory = new Category();
+
+    dummyCategory.name = categoryName;
+    dummyCategory.save().then((createdCategory) => {
+      dummyCategoryId = createdCategory.id;
       done();
     });
   });
 
-  describe('Create category', function() {
-    it('should be able to create a category', function(done) {
+  afterEach((done) => {
+    Category.remove({}).then(() => {
+      done();
+    });
+  });
+
+  describe('Create thread', function() {
+    it('should be able to create a thread', function(done) {
       sessionRequest
-      .post('/api/categories/')
+      .post('/api/threads')
       .send({
-        name: 'mock category'
+        title: 'mock category',
+        content: '*content*',
+        categoryId: dummyCategoryId
       })
       .expect(201)
       .end(function(err) {
@@ -61,11 +82,13 @@ describe('API Categories', function() {
       });
     });
 
-    it('should not be able to create a category when not authenticated', function(done) {
+    it('should not be able to create a thread when not authenticated', function(done) {
       request(app)
-      .post('/api/categories/')
+      .post('/api/threads')
       .send({
-        name: 'mock category'
+        title: 'mock category',
+        content: '*content*',
+        categoryId: dummyCategoryId
       })
       .expect(401)
       .end(function(err) {
@@ -76,11 +99,13 @@ describe('API Categories', function() {
       });
     });
 
-    it('should not be able to create a category with illigal name', function(done) {
+    it('should not be able to create a category with illigal category id', function(done) {
       sessionRequest
-      .post('/api/categories/')
+      .post('/api/threads')
       .send({
-        name: 'm'
+        title: 'mock category',
+        content: '*content*',
+        categoryId: objectId('12341234')
       })
       .expect(400)
       .end(function(err) {

@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
 import deepPopulate from 'mongoose-deep-populate';
 
-import { validateCategoryName } from '../services/validate';
+import { validateCategoryName } from '../../services/validate';
+import objectTransformation from '../helpers/standard-transformation';
 
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
@@ -30,13 +31,8 @@ const categorySchema = new Schema({
   }]
 });
 
-categorySchema.options.toObject = categorySchema.options.toObject ? categorySchema.options.toObject : {};
-categorySchema.options.toObject.transform = function(doc, ret) {
-  ret.id = ret._id;
-  delete ret._id;
-  delete ret.__v;
-  return ret;
-};
+categorySchema.options.toObject = categorySchema.options.toObject || {};
+categorySchema.options.toObject.transform = objectTransformation;
 
 categorySchema.plugin(deepPopulate(mongoose), {
   populate: {

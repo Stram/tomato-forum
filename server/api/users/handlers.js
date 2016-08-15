@@ -11,12 +11,6 @@ import Photo from '../../models/photo';
 
 import applicationConfig from '../../config/application';
 
-function generateError(res, code = 400, message) {
-  res.status(code).json({
-    errors: [message]
-  });
-}
-
 module.exports = {
   register(req, res, next) {
     passport.authenticate('local-register', (error, user, info) => {

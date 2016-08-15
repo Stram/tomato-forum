@@ -1,9 +1,10 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt-nodejs';
 import randToken from 'rand-token';
-import {validateEmail, validateUsername} from '../services/validate';
+import {validateEmail, validateUsername} from '../../services/validate';
 
-import applicationConfig from '../config/application';
+import applicationConfig from '../../config/application';
+import objectTransformation from './object-transformation';
 
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
@@ -65,7 +66,7 @@ const userSchema = new Schema({
 
   background: {
     type: Number,
-    default: '0'
+    default: 0
   },
 
   membership: {
@@ -116,12 +117,6 @@ userSchema.methods.getVerificationLink = function() {
 };
 
 userSchema.options.toObject = userSchema.options.toObject ? userSchema.options.toObject : {};
-userSchema.options.toObject.transform = function(doc, ret) {
-  ret.id = ret._id;
-  delete ret._id;
-  delete ret.__v;
-  delete ret.local;
-  return ret;
-};
+userSchema.options.toObject.transform = objectTransformation;
 
 module.exports = mongoose.model('User', userSchema);
