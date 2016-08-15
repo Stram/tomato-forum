@@ -1,20 +1,19 @@
+const mailerAuth = {
+  user: process.env.MAILER_USERNAME || '',
+  pass: process.env.MAILER_PASSWORD || ''
+};
+
 const applicationConfig = {
   host: 'http://localhost',
   port: '3000',
   privateUploadDirectory: 'uploads/photos',
   mailer: {
-    auth: {
-      user: process.env.MAILER_USERNAME || '',
-      pass: process.env.MAILER_PASSWORD || ''
-    },
+    auth: mailerAuth,
     smtp: {
       host: 'smtp.gmail.com',
       port: 465,
       secure: true,
-      auth: {
-        user: process.env.MAILER_USERNAME || '',
-        pass: process.env.MAILER_PASSWORD || ''
-      }
+      auth: mailerAuth
     }
   },
 

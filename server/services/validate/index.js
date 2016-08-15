@@ -17,3 +17,10 @@ export function validatePassword(value) {
     max: 8
   });
 }
+
+export function validateCategoryName(value) {
+  return validator.isLength(value, {
+    min: 3,
+    max: 20
+  });
+}

@@ -66,7 +66,7 @@ module.exports = function(passport) {
       if (!user) {
         return done(null, false, {
           error: {
-            message: 'Wrong user/email',
+            message: 'Wrong username/email',
             field: 'identification'
           }
         });

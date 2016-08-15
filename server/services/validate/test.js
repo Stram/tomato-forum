@@ -69,4 +69,26 @@ describe('Validators', function() {
       expect(validatePassword(username)).to.equal(false);
     });
   });
+
+  describe('should validate category name', function() {
+    it('should return true when valid name is given', function() {
+      const name = 'name';
+      expect(validatePassword(name)).to.equal(true);
+    });
+
+    it('should return false when too short name is given', function() {
+      const name = 'fo';
+      expect(validatePassword(name)).to.equal(false);
+    });
+
+    it('should return false when too long name is given', function() {
+      const name = '12345678901231234123987';
+      expect(validatePassword(name)).to.equal(false);
+    });
+
+    it('should return false when empty string is given', function() {
+      const name = '';
+      expect(validatePassword(name)).to.equal(false);
+    });
+  });
 });

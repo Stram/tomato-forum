@@ -19,10 +19,10 @@ router.use(permissions.checkAuthentification);
  * @apiParam {String} content Threads content.
  * @apiParam {ObjectId} owner Threads owner.
  */
-router.post('/', (req, res) => {
+router.post('/', (req, res, next) => {
   Category.findById(req.body.categoryId, (categoryError, category) => {
     if (categoryError) {
-      handleError(categoryError, res);
+      next(categoryError);
       return;
     }
 
@@ -38,8 +38,7 @@ router.post('/', (req, res) => {
       category,
       title: req.body.title,
       content: req.body.content,
-      owner: req.user.id,
-      createdAt: new Date()
+      owner: req.user.id
     });
 
     newThread.save((newThreadError) => {

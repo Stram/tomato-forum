@@ -1,22 +1,13 @@
 import request from 'supertest';
 import app from '../../server';
-import { describe, it, before, beforeEach } from 'mocha';
+import { describe, it, before, beforeEach, after, afterEach } from 'mocha';
 
 import mongoose from 'mongoose';
-import mockgoose from 'mockgoose';
 
 import User from '../../models/user';
 
 const Schema = mongoose.Schema;
 const objectId = Schema.ObjectId;
-
-before(function(done) {
-  mockgoose(mongoose).then(function() {
-    mongoose.connect('', function(err) {
-      done(err);
-    });
-  });
-});
 
 describe('API Users', function() {
 
@@ -31,6 +22,12 @@ describe('API Users', function() {
       testUser.local.password = testUser.generateHash(dummyUserPassword);
 
       testUser.save().then(() => {
+        done();
+      });
+    });
+
+    after((done) => {
+      User.remove({}).then(() => {
         done();
       });
     });
@@ -110,27 +107,31 @@ describe('API Users', function() {
     const dummyUser2Username = 'Username2';
 
     beforeEach((done) => {
+      const testUser = new User();
+
+      testUser.local.email = dummyUserEmail;
+      testUser.local.password = testUser.generateHash(dummyUserPassword);
+
+      const saveTestUser = testUser.save();
+
+      const testUser2 = new User();
+
+      testUser2.local.email = dummyUser2Email;
+      testUser2.local.password = testUser2.generateHash(dummyUser2Password);
+      testUser2.username = dummyUser2Username;
+
+      const saveTestUser2 = testUser2.save();
+
+      Promise.all([saveTestUser, saveTestUser2]).then(([user]) => {
+        dummyUserToken = user.get('token');
+        dummyUserId = user.get('id');
+        done();
+      });
+    });
+
+    afterEach((done) => {
       User.remove({}).then(() => {
-        const testUser = new User();
-
-        testUser.local.email = dummyUserEmail;
-        testUser.local.password = testUser.generateHash(dummyUserPassword);
-
-        const saveTestUser = testUser.save();
-
-        const testUser2 = new User();
-
-        testUser2.local.email = dummyUser2Email;
-        testUser2.local.password = testUser2.generateHash(dummyUser2Password);
-        testUser2.username = dummyUser2Username;
-
-        const saveTestUser2 = testUser2.save();
-
-        Promise.all([saveTestUser, saveTestUser2]).then(([user]) => {
-          dummyUserToken = user.get('token');
-          dummyUserId = user.get('id');
-          done();
-        });
+        done();
       });
     });
 
@@ -211,6 +212,171 @@ describe('API Users', function() {
         token: dummyUserToken
       })
       .expect(400)
+      .end(function(err) {
+        if (err) {
+          throw err;
+        }
+        done();
+      });
+    });
+  });
+
+  describe('Login', function() {
+    const dummyUserEmail = 'example@example.com';
+    const dummyUserPassword = '12345';
+    const dummyUserUsername = 'Username';
+
+    const dummyUser2Email = 'example1234@example.com';
+    const dummyUser2Password = 'password';
+    const dummyUser2Username = 'Username234';
+    const dummyUser2Token = '12345678901234567890';
+
+    beforeEach((done) => {
+      const testUser = new User();
+
+      testUser.local.email = dummyUserEmail;
+      testUser.local.password = testUser.generateHash(dummyUserPassword);
+      testUser.username = dummyUserUsername;
+
+      const saveTestUser = testUser.save();
+
+      const testUser2 = new User();
+
+      testUser2.local.email = dummyUser2Email;
+      testUser2.local.password = testUser2.generateHash(dummyUser2Password);
+      testUser2.username = dummyUser2Username;
+      testUser2.token = dummyUser2Token;
+
+      const saveTestUser2 = testUser2.save();
+
+      Promise.all([saveTestUser, saveTestUser2]).then(() => {
+        done();
+      });
+
+    });
+
+    afterEach((done) => {
+      User.remove({}).then(() => {
+        done();
+      });
+    });
+
+    it('should be able to login with email and password', function(done) {
+      request(app)
+      .post('/api/users/login')
+      .send({
+        identification: dummyUserEmail,
+        password: dummyUserPassword
+      })
+      .expect(200)
+      .end(function(err) {
+        if (err) {
+          throw err;
+        }
+        done();
+      });
+    });
+
+    it('should be able to login with username and password', function(done) {
+      request(app)
+      .post('/api/users/login')
+      .send({
+        identification: dummyUserUsername,
+        password: dummyUserPassword
+      })
+      .expect(200)
+      .end(function(err) {
+        if (err) {
+          throw err;
+        }
+        done();
+      });
+    });
+
+    it('should not be able to login with correct email and incorrect password', function(done) {
+      request(app)
+      .post('/api/users/login')
+      .send({
+        identification: dummyUserEmail,
+        password: 'asdf1'
+      })
+      .expect(400)
+      .end(function(err) {
+        if (err) {
+          throw err;
+        }
+        done();
+      });
+    });
+
+    it('should not be able to login with not existing username', function(done) {
+      request(app)
+      .post('/api/users/login')
+      .send({
+        identification: '122asdf',
+        password: 'asdf1'
+      })
+      .expect(400)
+      .end(function(err) {
+        if (err) {
+          throw err;
+        }
+        done();
+      });
+    });
+
+    it('should not be able to login with not existing email', function(done) {
+      request(app)
+      .post('/api/users/login')
+      .send({
+        identification: 'example1342@example.com',
+        password: 'asdf1'
+      })
+      .expect(400)
+      .end(function(err) {
+        if (err) {
+          throw err;
+        }
+        done();
+      });
+    });
+
+    it('should not be able to login with email that has not been verified', function(done) {
+      request(app)
+      .post('/api/users/login')
+      .send({
+        identification: dummyUser2Email,
+        password: dummyUser2Password
+      })
+      .expect(400)
+      .end(function(err) {
+        if (err) {
+          throw err;
+        }
+        done();
+      });
+    });
+  });
+
+  describe('Logout', function() {
+    it('should be able to logout', function(done) {
+      request(app)
+      .post('/api/users/logout')
+      .expect(200)
+      .end(function(err) {
+        if (err) {
+          throw err;
+        }
+        done();
+      });
+    });
+  });
+
+  describe('Current user', function() {
+    it('should not be able to get current user', function(done) {
+      request(app)
+      .get('/api/users/current')
+      .expect(200)
       .end(function(err) {
         if (err) {
           throw err;

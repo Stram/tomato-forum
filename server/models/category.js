@@ -1,13 +1,19 @@
 import mongoose from 'mongoose';
 import deepPopulate from 'mongoose-deep-populate';
 
+import { validateCategoryName } from '../services/validate';
+
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
 const categorySchema = new Schema({
   name: {
     type: String,
-    required: true
+    required: true,
+    validate: {
+      validator: validateCategoryName,
+      message: 'Category name is not valid'
+    }
   },
   createdAt: {
     type: Date,

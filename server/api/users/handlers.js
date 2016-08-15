@@ -62,7 +62,7 @@ module.exports = {
           next(sameUsernameError);
         }
         if (sameUsernameUser) {
-          generateError(res, 400, 'Username is already taken');
+          next(new errors.BadRequest('Username is already taken'));
           return;
         }
 
@@ -86,7 +86,7 @@ module.exports = {
         return;
       }
       if (!user) {
-        generateError(res, 400, info.error);
+        next(new errors.BadRequest(info));
         return;
       }
 
@@ -98,6 +98,7 @@ module.exports = {
   logout(req, res) {
     req.logout();
     res.status(200);
+    res.send();
   },
 
   currentUser(req, res) {

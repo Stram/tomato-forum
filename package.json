@@ -10,7 +10,7 @@
     "webpackDev": "webpack --progress --colors --watch",
     "build": "webpack --optimize-minimize --optimize-dedupe",
     "docs": "apidoc -i server/",
-    "test": "NODE_ENV=testing istanbul cover node_modules/.bin/_mocha -- --require babel-register -R spec server/**/test.js"
+    "test": "NODE_ENV=testing istanbul cover node_modules/.bin/_mocha -- --require babel-register -R spec 'server/**/test.js'"
   },
   "author": "Stjepan Petrusa",
   "license": "ISC",
@@ -67,6 +67,7 @@
     "script-loader": "^0.7.0",
     "style-loader": "^0.13.1",
     "supertest": "^2.0.0",
+    "supertest-session": "^2.0.1",
     "underscore": "^1.8.3",
     "webpack": "^1.13.1"
   }
