@@ -24,5 +24,6 @@ exclude_paths:
 - doc/
 - public/
 - server/**/test.js
+- server/test/
 - client/**/*.hbs
 - webpack.config.js

@@ -2,10 +2,10 @@
   "name": "tomato",
   "version": "0.0.1",
   "description": "Example of a forum made using express and backbone",
-  "main": "server/server.js",
+  "main": "server/index.js",
   "repository": "git@github.com:Stram/tomato-forum.git",
   "scripts": {
-    "start": "DATABASE_URL=localhost:27017/express nodemon server/server.js --watch server --exec babel-node --presets es2015,stage-2",
+    "start": "DATABASE_URL=localhost:27017/express nodemon server/index.js --watch server --exec babel-node --presets es2015,stage-2",
     "startServer": "webpack --config webpack.config.server.js --progress --colors --watch",
     "webpackDev": "webpack --progress --colors --watch",
     "build": "webpack --optimize-minimize --optimize-dedupe",

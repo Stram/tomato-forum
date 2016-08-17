@@ -1,5 +1,7 @@
 import express from 'express';
 
+import permissions from '../../services/permissions';
+
 import handlers from './handlers';
 
 const router = new express.Router();
@@ -26,18 +28,18 @@ router.post('/login', handlers.login);
 
 // LOGOUT
 
-router.post('/logout', handlers.logout);
+router.post('/logout', permissions.checkAuthentification, handlers.logout);
 
 // CURRENT USER
 
-router.get('/current', handlers.currentUser);
+router.get('/current', permissions.checkAuthentification, handlers.currentUser);
 
 // PHOTO UPLOAD
 
-router.post('/upload-photo', handlers.uploadPhoto);
+router.post('/upload-photo', permissions.checkAuthentification, handlers.uploadPhoto);
 
 // GET USER
 
-router.get('/:userId', handlers.getUser);
+router.get('/:userId', permissions.checkAuthentification, handlers.getUser);
 
 module.exports = router;

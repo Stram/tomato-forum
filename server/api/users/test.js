@@ -1,10 +1,11 @@
 import request from 'supertest';
-import app from '../../server';
-import { describe, it, before, beforeEach, after, afterEach } from 'mocha';
-
 import mongoose from 'mongoose';
+import { describe, it, before, beforeEach, after, afterEach } from 'mocha';
+import { expect } from 'chai';
 
+import app from '../../index';
 import User from '../../models/user';
+import testHelpers from '../../test/helpers';
 
 const Schema = mongoose.Schema;
 const objectId = Schema.ObjectId;
@@ -359,10 +360,93 @@ describe('API Users', function() {
   });
 
   describe('Logout', function() {
+    let sessionRequest;
+
+    beforeEach((done) => {
+      sessionRequest = testHelpers.createSessionRequestObject();
+      testHelpers.loginDummyUser({sessionRequest}).then(() => {
+        done();
+      });
+    });
+
+    afterEach((done) => {
+      testHelpers.removeDummyUser().then(() => {
+        done();
+      });
+    });
+
     it('should be able to logout', function(done) {
-      request(app)
+      sessionRequest
       .post('/api/users/logout')
       .expect(200)
+      .end(function(logoutErr) {
+        if (logoutErr) {
+          throw logoutErr;
+        }
+
+        sessionRequest
+        .get('/api/users/current')
+        .expect(401)
+        .end(function(currentErr) {
+          if (currentErr) {
+            throw currentErr;
+          }
+          done();
+        });
+      });
+    });
+
+    it('should not be able to logout if not suthenticated', function(done) {
+      request(app)
+      .post('/api/users/logout')
+      .expect(401)
+      .end(function(logoutErr) {
+        if (logoutErr) {
+          throw logoutErr;
+        }
+        done();
+      });
+    });
+  });
+
+  describe('Current user', function() {
+    let sessionRequest;
+    let dummyUser;
+
+    before((done) => {
+      sessionRequest = testHelpers.createSessionRequestObject();
+      testHelpers.loginDummyUser({sessionRequest}).then((user) => {
+        dummyUser = user;
+        done();
+      });
+    });
+
+    after((done) => {
+      testHelpers.logoutDummyUser({sessionRequest}).then(() => {
+        done();
+      });
+    });
+
+    it('should not be able to get current user when not authenticated', function(done) {
+      request(app)
+      .get('/api/users/current')
+      .expect(401)
+      .end(function(err) {
+        if (err) {
+          throw err;
+        }
+        done();
+      });
+    });
+
+    it('should be able to get current user when authenticated', function(done) {
+      sessionRequest
+      .get('/api/users/current')
+      .expect(200)
+      .expect((res) => {
+        expect(res.body).to.have.property('user');
+        expect(res.body.user).to.have.property('username').to.be.a('string').to.equal(dummyUser.username);
+      })
       .end(function(err) {
         if (err) {
           throw err;
@@ -372,11 +456,135 @@ describe('API Users', function() {
     });
   });
 
-  describe('Current user', function() {
-    it('should not be able to get current user', function(done) {
+  describe('Photo upload', function() {
+    let sessionRequest;
+
+    beforeEach((done) => {
+      sessionRequest = testHelpers.createSessionRequestObject();
+      testHelpers.loginDummyUser({sessionRequest}).then(() => {
+        done();
+      });
+    });
+
+    afterEach((done) => {
+      testHelpers.logoutDummyUser({sessionRequest}).then(() => {
+        done();
+      });
+    });
+
+    it('should not be able to upload photo when not authenticated', function(done) {
       request(app)
-      .get('/api/users/current')
+      .post('/api/users/upload-photo')
+      .attach('file', 'server/test/test-image.png')
+      .expect(401)
+      .end(function(err) {
+        if (err) {
+          throw err;
+        }
+        done();
+      });
+    });
+
+    it('should be able to upload photo when authenticated', function(done) {
+      let photoId;
+      sessionRequest
+      .post('/api/users/upload-photo')
+      .attach('file', 'server/test/test-image.png')
+      .expect(201)
+      .expect((res) => {
+        expect(res.body).to.have.property('photo');
+        expect(res.body.photo).to.have.property('id');
+        photoId = res.body.photo.id;
+      })
+      .end(function(err) {
+        if (err) {
+          throw err;
+        }
+
+        testHelpers.getDummyUser().then((user) => {
+          expect(user).to.have.property('photos').to.be.an('array').to.include(photoId).to.have.lengthOf(1);
+          expect(user).to.have.property('profilePhoto');
+          expect(user.profilePhoto.toString()).to.be.equal(photoId);
+
+          done();
+        });
+      });
+    });
+
+    it('should not be able to upload photo when no files were given', function(done) {
+      sessionRequest
+      .post('/api/users/upload-photo')
+      .expect(400)
+      .end(function(err) {
+        if (err) {
+          throw err;
+        }
+        done();
+      });
+    });
+  });
+
+  describe('Get user', function() {
+    let sessionRequest;
+    let userId;
+
+    beforeEach((done) => {
+      sessionRequest = testHelpers.createSessionRequestObject();
+      testHelpers.loginDummyUser({sessionRequest}).then((user) => {
+        userId = user.id;
+        done();
+      });
+    });
+
+    afterEach((done) => {
+      testHelpers.logoutDummyUser({sessionRequest}).then(() => {
+        done();
+      });
+    });
+
+    it('should not be able to get user when not authenticated', function(done) {
+      request(app)
+      .get(`/api/users/${userId}`)
+      .expect(401)
+      .end(function(err) {
+        if (err) {
+          throw err;
+        }
+        done();
+      });
+    });
+
+    it('should be able to get user when authenticated', function(done) {
+      sessionRequest
+      .get(`/api/users/${userId}`)
       .expect(200)
+      .end(function(err) {
+        if (err) {
+          throw err;
+        }
+        done();
+      });
+    });
+
+    it('should not be able to get user with bad id', function(done) {
+      const dummyId = '3';
+
+      sessionRequest
+      .get(`/api/users/${dummyId}`)
+      .expect(400)
+      .end(function(err) {
+        if (err) {
+          throw err;
+        }
+        done();
+      });
+    });
+
+    it('should not be able to get user with not existing id', function(done) {
+      const dummyId = '57b4b43dcaf81cf20772e800';
+      sessionRequest
+      .get(`/api/users/${dummyId}`)
+      .expect(404)
       .end(function(err) {
         if (err) {
           throw err;

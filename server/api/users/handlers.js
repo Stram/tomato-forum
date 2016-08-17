@@ -2,6 +2,7 @@ import passport from 'passport';
 import path from 'path';
 import fs from 'fs';
 import randToken from 'rand-token';
+import mongoose from 'mongoose';
 
 import mailer from '../../services/mailer';
 import errors from '../../services/errors';
@@ -76,7 +77,7 @@ module.exports = {
   login(req, res, next) {
     passport.authenticate('local-login', (error, user, info) => {
       if (error) {
-        res.json({error});
+        next(error);
         return;
       }
       if (!user) {
@@ -108,13 +109,8 @@ module.exports = {
   },
 
   uploadPhoto(req, res, next) {
-    if (!req.user) {
-      res.status('401');
-      return;
-    }
-
     if (!req.files) {
-      res.send('No files were uploaded.');
+      next(new errors.BadRequest('No files were uploaded.'));
       return;
     }
 
@@ -145,27 +141,35 @@ module.exports = {
 
       currentUser.photos.push(newPhoto);
 
-      newPhoto.save().then((newSavedPhoto) => {
-        currentUser.save().then(() => {
-          res.send({
-            photo: newSavedPhoto.toObject()
-          });
+      const savingNewPhoto = newPhoto.save();
+      const savingCurrentUser = currentUser.save();
+      Promise.all([savingNewPhoto, savingCurrentUser]).then(([newSavedPhoto]) => {
+        res.status(201);
+        res.send({
+          photo: newSavedPhoto.toObject()
         });
       });
     });
   },
 
   getUser(req, res, next) {
-    User.findById(req.params.userId, (error, user) => {
-      if (error) {
-        next(error);
-      }
+    const userId = req.params.userId;
 
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      next(new errors.BadRequest('Must provide a valid id'));
+      return;
+    }
+
+    User.findById(userId).then((user) => {
       if (!user) {
         next(new errors.NotFound('User not found'));
       }
 
       res.json(user.toObject());
+    }, (error) => {
+      if (error) {
+        next(error);
+      }
     });
   }
 };

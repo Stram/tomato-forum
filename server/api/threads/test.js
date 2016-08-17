@@ -1,15 +1,13 @@
 import request from 'supertest';
-import session from 'supertest-session';
 import mongoose from 'mongoose';
-import { describe, it, before, beforeEach, afterEach } from 'mocha';
+import { describe, it, before, beforeEach, after, afterEach } from 'mocha';
 
-import app from '../../server';
-import User from '../../models/user';
+import app from '../../index';
 import Category from '../../models/category';
+import testHelpers from '../../test/helpers';
 
 const Schema = mongoose.Schema;
 const objectId = Schema.ObjectId;
-
 
 describe('API Threads', function() {
 
@@ -17,43 +15,21 @@ describe('API Threads', function() {
   let dummyCategoryId;
 
   before((done) => {
-    const dummyUserEmail = 'session@example.com';
-    const dummyUserPassword = 'password';
-    const dummyUserUsername = 'Session';
+    sessionRequest = testHelpers.createSessionRequestObject();
+    testHelpers.loginDummyUser({sessionRequest}).then(() => {
+      done();
+    });
+  });
 
-    const dummyUser = new User();
-
-    dummyUser.local.email = dummyUserEmail;
-    dummyUser.local.password = dummyUser.generateHash(dummyUserPassword);
-    dummyUser.username = dummyUserUsername;
-
-    dummyUser.save().then(() => {
-      sessionRequest = session(app);
-
-      sessionRequest
-      .post('/api/users/login')
-      .send({
-        identification: dummyUserEmail,
-        password: dummyUserPassword
-      })
-      .expect(200)
-      .end(function(err) {
-        if (err) {
-          throw err;
-        }
-        done();
-      });
+  after((done) => {
+    testHelpers.logoutDummyUser({sessionRequest}).then(() => {
+      done();
     });
   });
 
   beforeEach((done) => {
-    const categoryName = 'category';
-
-    const dummyCategory = new Category();
-
-    dummyCategory.name = categoryName;
-    dummyCategory.save().then((createdCategory) => {
-      dummyCategoryId = createdCategory.id;
+    testHelpers.createDummyCategory().then((category) => {
+      dummyCategoryId = category.id;
       done();
     });
   });
@@ -99,7 +75,7 @@ describe('API Threads', function() {
       });
     });
 
-    it('should not be able to create a category with illigal category id', function(done) {
+    it('should not be able to create a thread with illigal category id', function(done) {
       sessionRequest
       .post('/api/threads')
       .send({

@@ -1,46 +1,21 @@
 import request from 'supertest';
-import session from 'supertest-session';
-import app from '../../server';
+import app from '../../index';
 import { describe, it, before, after } from 'mocha';
-
-import User from '../../models/user';
+import testHelpers from '../../test/helpers';
 
 describe('API Categories', function() {
 
   let sessionRequest;
 
   before((done) => {
-    const dummyUserEmail = 'session@example.com';
-    const dummyUserPassword = 'password';
-    const dummyUserUsername = 'Session';
-
-    const dummyUser = new User();
-
-    dummyUser.local.email = dummyUserEmail;
-    dummyUser.local.password = dummyUser.generateHash(dummyUserPassword);
-    dummyUser.username = dummyUserUsername;
-
-    dummyUser.save().then(() => {
-      sessionRequest = session(app);
-
-      sessionRequest
-      .post('/api/users/login')
-      .send({
-        identification: dummyUserEmail,
-        password: dummyUserPassword
-      })
-      .expect(200)
-      .end(function(err) {
-        if (err) {
-          throw err;
-        }
-        done();
-      });
+    sessionRequest = testHelpers.createSessionRequestObject();
+    testHelpers.loginDummyUser({sessionRequest}).then(() => {
+      done();
     });
   });
 
   after((done) => {
-    User.remove({}).then(() => {
+    testHelpers.logoutDummyUser({sessionRequest}).then(() => {
       done();
     });
   });

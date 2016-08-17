@@ -1,2 +1,2 @@
 instrumentation:
-    excludes: ['**/test.js']
+    excludes: ['**/test.js', 'server/test/**/*']
