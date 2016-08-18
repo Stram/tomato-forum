@@ -9,6 +9,8 @@ import testHelpers from '~/test/helpers';
 describe('API Threads - Get all', function() {
 
   let sessionRequest;
+  let dummyUserId;
+
   let dummyCategory1Id;
   let dummyCategory2Id;
 
@@ -18,7 +20,8 @@ describe('API Threads - Get all', function() {
 
   before((done) => {
     sessionRequest = testHelpers.createSessionRequestObject();
-    testHelpers.loginDummyUser({sessionRequest}).then(() => {
+    testHelpers.loginDummyUser({sessionRequest}).then((user) => {
+      dummyUserId = user.id;
       done();
     });
   });
@@ -51,6 +54,7 @@ describe('API Threads - Get all', function() {
         dummyThread1 = thread1;
         dummyThread2 = thread2;
         dummyThread3 = thread3;
+
         done();
       });
     });
@@ -67,7 +71,7 @@ describe('API Threads - Get all', function() {
     .get('/api/threads')
     .expect(200)
     .expect((res) => {
-      expect(res.body).to.have.property('threads').be.an('array').to.have.length(3);
+      expect(res.body).to.have.property('items').be.an('array').to.have.length(3);
       expect(res.body).to.have.property('meta');
     })
     .end(function(err) {
@@ -82,6 +86,58 @@ describe('API Threads - Get all', function() {
     request(app)
     .get('/api/threads')
     .expect(401)
+    .end(function(err) {
+      if (err) {
+        throw err;
+      }
+      done();
+    });
+  });
+
+  it('should be able to get threads only from a certain user', function(done) {
+    sessionRequest
+    .get('/api/threads')
+    .query({owner: dummyUserId})
+    .expect(200)
+    .expect((res) => {
+      expect(res.body).to.have.property('items').be.an('array').to.have.length(3);
+      expect(res.body).to.have.property('meta');
+    })
+    .end(function(err) {
+      if (err) {
+        throw err;
+      }
+      done();
+    });
+  });
+
+  it('should be able to get threads only in a certain category', function(done) {
+    sessionRequest
+    .get('/api/threads')
+    .query({category: dummyCategory1Id})
+    .expect(200)
+    .expect((res) => {
+      expect(res.body).to.have.property('items').be.an('array').to.have.length(2);
+      expect(res.body).to.have.property('meta');
+    })
+    .end(function(err) {
+      if (err) {
+        throw err;
+      }
+      done();
+    });
+  });
+
+  it('should be able to get threads on 2 pages with perPage param', function(done) {
+    sessionRequest
+    .get('/api/threads')
+    .query({perPage: 2})
+    .expect(200)
+    .expect((res) => {
+      expect(res.body).to.have.property('items').be.an('array').to.have.length(2);
+      expect(res.body).to.have.property('meta');
+      expect(res.body.meta).to.have.property('pages').to.be.equal(2);
+    })
     .end(function(err) {
       if (err) {
         throw err;

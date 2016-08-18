@@ -12,8 +12,7 @@ module.exports = function(req, res, next) {
 
   Thread
   .findById(threadId)
-  .deepPopulate('owner.profilePhoto')
-  .deepPopulate('comments.user.profilePhoto')
+  .deepPopulate(['owner.profilePhoto', 'comments.user.profilePhoto'])
   .then((thread) => {
     if (!thread) {
       next(new errors.NotFound('Thread not found'));

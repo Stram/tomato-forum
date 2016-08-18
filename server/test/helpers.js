@@ -10,6 +10,8 @@ const dummyUserEmail = 'session@example.com';
 const dummyUserPassword = 'password';
 const dummyUserUsername = 'Session';
 
+let currentUserId;
+
 function createDummyUser() {
 
   const dummyUser = new User();
@@ -42,6 +44,7 @@ function loginDummyUser(options = {}) {
         if (err) {
           reject(err);
         }
+        currentUserId = dummyUser.id;
         resolve(dummyUser);
       });
     });
@@ -89,7 +92,8 @@ function createDummyThread(options = {}) {
   const newThread = new Thread({
     category: options.categoryId,
     title: threadTitle,
-    content: '*content*'
+    content: '*content*',
+    owner: currentUserId
   });
 
   return newThread.save();

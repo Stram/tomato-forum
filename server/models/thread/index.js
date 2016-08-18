@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate';
+import deepPopulate from 'mongoose-deep-populate';
 
 import objectTransformation from '../helpers/standard-transformation';
 
@@ -31,5 +32,8 @@ threadSchema.plugin(mongoosePaginate);
 
 threadSchema.options.toObject = threadSchema.options.toObject ? threadSchema.options.toObject : {};
 threadSchema.options.toObject.transform = objectTransformation;
+
+threadSchema.plugin(deepPopulate(mongoose));
+
 
 module.exports = mongoose.model('Thread', threadSchema);

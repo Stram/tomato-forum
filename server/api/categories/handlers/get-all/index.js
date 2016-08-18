@@ -1,20 +1,10 @@
 import Category from '~/models/category';
-import metaInfo from '~/middlewares/pagination/meta-info';
+import paginateModel from '~/util/pagination/paginate-model';
 
 module.exports = function(req, res) {
-  const paginationOptions = req.pagination || {};
-  const filterOptions = req.filters || {};
+  const options = {
+    deepPopulate: 'threads.owner.profilePhoto'
+  };
 
-  Category
-  .paginate(filterOptions, paginationOptions)
-  .deepPopulate('threads.owner.profilePhoto')
-  .then((result) => {
-
-    const categories = result.docs;
-    const response = metaInfo({
-      categories: categories.map((category) => category.toObject())
-    }, result);
-
-    res.json(response);
-  });
+  paginateModel(req, res, Category, options);
 };
