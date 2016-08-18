@@ -1,7 +1,7 @@
 import express from 'express';
 
-import Comment from '../models/comment';
-import Thread from '../models/thread';
+import Comment from '~/models/comment';
+import Thread from '~/models/thread';
 
 const router = new express.Router();
 

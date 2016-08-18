@@ -1,8 +1,12 @@
 import express from 'express';
 
-import permissions from '../../services/permissions';
+import permissions from '~/services/permissions';
+import paginationMiddleware from '~/middlewares/pagination';
 
-import handlers from './handlers';
+import create from './handlers/create';
+import get from './handlers/get';
+import getAll from './handlers/get-all';
+import getAllFilters from './handlers/get-all/filters';
 
 const router = new express.Router();
 
@@ -17,7 +21,7 @@ router.use(permissions.checkAuthentification);
  * @apiParam {String} content Threads content.
  * @apiParam {ObjectId} categoryId Threads parent category.
  */
-router.post('/', handlers.createThread);
+router.post('/', create);
 
 /**
  * @api {get} /threads/ Get all threads
@@ -28,7 +32,7 @@ router.post('/', handlers.createThread);
  * @apiParam {String} content Threads content.
  * @apiParam {ObjectId} owner Threads owner.
  */
-router.get('/', handlers.getThreads);
+router.get('/', paginationMiddleware, getAllFilters, getAll);
 
 /**
  * @api {get} /threads/:id Get specific thread
@@ -39,6 +43,6 @@ router.get('/', handlers.getThreads);
  * @apiParam {String} content Threads content.
  * @apiParam {ObjectId} owner Threads owner.
  */
-router.get('/:threadId', handlers.getThread);
+router.get('/:threadId', get);
 
 module.exports = router;

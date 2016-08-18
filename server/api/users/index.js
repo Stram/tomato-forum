@@ -2,7 +2,13 @@ import express from 'express';
 
 import permissions from '../../services/permissions';
 
-import handlers from './handlers';
+import register from './handlers/register';
+import verify from './handlers/verify';
+import login from './handlers/login';
+import logout from './handlers/logout';
+import currentUser from './handlers/current-user';
+import uploadPhoto from './handlers/upload-photo';
+import get from './handlers/get';
 
 const router = new express.Router();
 
@@ -16,30 +22,30 @@ const router = new express.Router();
  *
  */
 
-router.post('/register', handlers.register);
+router.post('/register', register);
 
 // VERIFY EMAIL AND UPDATE ACCOUNT
 
-router.post('/verify', handlers.verify);
+router.post('/verify', verify);
 
 // LOGIN
 
-router.post('/login', handlers.login);
+router.post('/login', login);
 
 // LOGOUT
 
-router.post('/logout', permissions.checkAuthentification, handlers.logout);
+router.post('/logout', permissions.checkAuthentification, logout);
 
 // CURRENT USER
 
-router.get('/current', permissions.checkAuthentification, handlers.currentUser);
+router.get('/current', permissions.checkAuthentification, currentUser);
 
 // PHOTO UPLOAD
 
-router.post('/upload-photo', permissions.checkAuthentification, handlers.uploadPhoto);
+router.post('/upload-photo', permissions.checkAuthentification, uploadPhoto);
 
 // GET USER
 
-router.get('/:userId', permissions.checkAuthentification, handlers.getUser);
+router.get('/:userId', permissions.checkAuthentification, get);
 
 module.exports = router;

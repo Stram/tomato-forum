@@ -1,8 +1,10 @@
 import session from 'supertest-session';
+import randToken from 'rand-token';
 
 import app from '../';
 import User from '../models/user';
 import Category from '../models/category';
+import Thread from '../models/thread';
 
 const dummyUserEmail = 'session@example.com';
 const dummyUserPassword = 'password';
@@ -25,7 +27,7 @@ function createSessionRequestObject() {
   return session(app);
 }
 
-function loginDummyUser(options) {
+function loginDummyUser(options = {}) {
   return createDummyUser().then((dummyUser) => {
     const sessionRequest = options.sessionRequest || createSessionRequestObject();
 
@@ -54,7 +56,7 @@ function getDummyUser() {
   return User.findOne({username: dummyUserUsername});
 }
 
-function logoutDummyUser(options) {
+function logoutDummyUser(options = {}) {
   const sessionRequest = options.sessionRequest;
 
   return new Promise((resolve, reject) => {
@@ -71,14 +73,30 @@ function logoutDummyUser(options) {
   });
 }
 
-
 function createDummyCategory() {
-  const categoryName = 'category';
+  const categoryName = randToken.generate(8);
 
-  const dummyCategory = new Category();
+  const dummyCategory = new Category({
+    name: categoryName
+  });
 
-  dummyCategory.name = categoryName;
   return dummyCategory.save();
+}
+
+function createDummyThread(options = {}) {
+  const threadTitle = randToken.generate(8);
+
+  const newThread = new Thread({
+    category: options.categoryId,
+    title: threadTitle,
+    content: '*content*'
+  });
+
+  return newThread.save();
+}
+
+function removeThreads() {
+  return Thread.remove({});
 }
 
 module.exports = {
@@ -89,5 +107,8 @@ module.exports = {
   loginDummyUser,
   logoutDummyUser,
 
-  createDummyCategory
+  createDummyCategory,
+
+  createDummyThread,
+  removeThreads
 };

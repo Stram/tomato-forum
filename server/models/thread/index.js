@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate';
 
 import objectTransformation from '../helpers/standard-transformation';
 
@@ -16,11 +17,17 @@ const threadSchema = new Schema({
     type: Date,
     default: new Date()
   },
+  category: {
+    type: ObjectId,
+    ref: 'Category'
+  },
   comments: [{
     type: ObjectId,
     ref: 'Comment'
   }]
 });
+
+threadSchema.plugin(mongoosePaginate);
 
 threadSchema.options.toObject = threadSchema.options.toObject ? threadSchema.options.toObject : {};
 threadSchema.options.toObject.transform = objectTransformation;

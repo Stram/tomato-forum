@@ -27,7 +27,7 @@ describe('Thread model', () => {
         expect(objectOfSavedDummyThread).to.have.property('title').to.be.a('string');
         expect(objectOfSavedDummyThread).to.have.property('createdAt').to.be.a('date');
         expect(objectOfSavedDummyThread).to.have.property('content').to.be.a('string');
-        expect(objectOfSavedDummyThread).to.have.property('comments').to.be.a('array');
+        expect(objectOfSavedDummyThread).to.have.property('comments').to.be.an('array');
 
         done();
       });
