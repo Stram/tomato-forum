@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate';
 import deepPopulate from 'mongoose-deep-populate';
 
 import { validateCategoryName } from '../../services/validate';
@@ -30,6 +31,8 @@ const categorySchema = new Schema({
     ref: 'Thread'
   }]
 });
+
+categorySchema.plugin(mongoosePaginate);
 
 categorySchema.options.toObject = categorySchema.options.toObject || {};
 categorySchema.options.toObject.transform = objectTransformation;

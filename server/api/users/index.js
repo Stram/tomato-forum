@@ -1,6 +1,6 @@
 import express from 'express';
 
-import permissions from '../../services/permissions';
+import permissions from '~/services/permissions';
 
 import register from './handlers/register';
 import verify from './handlers/verify';
