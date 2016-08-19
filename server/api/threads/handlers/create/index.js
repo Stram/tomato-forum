@@ -1,10 +1,17 @@
 import Category from '~/models/category';
 import Thread from '~/models/thread';
-
 import errors from '~/services/errors';
+import { validateObjectId } from '~/services/validate';
 
 module.exports = function(req, res, next) {
-  Category.findById(req.body.categoryId, (categoryError, category) => {
+  const categoryId = req.body.categoryId;
+
+  if (!validateObjectId(categoryId)) {
+    next(new errors.BadRequest('Must provide a valid category id'));
+    return;
+  }
+
+  Category.findById(categoryId, (categoryError, category) => {
     if (categoryError) {
       next(categoryError);
       return;

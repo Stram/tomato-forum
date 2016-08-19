@@ -1,10 +1,18 @@
 import Comment from '~/models/comment';
 import Thread from '~/models/thread';
-
 import errors from '~/services/errors';
+import { validateObjectId } from '~/services/validate';
 
 module.exports = function(req, res, next) {
-  Thread.findById(req.body.thread.id, (findError, thread) => {
+  const threadId = req.body.threadId;
+
+  if (!validateObjectId(threadId)) {
+    next(new errors.BadRequest('Must provide a valid category id'));
+    return;
+  }
+
+  Thread.findById(threadId, (findError, thread) => {
+
     if (findError) {
       next(findError);
       return;
@@ -17,20 +25,19 @@ module.exports = function(req, res, next) {
     const newComment = new Comment({
       content: req.body.content,
       user: req.user.id,
-      thread,
-      createdAt: new Date()
+      thread
     });
 
     thread.comments.push(newComment);
 
-    Promise.all([newComment.save(), thread.save()]).then(() => {
+    Promise.all([newComment.save(), thread.save()]).then(([savedComment]) => {
+
+      // TODO: fix deep population
+      // savedComment.deepPopulate('user.profilePhoto');
 
       res.status(201);
-
-      newComment
-      .deepPopulate('user.profilePhoto')
-      .then((comment) => {
-        res.json(comment.toObject());
+      res.json({
+        comment: savedComment.toObject()
       });
 
     }, (error) => {

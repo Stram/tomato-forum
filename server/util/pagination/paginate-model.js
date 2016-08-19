@@ -9,6 +9,8 @@ module.exports = function(req, res, Model, options = {}) {
   .then((result) => {
 
     const docs = result.docs;
+
+    // TODO: fix deep population
     if (options.deepPopulate) {
       docs.forEach((doc) => {
         doc.deepPopulate(options.deepPopulate);

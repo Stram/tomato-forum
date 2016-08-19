@@ -14,10 +14,6 @@ describe('API Threads - Get all', function() {
   let dummyCategory1Id;
   let dummyCategory2Id;
 
-  let dummyThread1;
-  let dummyThread2;
-  let dummyThread3;
-
   before((done) => {
     sessionRequest = testHelpers.createSessionRequestObject();
     testHelpers.loginDummyUser({sessionRequest}).then((user) => {
@@ -50,10 +46,7 @@ describe('API Threads - Get all', function() {
         categoryId: dummyCategory2Id
       });
 
-      Promise.all([thread1Promise, thread2Promise, thread3Promise]).then(([thread1, thread2, thread3]) => {
-        dummyThread1 = thread1;
-        dummyThread2 = thread2;
-        dummyThread3 = thread3;
+      Promise.all([thread1Promise, thread2Promise, thread3Promise]).then(() => {
 
         done();
       });

@@ -76,6 +76,10 @@ function logoutDummyUser(options = {}) {
   });
 }
 
+function removeCategories() {
+  return Category.remove({});
+}
+
 function createDummyCategory() {
   const categoryName = randToken.generate(8);
 
@@ -112,6 +116,7 @@ module.exports = {
   logoutDummyUser,
 
   createDummyCategory,
+  removeCategories,
 
   createDummyThread,
   removeThreads

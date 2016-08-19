@@ -5,7 +5,7 @@ import app from '~/index';
 import Category from '~/models/category';
 import testHelpers from '~/test/helpers';
 
-describe('API Threads - Get all', function() {
+describe('API Threads - Get', function() {
 
   let sessionRequest;
 

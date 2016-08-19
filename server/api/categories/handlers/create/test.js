@@ -1,7 +1,9 @@
 import request from 'supertest';
+import { describe, it, before, after, afterEach } from 'mocha';
+
 import app from '~/index';
-import { describe, it, before, after } from 'mocha';
 import testHelpers from '~/test/helpers';
+import Category from '~/models/category';
 
 describe('API Categories - Create', function() {
   let sessionRequest;
@@ -15,6 +17,12 @@ describe('API Categories - Create', function() {
 
   after((done) => {
     testHelpers.logoutDummyUser({sessionRequest}).then(() => {
+      done();
+    });
+  });
+
+  afterEach((done) => {
+    Category.remove({}).then(() => {
       done();
     });
   });
