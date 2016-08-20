@@ -1,0 +1,70 @@
+@import '~styles/variables';
+@import '~styles/colors';
+@import '~styles/themes';
+@import '~styles/mixins';
+
+.sidebar {
+  position: absolute;
+  top: 0;
+  right: auto;
+  bottom: 0;
+  left: 0;
+
+  width: $sidebar-width;
+
+  background-color: $color-bg-grey-100;
+  box-shadow: 2px 0 16px 0 $color-light-shadow;
+
+  z-index: 2;
+}
+
+.header {
+  padding: 16px;
+
+  border-bottom: 1px solid $color-border-grey-300;
+
+  .user {
+    display: flex;
+
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .username {
+    font-size: 17px;
+  }
+
+  .profile-photo {
+    @include round-image;
+    margin-right: 16px;
+  }
+}
+
+%navigation {
+  padding: 12px 0;
+
+  .navigation-link {
+    @extend %default-text;
+    padding: 16px 24px;
+    display: block;
+    text-transform: uppercase;
+
+    &.is-active {
+      @extend %theme-primary-text;
+    }
+  }
+}
+
+.main-navigation {
+  @extend %navigation;
+
+  border-bottom: 1px solid $color-border-grey-300;
+
+  .navigation-link {
+    font-weight: bold;
+  }
+}
+
+.secondary-navigation {
+  @extend %navigation;
+}

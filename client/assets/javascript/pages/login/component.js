@@ -2,7 +2,7 @@ import Marionette from 'backbone.marionette';
 import _ from 'underscore';
 
 import router from 'application/router';
-import session from 'session';
+import session from 'application/session';
 
 import template from './template.hbs';
 

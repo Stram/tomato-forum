@@ -1,15 +1,12 @@
 import $ from 'jquery';
 import config from 'config';
-import app from 'application/app';
-
-import router from 'application/router';
 
 export default {
   _currentUser: null,
 
   setCurrentUser(user) {
     this._currentUser = user;
-    app.updateTheme(user);
+    // app.updateTheme(user);
   },
 
   getCurrentUser() {
@@ -50,7 +47,7 @@ export default {
       method: 'POST'
     }).done(() => {
       self.setCurrentUser(null);
-      router.navigate('login', true);
+      // router.navigate('login', true);
     });
   },
 

@@ -2,7 +2,7 @@ import Marionette from 'backbone.marionette';
 
 import template from './template.hbs';
 
-import session from 'session';
+import session from 'application/session';
 
 export default Marionette.View.extend({
   tagName: 'article',

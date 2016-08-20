@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcrypt-nodejs';
 import randToken from 'rand-token';
+import deepPopulate from 'mongoose-deep-populate';
 import {validateEmail, validateUsername} from '../../services/validate';
 
 import applicationConfig from '../../config/application';
@@ -118,5 +119,7 @@ userSchema.methods.getVerificationLink = function() {
 
 userSchema.options.toObject = userSchema.options.toObject ? userSchema.options.toObject : {};
 userSchema.options.toObject.transform = objectTransformation;
+
+userSchema.plugin(deepPopulate(mongoose));
 
 module.exports = mongoose.model('User', userSchema);

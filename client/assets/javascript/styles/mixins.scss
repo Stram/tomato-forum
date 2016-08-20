@@ -1,0 +1,6 @@
+@mixin round-image($size: 40px) {
+  width: $size;
+  height: $size;
+  display: inline-block;
+  border-radius: $size / 2;
+}

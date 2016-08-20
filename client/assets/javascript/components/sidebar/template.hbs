@@ -1,30 +1,20 @@
-<section class="navigation">
-  {{#each sidebarItems}}
-    <div class="navigation__header js-navigate" data-page="{{link}}">
-      {{label}}
+<section class="{{style.header}}">
+  <div class="{{style.user}}">
+    <img class="{{style.profilePhoto}}" src="{{currentUser.profilePhoto.url}}" alt="Profile photo"/>
+    <div class="{{style.username}}">
+      {{currentUser.username}}
     </div>
-  {{/each}}
-  <!-- <div class="navigation__header js-navigate" data-page="profile/{{currentUser.id}}">
-    {{currentUser.username}}
-  </div>
-  <div class="navigation__header js-navigate" data-page="dashboard">
-    DASHBOARD
-  </div>
-  <div class="navigation__header js-navigate" data-page="forum">
-    FORUM
-  </div>
-  <div class="navigation__items">
-    <div class="navigation__item">
-      Aktualno
-    </div>
-    <div class="navigation__item">
-      Moje teme
-    </div>
-    <div class="navigation__item">
-      Jos nesto
-    </div>
-  </div> -->
-  <div class="navigation__header js-logout">
-    LOGOUT
   </div>
 </section>
+
+{{#each navigations}}
+  <section class="{{className}}">
+    {{#each items}}
+      {{#if active}}
+        <a class="{{../../style.navigationLink}} {{../../style.isActive}}" href="/{{link}}">{{label}}</a>
+      {{else}}
+        <a class="{{../../style.navigationLink}}" href="/{{link}}">{{label}}</a>
+      {{/if}}
+    {{/each}}
+  </section>
+{{/each}}

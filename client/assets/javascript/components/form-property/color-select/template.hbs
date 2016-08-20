@@ -1,6 +1,0 @@
-<div class="color-select__label">
-  {{label}}
-</div>
-{{#each colors}}
-  <input type="radio" name="{{../inputId}}" value="{{id}}" class="color-select__item js-color-select-{{../inputId}}" style="background-color: {{hexValue}}" {{#if isSelected}} checked {{/if}}/>
-{{/each}}

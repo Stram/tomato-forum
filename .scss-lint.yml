@@ -90,7 +90,7 @@ linters:
     enabled: true
 
   PropertySortOrder:
-    enabled: true
+    enabled: false
     order:
       - font
       - font-family
@@ -265,7 +265,7 @@ linters:
 
   PropertySpelling:
     enabled: true
-    extra_properties: []
+    extra_properties: [composes]
 
   QualifyingElement:
     enabled: true

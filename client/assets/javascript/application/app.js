@@ -1,6 +1,6 @@
 import Backbone from 'backbone';
 import Marionette from 'backbone.marionette';
-import ApplicationView from 'pages/application/component';
+import ApplicationView from 'pages/application';
 import ModalView from 'components/modal-dialog/component';
 import LoadingView from 'components/loading/component';
 
@@ -8,6 +8,10 @@ const Application = Marionette.Application.extend({
   region: '#body',
 
   channelName: 'application',
+
+  radioRequests: {
+    'view:base:get': 'getBaseView'
+  },
 
   radioEvents: {
     'modal:show': 'showModal',

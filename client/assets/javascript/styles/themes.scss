@@ -1,0 +1,44 @@
+@import 'colors';
+
+:global {
+  .theme,
+  .theme-0 {
+    :local {
+      %default-text {
+        color: $base-black;
+        opacity: 0.87;
+      }
+
+      %theme-primary-text {
+        color: $base-blue-500;
+        opacity: 1;
+      }
+    }
+  }
+}
+
+// @mixin theme-style($type: 'primary') {
+//   @each $theme in $themes {
+//     $i: index($themes, $theme) - 1;
+//
+//     .theme-#{$i} & {
+//       $color: map-get($theme, $type + '-text');
+//       $background-color: map-get($theme, $type);
+//
+//       color: $color;
+//       background-color: $background-color;
+//     }
+//   }
+// }
+//
+// @mixin theme-background($type: 'primary') {
+//   @each $theme in $themes {
+//     $i: index($themes, $theme) - 1;
+//
+//     .theme-#{$i} & {
+//       $background-color: map-get($theme, $type);
+//
+//       background-color: $background-color;
+//     }
+//   }
+// }

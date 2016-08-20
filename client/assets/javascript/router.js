@@ -1,7 +1,7 @@
 import Backbone from 'backbone';
 import $ from 'jquery';
 
-import session from 'session';
+import session from 'application/session';
 
 import pages from 'pages';
 

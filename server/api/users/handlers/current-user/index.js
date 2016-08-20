@@ -1,5 +1,7 @@
 module.exports = function(req, res) {
-  res.json({
-    user: req.user.toObject()
+  req.user.deepPopulate('profilePhoto').then((user) => {
+    res.json({
+      user: user.toObject()
+    });
   });
 };

@@ -1,0 +1,26 @@
+$breakpoints: (
+  small: 767px,
+  medium: 992px,
+  large: 1200px
+);
+
+// GLOBAL
+
+$sidebar-width: 250px;
+
+$fab-size: 50px;
+
+$z-index-overlay: 1000;
+
+// SWITCH
+
+$switch-grid-step: 4px;
+
+$switch-size: $switch-grid-step * 10;
+$switch-height: $switch-grid-step * 4;
+$switch-padding: $switch-grid-step;
+$switch-border-radius: $switch-grid-step / 2;
+$switch-label: $switch-height + ($switch-padding * 2);
+
+$switch-animation-timing: cubic-bezier(0.4, 0, 0.2, 1);
+$switch-animation: 0.28s $switch-animation-timing;

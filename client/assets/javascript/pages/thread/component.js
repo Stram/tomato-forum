@@ -4,7 +4,7 @@ import $ from 'jquery';
 
 import template from './template.hbs';
 
-import session from 'session';
+import session from 'application/session';
 
 import Comment from 'models/comment';
 

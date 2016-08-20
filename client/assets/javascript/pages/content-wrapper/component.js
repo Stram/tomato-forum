@@ -2,9 +2,7 @@ import Marionette from 'backbone.marionette';
 
 import template from './template.hbs';
 import router from 'application/router';
-import session from 'session';
-
-import SidebarView from 'components/sidebar/component';
+import session from 'application/session';
 
 export default Marionette.View.extend({
 
@@ -15,17 +13,9 @@ export default Marionette.View.extend({
   className: 'content-wrapper',
 
   regions: {
-    sidebar: {
-      el: '#sidebar',
-      replaceEl: true
-    },
     content: {
       el: '#page-content'
     }
-  },
-
-  onBeforeAttach() {
-    this.showChildView('sidebar', new SidebarView());
   },
 
   navigate(event) {
