@@ -1,5 +1,6 @@
 import Backbone from 'backbone';
 import Marionette from 'backbone.marionette';
+import Radio from 'backbone.radio';
 import ApplicationView from 'pages/application';
 import ModalView from 'components/modal-dialog/component';
 import LoadingView from 'components/loading/component';
@@ -17,11 +18,14 @@ const Application = Marionette.Application.extend({
     'modal:show': 'showModal',
     'modal:hide': 'hideModal',
     'loading:show': 'showLoading',
-    'loading:hide': 'hideLoading'
+    'loading:hide': 'hideLoading',
+    'overlay:show': 'showOverlay',
+    'overlay:hide': 'hideOverlay'
   },
 
   initialize() {
     this.applicationView = new ApplicationView();
+    this.listenTo(this.applicationView, 'overlayClicked', this.overlayClicked);
     this.showView(this.applicationView, {replaceElement: true});
   },
 
@@ -87,6 +91,20 @@ const Application = Marionette.Application.extend({
     this.hideSubView({
       region: 'loading'
     });
+  },
+
+  showOverlay() {
+    this.getView().showOverlay();
+  },
+
+  hideOverlay() {
+    this.getView().hideOverlay();
+  },
+
+  overlayClicked() {
+    this.hideOverlay();
+    const sidebarChannel = Radio.channel('sidebar');
+    sidebarChannel.trigger('sidebar:hide');
   }
 });
 

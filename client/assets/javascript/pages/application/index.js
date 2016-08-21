@@ -15,6 +15,14 @@ export default Marionette.View.extend({
     id: 'body'
   },
 
+  ui: {
+    overlay: '#overlay'
+  },
+
+  events: {
+    'click @ui.overlay': 'overlayClicked'
+  },
+
   className: `${style.body} theme theme-0`,
 
   regions: {
@@ -41,6 +49,18 @@ export default Marionette.View.extend({
   removeSidebar() {
     const sidebarRegion = this.getRegion('sidebar');
     sidebarRegion.empty();
+  },
+
+  showOverlay() {
+    this.getUI('overlay').addClass(style.isShown);
+  },
+
+  hideOverlay() {
+    this.getUI('overlay').removeClass(style.isShown);
+  },
+
+  overlayClicked() {
+    this.trigger('overlayClicked');
   },
 
   updateTheme(theme) {

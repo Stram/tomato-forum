@@ -1,3 +1,5 @@
+import 'backbone-associations';
+
 import app from 'application/app';
 
 import 'application/router';

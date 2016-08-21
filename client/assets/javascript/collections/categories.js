@@ -5,7 +5,11 @@ import config from 'config';
 
 const Categories = Backbone.Collection.extend({
   model: Category,
-  url: `${config.apiEndpoint}/categories`
+  url: `${config.apiEndpoint}/categories`,
+
+  parse(response) {
+    return response.items;
+  }
 });
 
 export default new Categories();

@@ -1,16 +1,25 @@
+// GLOBAL
+$overlay-z-index: 100;
+
+// SIDEBAR
+$sidebar-width: 250px;
+$sidebar-z-index: 101;
+
+
 $breakpoints: (
   small: 767px,
   medium: 992px,
   large: 1200px
 );
 
-// GLOBAL
 
-$sidebar-width: 250px;
+// GLOBAL
 
 $fab-size: 50px;
 
 $z-index-overlay: 1000;
+
+
 
 // SWITCH
 

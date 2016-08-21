@@ -6,7 +6,7 @@ import Thread from 'models/thread';
 
 import LoginView from 'pages/login/component';
 import RegisterView from 'pages/register/component';
-import ForumView from 'pages/forum/component';
+import ForumView from 'pages/forum';
 import DashboardView from 'pages/dashboard/component';
 import ThreadView from 'pages/thread/component';
 

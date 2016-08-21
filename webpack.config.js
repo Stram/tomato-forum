@@ -1,9 +1,12 @@
 var path = require('path');
+var fs = require('fs');
 var webpack = require('webpack');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
+var LiveReloadPlugin = require('webpack-livereload-plugin');
 
 module.exports = {
   entry: './client/assets/javascript/app.js',
+
 
   output: {
     path: path.join(__dirname, 'public'),
@@ -29,15 +32,26 @@ module.exports = {
       }
     }, {
       test: /\.hbs$/,
-      loader: 'handlebars-loader/index.js',
+      loader: 'handlebars-template-loader/index.js',
       query: {
-        runtime: 'handlebars/dist/handlebars.runtime.js'
+        runtime: 'handlebars/dist/handlebars.runtime.js',
+        noConflict: true
       }
     }, {
       test: /\.scss|\.css$/,
       loader: ExtractTextPlugin.extract('css?camelcase&modules&localIdentName=[name]__[local]__[hash:base64:5]!sass')
     }]
   },
+
+  macros: {
+    svg(name) {
+      var svgPath = path.join('public', 'images', `${name}.svg`);
+      var svg = fs.readFileSync(svgPath, 'utf-8');
+      return JSON.stringify(svg);
+    }
+  },
+
+  devtool: "#inline-source-map",
 
   sassLoader: {
     includePaths: [path.resolve(__dirname, 'client/javascript')]
@@ -49,6 +63,7 @@ module.exports = {
     //     warnings: false
     //   }
     // })
+    new LiveReloadPlugin(),
     new ExtractTextPlugin('styles.css')
   ]
 };

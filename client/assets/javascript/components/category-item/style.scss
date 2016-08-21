@@ -1,0 +1,19 @@
+@import '~styles/mixins';
+@import '~styles/themes';
+@import '~styles/colors';
+
+.thread-item {
+  display: flex;
+  padding: 8px;
+  align-items: center;
+  border-bottom: 1px solid $color-border-grey-300;
+}
+
+.profile-photo {
+  @include round-image(36px);
+  margin-right: 8px;
+}
+
+.thread-title {
+  @extend %default-text;
+}

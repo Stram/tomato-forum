@@ -1,4 +1,13 @@
+import _ from 'lodash';
 import metaInfo from './meta-info';
+
+function sendResponse(docs, result, res) {
+  const response = metaInfo({
+    items: docs.map((doc) => doc.toObject())
+  }, result);
+
+  res.json(response);
+}
 
 module.exports = function(req, res, Model, options = {}) {
   const paginationOptions = req.pagination || {};
@@ -11,15 +20,18 @@ module.exports = function(req, res, Model, options = {}) {
     const docs = result.docs;
 
     // TODO: fix deep population
+    const deepPopulated = [];
     if (options.deepPopulate) {
       docs.forEach((doc) => {
-        doc.deepPopulate(options.deepPopulate);
+        deepPopulated.push(doc.deepPopulate(options.deepPopulate));
       });
     }
-    const response = metaInfo({
-      items: docs.map((doc) => doc.toObject())
-    }, result);
-
-    res.json(response);
+    if (_.isEmpty(deepPopulated)) {
+      sendResponse(docs, result, res);
+    } else {
+      Promise.all(deepPopulated).then(() => {
+        sendResponse(docs, result, res);
+      });
+    }
   });
 };

@@ -1,9 +1,12 @@
 import Marionette from 'backbone.marionette';
+import Radio from 'backbone.radio';
 import Backbone from 'backbone';
 
 import style from './style.scss';
 import template from './template.hbs';
 import session from 'application/session';
+
+const applicationChannel = Radio.channel('application');
 
 export default Marionette.View.extend({
 
@@ -23,6 +26,23 @@ export default Marionette.View.extend({
 
   events: {
     'click @ui.logoutButton': 'logout'
+  },
+
+  channelName: 'sidebar',
+
+  radioEvents: {
+    'sidebar:show': 'show',
+    'sidebar:hide': 'hide'
+  },
+
+  initialize() {
+
+    this.hide();
+    this.currentUser = session.getCurrentUser();
+
+    const channel = Radio.channel('sidebar');
+    this.listenTo(channel, 'sidebar:show', this.show);
+    this.listenTo(channel, 'sidebar:hide', this.hide);
   },
 
   templateContext() {
@@ -54,19 +74,15 @@ export default Marionette.View.extend({
         secondary: {
           className: style.secondaryNavigation,
           items: [{
-            label: 'dashboard',
-            link: 'dashboard',
-            active: currentPage === 'dashboard'
-          }, {
-            label: 'forum',
-            link: 'forum',
-            active: currentPage === 'forum'
-          }, {
-            label: 'objave',
+            label: 'logout',
             link: '#',
             active: currentPage === '#'
           }, {
-            label: 'profili',
+            label: 'settings',
+            link: '#',
+            active: currentPage === '#'
+          }, {
+            label: 'help',
             link: '#',
             active: currentPage === '#'
           }]
@@ -75,8 +91,14 @@ export default Marionette.View.extend({
     };
   },
 
-  initialize() {
-    this.currentUser = session.getCurrentUser();
+  hide() {
+    applicationChannel.trigger('overlay:hide');
+    this.$el.addClass(style.isHidden);
+  },
+
+  show() {
+    applicationChannel.trigger('overlay:show');
+    this.$el.removeClass(style.isHidden);
   },
 
   logout() {

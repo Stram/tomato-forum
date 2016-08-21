@@ -13,6 +13,29 @@
         color: $base-blue-500;
         opacity: 1;
       }
+
+      %theme-primary-background {
+        background-color: $base-blue-500;
+      }
+
+      %theme-light-text {
+        color: $base-white;
+        opacity: 1;
+      }
+    }
+  }
+
+  .theme-1 {
+    :local {
+      %default-text {
+        color: $base-black;
+        opacity: 0.87;
+      }
+
+      %theme-primary-text {
+        color: $base-red-500;
+        opacity: 1;
+      }
     }
   }
 }

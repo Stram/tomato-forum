@@ -1,21 +1,19 @@
-<div class="card-list__header">
-  <div class="card-list__title">
+{{log this}}
+<div class="{{cardList.header}}">
+  <div class="{{cardList.title}}">
     {{name}}
   </div>
-  <div class="card-list__header-actions">
-    <div class="card-list__header-icon-action js-create-new-thread" data-category-id="{{id}}">
-      <img src="/public/images/add-icon-white.svg" alt="addNewThread" />
+  <div class="{{cardList.headerActions}}">
+    <div class="{{cardList.headerIconAction}} js-create-new-thread" data-category-id="{{id}}">
+      @svg('add-icon-white')
     </div>
   </div>
 </div>
-<div class="card-list__items">
-  {{#each threads}}
-    <div class="js-navigate-to-thread" data-thread-id="{{id}}">
-      {{title}}
-    </div>
-  {{else}}
-    <div>
-      No threads in this category
+<div class="{{cardList.items}} js-category-threads">
+  {{#each threadsToShow}}
+    <div class="{{../style.threadItem}}">
+      <img class="{{../style.profilePhoto}}" src="{{owner.profilePhoto.url}}" alt="{{owner.username}}"/>
+      <div class="{{../style.threadTitle}}">{{title}}</div>
     </div>
   {{/each}}
 </div>
