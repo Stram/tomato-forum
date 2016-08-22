@@ -1,10 +1,9 @@
 import Backbone from 'backbone';
-import _ from 'underscore';
 
-import FormView from 'collection-views/form/component';
+import FormView from 'components/form';
 
 export default class BaseForm {
-  constructor(attributes) {
+  constructor(attributes = {}) {
     this.model = attributes.model;
     this.propertyModel = Backbone.Model;
   }
@@ -20,34 +19,24 @@ export default class BaseForm {
   submit() {
     const formView = this.formView;
     if (formView) {
-      formView.children.each((view) => {
-        this.model.set(view.name, view.getValue());
-      });
+      this.values = formView.getValues();
+      // formView.children.each((view) => {
+      //   this.model.set(view.name, view.getValue());
+      // });
     } else {
       throw new Error('Cannot get form view');
     }
 
-    this.model.save();
+    if (this.model) {
+      this.model.save();
+    }
   }
 
   _setupFormView() {
-    const PropertyModel = Backbone.Model.extend({
-      idAttribute: 'cid'
-    });
-
-    const PropertiesCollection = Backbone.Collection.extend({
-      model: PropertyModel
-    });
-
-
-    this.propertiesCollection = new PropertiesCollection(
-      _.values(this.properties).map((property) => new PropertyModel(property))
-    );
-
     this.formView = new FormView({
-      collection: this.propertiesCollection
+      formProperties: this.properties
     });
 
-    this.formView.on('submit', this.submit);
+    this.formView.on('submit', this.submit.bind(this));
   }
 }

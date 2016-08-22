@@ -1,21 +1,34 @@
-<div class="card">
-  <form class="js-form">
-    <div class="card__content">
-      <div class="input-box">
-        <label for="register-input-email" class="input-box__label">Email</label>
-        <input type="email" class="input-box__input js-email" id="register-input-email" required/>
-        <span class="input-box__message is-error js-error-email"></span>
+<div class="{{style.background}}"></div>
+<div class="{{style.header}}">
+  <div class="{{style.headerItem}}">
+    <div class="{{style.headerIcon}}">
+      @svg('arrow-back-icon-white')
+    </div>
+    <div class="{{style.headerText}}">
+      Log in
+    </div>
+  </div>
+</div>
+<div class="{{style.cardContainer}}">
+  {{#unless isRegistrationSuccessful}}
+    <div class="{{style.title}}">Welcome!</div>
+    <div class="{{style.card}}">
+      <div class="{{style.description}}">
+        To start the registration process please enter your email and select a password for your account.
       </div>
-      <div class="input-box">
-        <label for="register-input-password" class="input-box__label">Password</label>
-        <input type="password" class="input-box__input js-password" id="register-input-password" required/>
-        <span class="input-box__message is-error js-error-password"></span>
+      <div class="{{style.form}} js-form">
+
       </div>
     </div>
-    <div class="card__actions align-right">
-      <button class="button button--dialog" type="submit">
-        REGISTER
-      </button>
+    <button class="{{style.nextButton}} js-next-button">
+      @svg('send-icon-white')
+    </button>
+  {{else}}
+    <div class="{{style.title}}">Check your inbox!</div>
+    <div class="{{style.card}}">
+      <div class="{{style.description}}">
+        Thank you for your registration. All further informations are sent to your email address.
+      </div>
     </div>
-  </form>
+  {{/unless}}
 </div>

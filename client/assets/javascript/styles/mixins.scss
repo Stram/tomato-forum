@@ -1,6 +1,63 @@
+@import '~styles/variables';
+@import '~styles/themes';
+
+@mixin mobile {
+  @media #{map-get($media-query-selectors, mobile) } { @content; }
+}
+
+@mixin tablet-only {
+  @media #{map-get($media-query-selectors, tablet-only) } { @content; }
+}
+
+@mixin desktop-only {
+  @media #{map-get($media-query-selectors, desktop-only) } { @content; }
+}
+
+@mixin large-only {
+  @media #{map-get($media-query-selectors, large-only) } { @content; }
+}
+
+@mixin xlarge {
+  @media #{map-get($media-query-selectors, xlarge) } { @content; }
+}
+
 @mixin round-image($size: 40px) {
   width: $size;
   height: $size;
   display: inline-block;
   border-radius: $size / 2;
+}
+
+@mixin fab($fab-size: 40px) {
+  font-size: 20px;
+
+  display: flex;
+
+  width: $fab-size;
+  height: $fab-size;
+
+  border-radius: $fab-size / 2;
+
+  align-items: center;
+  justify-content: center;
+  outline: 0;
+  border: 0;
+  cursor: pointer;
+
+  box-shadow: 0 6px 6px 0 $color-light-shadow;
+
+  transition: box-shadow 400ms;
+
+  &:focus {
+    box-shadow: 0 12px 12px 0 $color-light-shadow;
+  }
+}
+
+@mixin theme-border($top: 0, $right: 0, $bottom: 0, $left: 0) {
+  @extend %theme-primary-border;
+  border-top-width: $top;
+  border-right-width: $right;
+  border-bottom-width: $bottom;
+  border-left-width: $left;
+  border-style: solid;
 }

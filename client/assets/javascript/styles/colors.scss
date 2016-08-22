@@ -4,11 +4,13 @@ $base-white: #FFFFFF;
 $base-black: #000000;
 
 $base-grey-opaque: rgba(0, 0, 0, 0.3);
-$base-grey-light-opaque: rgba(0, 0, 0, 0.1);
+$base-grey-light-opaque: rgba(0, 0, 0, 0.12);
 
 $color-shadow: $base-grey-opaque;
 $color-light-shadow: $base-grey-light-opaque;
 
+
+$color-error: $base-red-500;
 
 // BACKGROUND
 
@@ -33,4 +35,4 @@ $color-text-error: $base-red-500;
 $color-border-light-grey: $base-grey-300;
 $color-border-grey-300: $base-grey-300;
 $color-border-grey: $base-grey-800;
-$color-border-primary: $base-red-500;
+$color-border-error: $base-red-500;

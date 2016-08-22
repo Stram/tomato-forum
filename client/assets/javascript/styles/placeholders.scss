@@ -1,0 +1,25 @@
+@import 'colors';
+@import 'variables';
+@import 'mixins';
+
+%container {
+  margin: 0 auto;
+  transition: max-width 500ms;
+  @include tablet-only { max-width: map-get($container-width, tablet); }
+  @include desktop-only { max-width: map-get($container-width, desktop); }
+  @include large-only { max-width: map-get($container-width, large); }
+  @include xlarge { max-width: map-get($container-width, xlarge); }
+}
+
+%small-container {
+  margin: 0 auto;
+  transition: max-width 500ms;
+  @include tablet-only { max-width: map-get($small-container-width, tablet); }
+  @include desktop-only { max-width: map-get($small-container-width, desktop); }
+  @include large-only { max-width: map-get($small-container-width, large); }
+  @include xlarge { max-width: map-get($small-container-width, xlarge); }
+}
+
+%card {
+  box-shadow: 0 2px 4px 0 $color-light-shadow;
+}

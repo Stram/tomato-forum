@@ -1,0 +1,78 @@
+@import '~styles/colors';
+@import '~styles/themes';
+@import '~styles/placeholders';
+@import '~styles/mixins';
+
+.background {
+  @extend %theme-primary-background;
+
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 512px;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  position: relative;
+
+  padding: 24px;
+}
+
+.header-item {
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+}
+
+.header-icon {
+  margin-right: 12px;
+  font-size: 0;
+}
+
+.header-text {
+  @extend %theme-light-text;
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.card-container {
+  @extend %small-container;
+  margin-top: 130px;
+  position: relative;
+}
+
+.title {
+  @extend %theme-light-text;
+  font-size: 36px;
+  margin-bottom: 16px;
+}
+
+.card {
+  @extend %card;
+  background-color: $color-bg-white;
+  padding: 45px 75px;
+}
+
+.next-button {
+  $fab-size: 56px;
+
+  @extend %theme-secondary-background;
+  @include fab($fab-size);
+
+  position: absolute;
+  right: 30px;
+  bottom: -$fab-size / 2;
+}
+
+.description {
+  @extend %default-text;
+}
+
+.form {
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+}

@@ -23,10 +23,10 @@ describe('API Users - Current user', function() {
     });
   });
 
-  it('should not be able to get current user when not authenticated', function(done) {
+  it('should be able to get current user when not authenticated', function(done) {
     request(app)
     .get('/api/users/current')
-    .expect(401)
+    .expect(200)
     .end(function(err) {
       if (err) {
         throw err;

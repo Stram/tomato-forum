@@ -5,7 +5,7 @@ import session from 'application/session';
 import Thread from 'models/thread';
 
 import LoginView from 'pages/login/component';
-import RegisterView from 'pages/register/component';
+import RegisterView from 'pages/register';
 import ForumView from 'pages/forum';
 import DashboardView from 'pages/dashboard/component';
 import ThreadView from 'pages/thread/component';
@@ -37,7 +37,11 @@ const Router = Backbone.Router.extend({
       applicationChannel.trigger('loading:show');
     }
 
-    this.baseView.addSidebar();
+    if (options.sidebar) {
+      this.baseView.addSidebar();
+    } else {
+      this.baseView.removeSidebar();
+    }
     this.baseView.showChildView('main', page);
   },
 
@@ -61,7 +65,8 @@ const Router = Backbone.Router.extend({
   dashboard() {
     const dashboardView = new DashboardView();
     this.changePage(dashboardView, {
-      authenticated: true
+      authenticated: true,
+      sidebar: true
     });
   },
 
@@ -69,7 +74,8 @@ const Router = Backbone.Router.extend({
     const forumView = new ForumView();
     this.changePage(forumView, {
       authenticated: true,
-      loading: true
+      loading: true,
+      sidebar: true
     });
   },
 

@@ -1,0 +1,85 @@
+import Marionette from 'backbone.marionette';
+import _ from 'underscore';
+
+import InputTextView from 'components/form-property/input-text';
+import SwitchView from 'components/form-property/switch';
+
+import template from './template.hbs';
+
+export default Marionette.View.extend({
+  template,
+  tagName: 'form',
+
+  className: '',
+
+  events: {
+    submit: 'onSubmit'
+  },
+
+  initialize(args) {
+    this.properties = _.mapObject(args.formProperties, (property) => {
+      property.id = _.uniqueId();
+      property.View = this.createView(property);
+      return property;
+    });
+    this.addPropertyRegions();
+  },
+
+  templateContext() {
+    return {
+      properties: this.properties
+    };
+  },
+
+  onRender() {
+    const self = this;
+    _.values(this.properties).forEach((property) => {
+      self.showChildView(property.id, new property.View(property.options));
+    });
+  },
+
+  createView(property) {
+    switch (property.type) {
+    case 'text':
+      return InputTextView;
+    case 'switch':
+      return SwitchView;
+    default:
+      throw new Error('unknown form property type');
+    }
+  },
+
+  addPropertyRegions() {
+    _.values(this.properties).forEach((property) => {
+      this.addRegion(property.id, `#${property.id}`);
+    });
+  },
+
+  getValues() {
+    return _.values(this.properties).reduce((values, property) => {
+      values[property.name] = this.getChildView(property.id).getValue();
+      return values;
+    }, {});
+  },
+
+  clearErrors() {
+    _.values(this.properties).forEach((property) => {
+      this.getChildView(property.id).clearError();
+    });
+  },
+
+  showErrors(errors) {
+    this.clearErrors();
+    const field = errors.field;
+    
+    if (field && this.properties[field]) {
+      const view = this.getChildView(this.properties[field].id);
+      view.showError(errors.message);
+    }
+  },
+
+  onSubmit(event) {
+    event.preventDefault();
+    this.trigger('submit');
+  }
+});

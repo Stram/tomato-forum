@@ -6,9 +6,10 @@ function saniteizeError(errorObject) {
   case 'ValidationError':
     return _.keys(errorObject.errors).map((errorKey) => {
       if (errorObject.errors.hasOwnProperty(errorKey)) {
+        const field = _.last(_.split(errorObject.errors[errorKey].path, '.'));
         return new errors.BadRequest({
           message: errorObject.errors[errorKey].message,
-          field: errorObject.errors[errorKey].path
+          field
         });
       }
       return {};
@@ -26,16 +27,18 @@ module.exports = function(err, req, res, next) {
   }
 
   let status;
-  let message;
+  let response;
 
   if (_.isArray(error)) {
     status = _.maxBy(error, 'statusCode').statusCode;
-    message = error.map((errorDesc) => _.omit(errorDesc, ['statusCode']));
+    response = error.map((errorDesc) => _.omit(errorDesc, ['statusCode']));
   } else {
     status = error.statusCode;
-    message = _.omit(error, ['statusCode']);
+    response = _.omit(error, ['statusCode']);
   }
 
   res.status(status || 500);
-  res.send(message || 'An error occured!');
+  res.send({
+    errors: response || {message: 'An error occured!'}
+  });
 };

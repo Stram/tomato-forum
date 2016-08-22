@@ -28,16 +28,7 @@ describe('API Users - Logout', function() {
       if (logoutErr) {
         throw logoutErr;
       }
-
-      sessionRequest
-      .get('/api/users/current')
-      .expect(401)
-      .end(function(currentErr) {
-        if (currentErr) {
-          throw currentErr;
-        }
-        done();
-      });
+      done();
     });
   });
 

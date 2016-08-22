@@ -38,7 +38,7 @@ router.post('/logout', permissions.checkAuthentification, logout);
 
 // CURRENT USER
 
-router.get('/current', permissions.checkAuthentification, currentUser);
+router.get('/current', currentUser);
 
 // PHOTO UPLOAD
 

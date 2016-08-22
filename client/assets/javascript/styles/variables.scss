@@ -1,4 +1,34 @@
 // GLOBAL
+$media-query-selectors: (
+retina: 'only screen and (min-resolution: 2dppx)',
+mobile-small: '(max-width: 550px)',
+mobile: '(max-width: 767px)',
+mobile-big: '(min-width: 551px) and (max-width: 767px)',
+tablet: '(min-width: 768px)',
+tablet-only: '(min-width: 768px) and (max-width: 991px)',
+desktop: '(min-width: 992px)',
+desktop-only: '(min-width: 992px) and (max-width: 1199px)',
+large: '(min-width: 1200px)',
+large-only: '(min-width: 1200px) and (max-width: 1449px)',
+xlarge: '(min-width: 1450px)'
+);
+
+$container-width: (
+  mobile-big: 530px,
+  tablet: 730px,
+  desktop: 950px,
+  large: 1170px,
+  xlarge: 1430px
+);
+
+$small-container-width: (
+  mobile-big: 530px,
+  tablet: 730px,
+  desktop: 650px,
+  large: 700px,
+  xlarge: 750px
+);
+
 $overlay-z-index: 100;
 
 // SIDEBAR

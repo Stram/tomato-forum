@@ -22,6 +22,14 @@
         color: $base-white;
         opacity: 1;
       }
+
+      %theme-primary-border {
+        border-color: $base-blue-500;
+      }
+
+      %theme-secondary-background {
+        background-color: $base-red-500;
+      }
     }
   }
 
