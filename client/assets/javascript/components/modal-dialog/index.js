@@ -2,11 +2,13 @@ import Marionette from 'backbone.marionette';
 import $ from 'jquery';
 
 import template from './template.hbs';
+import style from './style.scss';
+import buttonStyle from 'styles/partials/button.scss';
 
 export default Marionette.View.extend({
   tagName: 'div',
 
-  className: 'modal-dialog-container',
+  className: style.modalDialogContainer,
 
   template,
 
@@ -44,6 +46,8 @@ export default Marionette.View.extend({
 
   templateContext() {
     return {
+      style,
+      buttonStyle,
       title: this.title,
       confirmLabel: this.confirmLabel,
       cancelLabel: this.cancelLabel,

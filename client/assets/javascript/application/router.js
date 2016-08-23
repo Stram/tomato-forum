@@ -1,7 +1,8 @@
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
-import session from 'application/session';
+// import session from 'application/session';
+import { getParam } from 'services/url-manager';
 import Thread from 'models/thread';
 
 import LoginView from 'pages/login/component';
@@ -9,13 +10,15 @@ import RegisterView from 'pages/register';
 import ForumView from 'pages/forum';
 import DashboardView from 'pages/dashboard/component';
 import ThreadView from 'pages/thread/component';
+import VerifyView from 'pages/verify';
 
 const applicationChannel = Radio.channel('application');
+const sessionChannel = Radio.channel('session');
 
 const Router = Backbone.Router.extend({
 
   initialize() {
-    this.baseView = applicationChannel.request('view:base:get');
+    this.requestBaseView();
   },
 
   routes: {
@@ -24,11 +27,20 @@ const Router = Backbone.Router.extend({
     register: 'register',
     dashboard: 'dashboard',
     forum: 'forum',
-    'thread/:threadId': 'thread'
+    'thread/:threadId': 'thread',
+    'verify?*querystring': 'verify'
+  },
+
+  requestBaseView() {
+    this.baseView = applicationChannel.request('view:base:get');
   },
 
   changePage(page, options = {}) {
-    if (options.authenticated && !session.isAuthenticated()) {
+    if (!this.baseView) {
+      this.requestBaseView();
+    }
+    const isAuthenticated = sessionChannel.request('user:authenticated');
+    if (options.authenticated && !isAuthenticated) {
       this.navigate('login', true);
       return;
     }
@@ -90,6 +102,14 @@ const Router = Backbone.Router.extend({
       authenticated: true,
       loading: true
     });
+  },
+
+  verify() {
+    const userId = getParam('userId');
+    const token = getParam('token');
+
+    const verifyView = new VerifyView({userId, token});
+    this.changePage(verifyView);
   }
 });
 

@@ -82,15 +82,32 @@ describe('API Users - Verify', function() {
     });
   });
 
+  it('should not be able to verify a user with not existing user id', function(done) {
+    request(app)
+    .post('/api/users/verify')
+    .send({
+      username: dummyUserUsername,
+      userId: '57b4b43dcaf81cf20772e800',
+      token: dummyUserToken
+    })
+    .expect(404)
+    .end(function(err) {
+      if (err) {
+        throw err;
+      }
+      done();
+    });
+  });
+
   it('should not be able to verify a user with wrong user id', function(done) {
     request(app)
     .post('/api/users/verify')
     .send({
       username: dummyUserUsername,
-      userId: objectId('3'),
+      userId: '3',
       token: dummyUserToken
     })
-    .expect(404)
+    .expect(400)
     .end(function(err) {
       if (err) {
         throw err;

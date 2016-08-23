@@ -1,6 +1,7 @@
 import Marionette from 'backbone.marionette';
 import Radio from 'backbone.radio';
 import Backbone from 'backbone';
+import router from 'application/router';
 
 import style from './style.scss';
 import template from './template.hbs';

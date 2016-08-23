@@ -1,3 +1,5 @@
+@import '~styles/colors';
+
 .modal-dialog-container {
   position: fixed;
   top: 0;
@@ -18,15 +20,15 @@
   background-color: $color-bg-white;
   box-shadow: 0 2px 2px 0 $color-shadow;
 
-  & &__header {
+  .header {
     padding: 24px 24px 20px;
   }
 
-  & &__content {
+  .content {
     padding: 24px 24px 16px;
   }
 
-  & &__actions {
+  .actions {
     padding: 8px;
 
     text-align: right;

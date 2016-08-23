@@ -1,19 +1,19 @@
-<div class="modal-dialog">
-  <div class="modal-dialog__header" {{#if headerColor}} style="background-color: {{headerColor}}" {{/if}}>
+<div class="{{style.modalDialog}}">
+  <div class="{{style.header}}" {{#if headerColor}} style="background-color: {{headerColor}}" {{/if}}>
     {{title}}
   </div>
 
-  <div class="modal-dialog__content js-modal-content"></div>
+  <div class="{{style.content}} js-modal-content"></div>
 
-  <div class="modal-dialog__actions">
+  <div class="{{style.actions}}">
     {{#if cancelLabel}}
-      <div class="button button--dialog js-modal-dialog-cancel-action">
+      <div class="{{buttonStyle.button}} {{buttonStyle.dialog}} js-modal-dialog-cancel-action">
         {{cancelLabel}}
       </div>
     {{/if}}
 
     {{#if confirmLabel}}
-      <div class="button button--dialog js-modal-dialog-confirm-action">
+      <div class="{{buttonStyle.button}} {{buttonStyle.dialog}} js-modal-dialog-confirm-action">
         {{confirmLabel}}
       </div>
     {{/if}}

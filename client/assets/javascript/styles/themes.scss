@@ -9,6 +9,11 @@
         opacity: 0.87;
       }
 
+      %default-light-text {
+        color: $base-black;
+        opacity: 0.54;
+      }
+
       %theme-primary-text {
         color: $base-blue-500;
         opacity: 1;

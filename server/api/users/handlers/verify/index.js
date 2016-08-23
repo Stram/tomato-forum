@@ -1,4 +1,5 @@
 import errors from '~/services/errors';
+import { validateObjectId } from '~/services/validate';
 
 import User from '~/models/user';
 
@@ -7,7 +8,12 @@ module.exports = function(req, res, next) {
   const token = req.body.token;
   const username = req.body.username;
 
-  User.findOne({_id: userId}, (error, user) => {
+  if (!validateObjectId(userId)) {
+    next(new errors.BadRequest('Must provide a valid id'));
+    return;
+  }
+
+  User.findById(userId, (error, user) => {
     if (error) {
       next(error);
       return;
@@ -28,7 +34,10 @@ module.exports = function(req, res, next) {
         next(sameUsernameError);
       }
       if (sameUsernameUser) {
-        next(new errors.BadRequest('Username is already taken'));
+        next(new errors.BadRequest({
+          message: 'Username is already taken',
+          field: 'username'
+        }));
         return;
       }
 

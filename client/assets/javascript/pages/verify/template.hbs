@@ -1,0 +1,32 @@
+<div class="{{style.background}}"></div>
+<div class="{{style.cardContainer}}">
+
+  {{#if termsAndConditions}}
+    <div class="{{style.title}}">There are some rules</div>
+    <div class="{{style.card}}">
+      <div class="{{style.description}}">
+        By going next You acceppt following terms and conditions:
+      </div>
+      <div class="{{style.terms}}">
+        Etiam eu consectetur leo. Fusce ac sem ullamcorper, auctor lectus sit amet, ultricies dui. Ut consectetur molestie tempor. Nullam diam neque, accumsan at tempus eget, aliquam ut massa. Ut consectetur molestie tempor. Nullam diam neque, accumsan at tempus eget, aliquam ut massa.
+        Ut consectetur molestie tempor. Nullam diam neque, accumsan at tempus eget, aliquam ut massa. Ut consectetur molestie tempor. Nullam diam neque, accumsan at tempus eget, aliquam ut massa. Ut consectetur molestie tempor. Nullam diam neque, accumsan at tempus eget, aliquam ut massa.
+        Etiam eu consectetur leo. Nullam diam neque, accumsan at tempus eget, aliquam ut massa. Etiam eu consectetur leo. Nullam diam neque, accumsan at tempus eget, aliquam ut massa. Etiam eu consectetur leo.
+      </div>
+    </div>
+  {{else if selectUsername}}
+    <div class="{{style.title}}">How should we call you?</div>
+    <div class="{{style.card}}">
+      <div class="{{style.description}}">
+        Your email address has been validated. To finish your registration process please select a username you will be using on this website.
+      </div>
+      <div class="{{style.form}} js-form">
+
+      </div>
+    </div>
+  {{/if}}
+
+  <button class="{{style.nextButton}} js-next-button">
+    @svg('send-icon-white')
+  </button>
+
+</div>

@@ -1,7 +1,11 @@
+import Radio from 'backbone.radio';
 import $ from 'jquery';
 import config from 'config';
 
-export default {
+const sessionChannel = Radio.channel('session');
+
+
+const session = {
   _currentUser: null,
 
   setCurrentUser(user) {
@@ -65,3 +69,7 @@ export default {
     });
   }
 };
+
+sessionChannel.reply('user:authenticated', session.isAuthenticated.bind(session));
+
+export default session;
