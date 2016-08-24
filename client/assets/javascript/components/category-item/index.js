@@ -2,11 +2,11 @@ import Marionette from 'backbone.marionette';
 import Radio from 'backbone.radio';
 
 import template from './template.hbs';
-import style from './style.scss';
 import cardListStyle from 'styles/partials/card-list.scss';
-import NewThreadForm from 'forms/thread';
 
+import NewThreadForm from 'forms/thread';
 import Thread from 'models/thread';
+import ThreadListView from 'components/thread-list';
 
 const applicationChannel = Radio.channel('application');
 
@@ -21,21 +21,31 @@ export default Marionette.View.extend({
     createNewThreadButton: '.js-create-new-thread'
   },
 
+  regions: {
+    threads: '.js-category-threads'
+  },
+
   events: {
     'click @ui.createNewThreadButton': 'showNewThreadModal'
   },
 
   templateContext() {
     return {
-      style,
-      cardList: cardListStyle,
-      threadsToShow: this.threadsToShow
+      cardList: cardListStyle
     };
   },
 
   initialize(collection) {
     this.model = collection.model;
-    this.threadsToShow = this.model.get('threads').first(5).map((thread) => thread.toJSON());
+  },
+
+  onBeforeAttach() {
+    this.showChildView('threads', new ThreadListView({
+      collection: this.model.get('threads'),
+      filter(child, index) {
+        return index < 5;
+      }
+    }));
   },
 
   showNewThreadModal(event) {
