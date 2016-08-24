@@ -4,7 +4,7 @@ import Dropzone from 'dropzone';
 
 import template from 'views/templates/first-steps/photo.html';
 
-import session from 'application/session';
+import session from 'services/session';
 import router from 'application/router';
 
 export default Backbone.View.extend({

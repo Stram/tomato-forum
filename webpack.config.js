@@ -5,7 +5,7 @@ var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var LiveReloadPlugin = require('webpack-livereload-plugin');
 
 module.exports = {
-  entry: './client/assets/javascript/app.js',
+  entry: './client/app.js',
 
 
   output: {
@@ -15,7 +15,7 @@ module.exports = {
 
   resolve: {
     root: [
-      path.join(__dirname, 'client/assets/javascript')
+      path.join(__dirname, 'client/')
     ],
     modulesDirectories: [
       'node_modules'
@@ -54,7 +54,7 @@ module.exports = {
   devtool: "#inline-source-map",
 
   sassLoader: {
-    includePaths: [path.resolve(__dirname, 'client/javascript')]
+    includePaths: [path.resolve(__dirname, 'client')]
   },
 
   plugins: [

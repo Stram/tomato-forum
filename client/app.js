@@ -3,7 +3,7 @@ import 'backbone-associations';
 import app from 'application/app';
 
 import 'application/router';
-import session from 'application/session';
+import session from 'services/session';
 
 
 import 'styles/app.scss';

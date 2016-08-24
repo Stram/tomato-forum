@@ -1,7 +1,6 @@
 import Backbone from 'backbone';
 import Radio from 'backbone.radio';
 
-// import session from 'application/session';
 import { getParam } from 'services/url-manager';
 import Thread from 'models/thread';
 

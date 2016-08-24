@@ -3,7 +3,7 @@ import Marionette from 'backbone.marionette';
 import Radio from 'backbone.radio';
 import ApplicationView from 'pages/application';
 import ModalView from 'components/modal-dialog';
-import LoadingView from 'components/loading/component';
+import LoadingView from 'components/loading';
 
 const Application = Marionette.Application.extend({
   region: '#body',

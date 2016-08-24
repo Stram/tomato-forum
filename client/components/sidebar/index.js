@@ -5,7 +5,7 @@ import router from 'application/router';
 
 import style from './style.scss';
 import template from './template.hbs';
-import session from 'application/session';
+import session from 'services/session';
 
 const applicationChannel = Radio.channel('application');
 
