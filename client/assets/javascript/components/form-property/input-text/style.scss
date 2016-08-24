@@ -47,10 +47,10 @@ $color-dark-track-on: rgba($color-dark-swatch, 50%);
     padding: 0 0 7px;
   }
 
-  &:invalid {
-    border-bottom: 2px solid $color-error;
-    padding: 0 0 7px;
-  }
+  // &:invalid {
+  //   border-bottom: 2px solid $color-error;
+  //   padding: 0 0 7px;
+  // }
 }
 
 .message {

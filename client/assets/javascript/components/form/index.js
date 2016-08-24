@@ -3,6 +3,8 @@ import _ from 'underscore';
 
 import InputTextView from 'components/form-property/input-text';
 import SwitchView from 'components/form-property/switch';
+import MultipleView from 'components/form-property/multiple';
+import TextareaView from 'components/form-property/textarea';
 
 import template from './template.hbs';
 
@@ -44,6 +46,10 @@ export default Marionette.View.extend({
       return InputTextView;
     case 'switch':
       return SwitchView;
+    case 'multiple':
+      return MultipleView;
+    case 'textarea':
+      return TextareaView;
     default:
       throw new Error('unknown form property type');
     }
@@ -71,7 +77,7 @@ export default Marionette.View.extend({
   showErrors(errors) {
     this.clearErrors();
     const field = errors.field;
-    
+
     if (field && this.properties[field]) {
       const view = this.getChildView(this.properties[field].id);
       view.showError(errors.message);

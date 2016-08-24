@@ -1,4 +1,5 @@
 import BaseForm from 'forms/base-form';
+import Categories from 'collections/categories';
 
 export default class CategoryForm extends BaseForm {
   constructor() {
@@ -6,14 +7,31 @@ export default class CategoryForm extends BaseForm {
     this.modelName = 'thread';
 
     this.properties = {
+      cateroryId: {
+        name: 'categoryId',
+        type: 'multiple',
+        options: {
+          label: 'Category',
+          collection: Categories,
+          labelProperty: 'name'
+        }
+      },
       title: {
         name: 'title',
-        type: 'text'
+        type: 'text',
+        options: {
+          required: true,
+          label: 'Title'
+        }
       },
 
       content: {
         name: 'content',
-        type: 'text'
+        type: 'textarea',
+        options: {
+          required: true,
+          label: 'Content'
+        }
       }
     };
   }

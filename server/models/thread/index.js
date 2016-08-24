@@ -8,7 +8,10 @@ const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
 
 const threadSchema = new Schema({
-  title: String,
+  title: {
+    type: String,
+    required: true
+  },
   owner: {
     type: ObjectId,
     ref: 'User'

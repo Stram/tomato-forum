@@ -1,0 +1,6 @@
+<label for="{{inputId}}" class="{{style.label}}">{{label}}</label>
+<select class="{{style.select}}" id="{{inputId}}">
+  {{#each options}}
+    <option value="{{value}}" {{#if selected}} selected {{/if}}>{{label}}</option>
+  {{/each}}
+</select>

@@ -90,4 +90,20 @@ describe('API Threads - Create', function() {
       done();
     });
   });
+
+  it('should not be able to create a thread without title', function(done) {
+    sessionRequest
+    .post('/api/threads')
+    .send({
+      content: '*content*',
+      categoryId: dummyCategoryId
+    })
+    .expect(400)
+    .end(function(err) {
+      if (err) {
+        throw err;
+      }
+      done();
+    });
+  });
 });

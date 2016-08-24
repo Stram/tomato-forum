@@ -1,0 +1,21 @@
+@import '~styles/themes';
+
+.select-box {
+}
+
+.label {
+  @extend %default-text;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.select {
+  margin-left: 48px;
+  // -webkit-appearance: none;
+  border: 0;
+  background-color: transparent;
+  outline: 0;
+  font-size: 15px;
+  line-height: 20px;
+  padding: 15px 30px 15px 10px;
+}

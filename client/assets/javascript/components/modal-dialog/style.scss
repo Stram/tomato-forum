@@ -1,3 +1,5 @@
+@import '~styles/themes';
+@import '~styles/placeholders';
 @import '~styles/colors';
 
 .modal-dialog-container {
@@ -16,12 +18,17 @@
 }
 
 .modal-dialog {
+  @extend %small-container;
+  max-height: 90vh;
   border-radius: 2px;
   background-color: $color-bg-white;
   box-shadow: 0 2px 2px 0 $color-shadow;
 
   .header {
-    padding: 24px 24px 20px;
+    @extend %theme-primary-background;
+    @extend %theme-light-text;
+    font-size: 18px;
+    padding: 16px;
   }
 
   .content {
@@ -29,6 +36,8 @@
   }
 
   .actions {
+    @extend %theme-primary-text;
+    font-weight: bold;
     padding: 8px;
 
     text-align: right;
