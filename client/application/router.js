@@ -6,12 +6,13 @@ import Thread from 'models/thread';
 import Category from 'models/category';
 
 import Threads from 'collections/threads';
+import Comments from 'collections/comments';
 
 import LoginView from 'pages/login/component';
 import RegisterView from 'pages/register';
 import ForumView from 'pages/forum';
 import DashboardView from 'pages/dashboard/component';
-import ThreadView from 'pages/thread/component';
+import ThreadView from 'pages/thread';
 import VerifyView from 'pages/verify';
 import CategoryView from 'pages/category';
 
@@ -96,15 +97,26 @@ const Router = Backbone.Router.extend({
   },
 
   thread(threadId) {
+    const commentsCollection = new Comments({
+      state: {
+        pageSize: 30
+      }
+    });
+
+    const thread = new Thread({
+      id: threadId
+    });
+
     const threadView = new ThreadView({
-      model: new Thread({
-        id: threadId
-      })
+      collection: commentsCollection,
+      model: thread,
+      threadId
     });
 
     this.changePage(threadView, {
       authenticated: true,
-      loading: true
+      loading: true,
+      sidebar: true
     });
   },
 

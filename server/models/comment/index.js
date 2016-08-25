@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import mongoosePaginate from 'mongoose-paginate';
 
 import objectTransformation from '../helpers/standard-transformation';
 
@@ -17,11 +18,13 @@ const commentSchema = new Schema({
     ref: 'Thread'
   },
 
-  user: {
+  owner: {
     type: ObjectId,
     ref: 'User'
   }
 });
+
+commentSchema.plugin(mongoosePaginate);
 
 commentSchema.options.toObject = commentSchema.options.toObject ? commentSchema.options.toObject : {};
 commentSchema.options.toObject.transform = objectTransformation;

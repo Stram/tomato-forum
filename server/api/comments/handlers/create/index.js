@@ -24,7 +24,7 @@ module.exports = function(req, res, next) {
 
     const newComment = new Comment({
       content: req.body.content,
-      user: req.user.id,
+      owner: req.user.id,
       thread
     });
 

@@ -1,0 +1,44 @@
+@import '~styles/placeholders';
+@import '~styles/mixins';
+@import '~styles/themes';
+
+.content-container {
+  @extend %theme-background;
+
+  border-bottom: 1px solid $base-grey-light-opaque;
+  padding: 36px 0 32px;
+}
+
+.content-wrap {
+  @extend %container;
+}
+
+.content-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .user {
+    display: flex;
+    align-items: center;
+  }
+
+  .profile-photo {
+    @include round-image();
+    margin-right: 8px;
+  }
+}
+
+.username {
+  @extend %theme-primary-text;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+.date {
+  @extend %default-text;
+}
+
+.content {
+  margin-top: 24px;
+}
