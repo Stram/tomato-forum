@@ -36,7 +36,13 @@ export default Marionette.View.extend({
   onRender() {
     const self = this;
     _.values(this.properties).forEach((property) => {
-      self.showChildView(property.id, new property.View(property.options));
+      const view = new property.View(property.options);
+
+      view.on('submit', () => {
+        self.trigger('submit');
+      });
+      
+      self.showChildView(property.id, view);
     });
   },
 

@@ -1,8 +1,6 @@
 <div class="js-header"></div>
 
-<div class="js-pagination"></div>
-
-<div class="{{style.contentContainer}}">
+<section class="{{style.contentContainer}}">
   <div class="{{style.contentWrap}}">
     <div class="{{style.contentHeader}}">
       <div class="{{style.user}}">
@@ -17,8 +15,12 @@
       {{{content}}}
     </div>
   </div>
-</div>
+</section>
 
-<div class="" id="thread-comments">
+<section class="{{style.commentSection}}">
+  <div class="js-pagination"></div>
 
-</div>
+  <div id="thread-comments"></div>
+
+  <div id="new-comment"></div>
+</section>

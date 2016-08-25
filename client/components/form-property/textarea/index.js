@@ -13,7 +13,12 @@ export default Marionette.View.extend({
   template,
 
   ui: {
-    error: '.js-error'
+    error: '.js-error',
+    submit: '.js-submit'
+  },
+
+  events: {
+    'click @ui.submit': 'submitClicked'
   },
 
   initialize(args) {
@@ -21,7 +26,7 @@ export default Marionette.View.extend({
     this.value = args.value;
     this.inputId = _.uniqueId();
     this.isRequired = args.required;
-    this.type = args.type || 'text';
+    this.submit = args.submit;
   },
 
   templateContext() {
@@ -31,7 +36,8 @@ export default Marionette.View.extend({
       value: this.value,
       type: this.type,
       inputId: this.inputId,
-      isRequired: this.isRequired
+      isRequired: this.isRequired,
+      submit: this.submit
     };
   },
 
@@ -46,5 +52,9 @@ export default Marionette.View.extend({
   getValue() {
     const value = $(`#${this.inputId}`).val();
     return value;
+  },
+
+  submitClicked() {
+    this.trigger('submit');
   }
 });

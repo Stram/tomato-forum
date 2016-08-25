@@ -29,6 +29,7 @@
 
   outline: 0;
 
+  width: 100%;
   max-width: 100%;
   max-height: 200px;
 
@@ -61,4 +62,13 @@
   a {
     @extend %theme-primary-text;
   }
+}
+
+.submit {
+  @extend %theme-primary-text;
+  text-transform: uppercase;
+  font-weight: bold;
+  padding: 8px;
+  cursor: pointer;
+  display: inline-block;
 }

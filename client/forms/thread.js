@@ -4,7 +4,6 @@ import Categories from 'collections/categories';
 export default class CategoryForm extends BaseForm {
   constructor() {
     super(...arguments);
-    this.modelName = 'thread';
 
     this.properties = {
       cateroryId: {

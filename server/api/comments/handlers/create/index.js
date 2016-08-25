@@ -4,10 +4,10 @@ import errors from '~/services/errors';
 import { validateObjectId } from '~/services/validate';
 
 module.exports = function(req, res, next) {
-  const threadId = req.body.threadId;
+  const threadId = req.body.thread;
 
   if (!validateObjectId(threadId)) {
-    next(new errors.BadRequest('Must provide a valid category id'));
+    next(new errors.BadRequest('Must provide a valid thread id'));
     return;
   }
 

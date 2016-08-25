@@ -4,9 +4,13 @@ import Radio from 'backbone.radio';
 import template from './template.hbs';
 import style from './style.scss';
 
+import Comment from 'models/comment';
+
 import HeaderView from 'components/header';
 import CommentsView from 'components/comment-list';
 import PaginationView from 'components/pagination';
+
+import CommentForm from 'forms/comment';
 
 export default Marionette.View.extend({
   tagName: 'div',
@@ -18,7 +22,8 @@ export default Marionette.View.extend({
   regions: {
     header: '.js-header',
     comments: '#thread-comments',
-    pagination: '.js-pagination'
+    pagination: '.js-pagination',
+    newComment: '#new-comment'
   },
 
   templateContext() {
@@ -30,6 +35,7 @@ export default Marionette.View.extend({
   },
 
   initialize({threadId}) {
+    this.threadId = threadId;
     this.applicationChannel = Radio.channel('application');
 
     const fetchModel = this.model.fetch();
@@ -68,5 +74,18 @@ export default Marionette.View.extend({
     });
 
     this.showChildView('pagination', paginationView);
+
+    if (this.collection.currentPage === this.collection.totalPages) {
+      const commentModel = new Comment({
+        thread: this.threadId
+      });
+
+      this.commentForm = new CommentForm({
+        model: commentModel
+      });
+
+      const formView = this.commentForm.getForm();
+      this.showChildView('newComment', formView);
+    }
   }
 });
