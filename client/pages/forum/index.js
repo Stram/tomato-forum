@@ -4,10 +4,10 @@ import Radio from 'backbone.radio';
 import template from './template.hbs';
 import style from './style.scss';
 
-import CategoriesView from 'components/category-list';
-
 import categories from 'collections/categories';
 
+import CategoriesView from 'components/category-list';
+import HeaderView from 'components/header';
 
 export default Marionette.View.extend({
   tagName: 'article',
@@ -17,17 +17,16 @@ export default Marionette.View.extend({
   template,
 
   regions: {
-    forumCategories: '#forum-categories'
+    forumCategories: '#forum-categories',
+    header: '.js-header'
   },
 
   ui: {
-    sidebarMenuIcon: '.js-menu',
     toForumEdit: '.js-forum-edit'
   },
 
   events: {
-    'click @ui.toForumEdit': 'transitionToEditForum',
-    'click @ui.sidebarMenuIcon': 'openSidebar'
+    'click @ui.toForumEdit': 'transitionToEditForum'
   },
 
   templateContext: {
@@ -36,14 +35,19 @@ export default Marionette.View.extend({
 
   initialize() {
     this.applicationChannel = Radio.channel('application');
-    this.sidebarChannel = Radio.channel('sidebar');
 
     categories.fetch().then(() => {
-      this.applicationChannel.trigger('loading:hide');
+      this.showCategories();
     });
   },
 
-  onBeforeAttach() {
+  showCategories() {
+    this.applicationChannel.trigger('loading:hide');
+
+    this.showChildView('header', new HeaderView({
+      title: 'Forum'
+    }), {replaceElement: true});
+
     this.showChildView('forumCategories', new CategoriesView({
       collection: categories
     }));
@@ -51,9 +55,5 @@ export default Marionette.View.extend({
 
   transitionToEditForum() {
     // router.navigate('forum/edit', true);
-  },
-
-  openSidebar() {
-    this.sidebarChannel.trigger('sidebar:show');
   }
 });

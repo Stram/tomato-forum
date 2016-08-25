@@ -6,6 +6,7 @@ import style from './style.scss';
 
 import ThreadsView from 'components/thread-list';
 import PaginationView from 'components/pagination';
+import HeaderView from 'components/header';
 
 export default Marionette.View.extend({
   tagName: 'article',
@@ -14,17 +15,10 @@ export default Marionette.View.extend({
 
   regions: {
     categoryThreads: '#category-threads',
-    pagination: '.js-pagination'
+    pagination: '.js-pagination',
+    header: '.js-header'
   },
-
-  ui: {
-    sidebarMenuIcon: '.js-menu'
-  },
-
-  events: {
-    'click @ui.sidebarMenuIcon': 'openSidebar'
-  },
-
+  
   templateContext() {
     return {
       style,
@@ -34,7 +28,6 @@ export default Marionette.View.extend({
 
   initialize({categoryId}) {
     this.applicationChannel = Radio.channel('application');
-    this.sidebarChannel = Radio.channel('sidebar');
 
     const fetchModel = this.model.fetch();
     const fetchCollection = this.collection.fetch({
@@ -63,9 +56,11 @@ export default Marionette.View.extend({
     });
 
     this.showChildView('pagination', paginationView);
-  },
 
-  openSidebar() {
-    this.sidebarChannel.trigger('sidebar:show');
+    const headerView = new HeaderView({
+      title: this.model.get('name')
+    });
+
+    this.showChildView('header', headerView, {replaceElement: true});
   }
 });
