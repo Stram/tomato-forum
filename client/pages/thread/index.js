@@ -77,7 +77,7 @@ export default Marionette.View.extend({
 
     if (this.collection.currentPage === this.collection.totalPages) {
       const commentModel = new Comment({
-        thread: this.threadId
+        threadId: this.threadId
       });
 
       this.commentForm = new CommentForm({
