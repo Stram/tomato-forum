@@ -41,7 +41,6 @@ export default Marionette.View.extend({
     const commentContent = $('.js-new-comment-content').val();
     const newComment = new Comment({
       content: commentContent,
-      user: session.getCurrentUser().id,
       thread: this.model
     });
 

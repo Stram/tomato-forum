@@ -1,9 +1,5 @@
 import Marionette from 'backbone.marionette';
 import Radio from 'backbone.radio';
-// import router from 'application/router';
-
-// import Handlebars from 'handlebars';
-// var myHandlebars = Handlebars.noConflict();
 
 import template from './template.hbs';
 import style from './style.scss';

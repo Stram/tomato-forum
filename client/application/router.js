@@ -3,6 +3,9 @@ import Radio from 'backbone.radio';
 
 import { getParam } from 'services/url-manager';
 import Thread from 'models/thread';
+import Category from 'models/category';
+
+import Threads from 'collections/threads';
 
 import LoginView from 'pages/login/component';
 import RegisterView from 'pages/register';
@@ -10,6 +13,7 @@ import ForumView from 'pages/forum';
 import DashboardView from 'pages/dashboard/component';
 import ThreadView from 'pages/thread/component';
 import VerifyView from 'pages/verify';
+import CategoryView from 'pages/category';
 
 const applicationChannel = Radio.channel('application');
 const sessionChannel = Radio.channel('session');
@@ -27,7 +31,8 @@ const Router = Backbone.Router.extend({
     dashboard: 'dashboard',
     forum: 'forum',
     'thread/:threadId': 'thread',
-    'verify?*querystring': 'verify'
+    'verify?*querystring': 'verify',
+    'category/:categoryId': 'category'
   },
 
   requestBaseView() {
@@ -109,6 +114,30 @@ const Router = Backbone.Router.extend({
 
     const verifyView = new VerifyView({userId, token});
     this.changePage(verifyView);
+  },
+
+  category(categoryId) {
+    const threadsCollection = new Threads({
+      state: {
+        pageSize: 30
+      }
+    });
+
+    const category = new Category({
+      id: categoryId
+    });
+
+    const categoryView = new CategoryView({
+      collection: threadsCollection,
+      model: category,
+      categoryId
+    });
+
+    this.changePage(categoryView, {
+      authenticated: true,
+      loading: true,
+      sidebar: true
+    });
   }
 });
 

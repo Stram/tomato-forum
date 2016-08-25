@@ -4,6 +4,7 @@ import permissions from '~/services/permissions';
 import paginationMiddleware from '~/middlewares/pagination';
 
 import create from './handlers/create';
+import get from './handlers/get';
 import getAll from './handlers/get-all';
 
 const router = new express.Router();
@@ -23,6 +24,8 @@ router.use(permissions.checkAuthentification);
  * @apiSuccess {Object[]} threads Id's of threads belonging to selected category.
  */
 router.post('/', create);
+
+router.get('/:categoryId', get);
 
 /**
  * @api {get} /categories/ Get all categories
