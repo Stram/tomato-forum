@@ -1,5 +1,5 @@
 import request from 'supertest';
-import { describe, xit, before, beforeEach, after, afterEach } from 'mocha';
+import { describe, it, before, beforeEach, after, afterEach } from 'mocha';
 
 import app from '~/index';
 import Category from '~/models/category';
@@ -9,7 +9,7 @@ describe('API Threads - Get', function() {
 
   let sessionRequest;
 
-  let dummyThread;
+  let dummyCategory;
 
   before((done) => {
     sessionRequest = testHelpers.createSessionRequestObject();
@@ -26,27 +26,22 @@ describe('API Threads - Get', function() {
 
   beforeEach((done) => {
     testHelpers.createDummyCategory().then((category) => {
-
-      testHelpers.createDummyThread({
-        categoryId: category.id
-      }).then((thread) => {
-        dummyThread = thread;
-        done();
-      });
-    });
-  });
-
-  afterEach((done) => {
-    Promise.all([Category.remove({}), testHelpers.removeThreads()]).then(() => {
+      dummyCategory = category;
       done();
     });
   });
 
-  xit('should be able to get thread', function(done) {
-    const threadId = dummyThread.id;
+  afterEach((done) => {
+    Category.remove({}).then(() => {
+      done();
+    });
+  });
+
+  it('should be able to get category', function(done) {
+    const categoryId = dummyCategory.id;
 
     sessionRequest
-    .get(`/api/threads/${threadId}`)
+    .get(`/api/categories/${categoryId}`)
     .expect(200)
     .end(function(err) {
       if (err) {
@@ -56,11 +51,11 @@ describe('API Threads - Get', function() {
     });
   });
 
-  xit('should not be able to get threads when not authenticated', function(done) {
-    const threadId = dummyThread.id;
+  it('should not be able to get categories when not authenticated', function(done) {
+    const categoryId = dummyCategory.id;
 
     request(app)
-    .get(`/api/threads/${threadId}`)
+    .get(`/api/categories/${categoryId}`)
     .expect(401)
     .end(function(err) {
       if (err) {
@@ -70,11 +65,11 @@ describe('API Threads - Get', function() {
     });
   });
 
-  xit('should not be able to get thread wxith bad id', function(done) {
-    const threadId = '3';
+  it('should not be able to get category wxith bad id', function(done) {
+    const categoryId = '3';
 
     sessionRequest
-    .get(`/api/threads/${threadId}`)
+    .get(`/api/categories/${categoryId}`)
     .expect(400)
     .end(function(err) {
       if (err) {
@@ -84,11 +79,11 @@ describe('API Threads - Get', function() {
     });
   });
 
-  xit('should not be able to get thread wxith not existing id', function(done) {
-    const threadId = '57b4b43dcaf81cf20772e800';
+  it('should not be able to get thread with not existing id', function(done) {
+    const categoryId = '57b4b43dcaf81cf20772e800';
 
     sessionRequest
-    .get(`/api/threads/${threadId}`)
+    .get(`/api/categories/${categoryId}`)
     .expect(404)
     .end(function(err) {
       if (err) {
