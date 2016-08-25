@@ -63,7 +63,7 @@ export default Marionette.View.extend({
   },
 
   itemClicked() {
-    this.trigger('item:clicked');
+    this.trigger('page:changed', 2);
   }
 
 });

@@ -15,6 +15,11 @@ const Threads = PageableCollection.extend({
     return {
       totalRecords: resp.meta.total
     };
+  },
+
+  queryParams: {
+    currentPage: 'page',
+    pageSize: 'perPage'
   }
 });
 
