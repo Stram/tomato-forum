@@ -52,28 +52,9 @@ export default Marionette.View.extend({
     this.render();
     this.applicationChannel.trigger('loading:hide');
 
-    const headerView = new HeaderView({
-      title: this.model.get('title')
-    });
-
-    this.showChildView('header', headerView, {replaceElement: true});
-
-    const commentsView = new CommentsView({
-      collection: this.collection
-    });
-
-    this.showChildView('comments', commentsView);
-
-    const paginationView = new PaginationView({
-      current: this.collection.state.currentPage,
-      total: this.collection.state.totalPages
-    });
-
-    this.listenTo(paginationView, 'page:changed', (page) => {
-      this.collection.getPage(page);
-    });
-
-    this.showChildView('pagination', paginationView);
+    this.showHeader();
+    this.showComments();
+    this.showPagination();
 
     if (this.collection.currentPage === this.collection.totalPages) {
       const commentModel = new Comment({
@@ -87,5 +68,38 @@ export default Marionette.View.extend({
       const formView = this.commentForm.getForm();
       this.showChildView('newComment', formView);
     }
+  },
+
+  showHeader() {
+    const headerView = new HeaderView({
+      title: this.model.get('title')
+    });
+
+    this.showChildView('header', headerView, {replaceElement: true});
+  },
+
+  showComments() {
+    const commentsView = new CommentsView({
+      collection: this.collection
+    });
+
+    this.showChildView('comments', commentsView);
+  },
+
+  showPagination() {
+    const paginationView = new PaginationView({
+      current: this.collection.state.currentPage,
+      total: this.collection.state.totalPages
+    });
+
+    this.listenTo(paginationView, 'page:changed', (page) => {
+      this.applicationChannel.trigger('loading:show');
+      this.collection.getPage(page).then(() => {
+        paginationView.changePage(page);
+        this.applicationChannel.trigger('loading:hide');
+      });
+    });
+
+    this.showChildView('pagination', paginationView);
   }
 });

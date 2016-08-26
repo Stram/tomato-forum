@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate';
+import deepPopulate from 'mongoose-deep-populate';
 
 import objectTransformation from '../helpers/standard-transformation';
 
@@ -28,5 +29,7 @@ commentSchema.plugin(mongoosePaginate);
 
 commentSchema.options.toObject = commentSchema.options.toObject ? commentSchema.options.toObject : {};
 commentSchema.options.toObject.transform = objectTransformation;
+
+commentSchema.plugin(deepPopulate(mongoose));
 
 module.exports = mongoose.model('Comment', commentSchema);

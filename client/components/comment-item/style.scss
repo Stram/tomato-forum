@@ -1,4 +1,41 @@
+@import '~styles/colors';
+@import '~styles/mixins';
+@import '~styles/themes';
+
 .comment-container {
+  margin-top: 16px;
   padding-bottom: 16px;
-  border-bottom: 1px solid;
+  border-bottom: 1px solid $base-grey-opaque;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.user {
+  display: flex;
+  align-items: center;
+}
+
+.profile-photo {
+  @include round-image(36px);
+  margin-right: 8px;
+}
+
+.username {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.date {
+  @extend %default-text;
+}
+
+.content {
+  @extend %default-text;
+  margin-top: 16px;
+  font-size: 14px;
+  line-height: 24px;
 }

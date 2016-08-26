@@ -62,8 +62,16 @@ export default Marionette.View.extend({
     return numbers;
   },
 
-  itemClicked() {
-    this.trigger('page:changed', 2);
+  itemClicked(event) {
+    const page = parseInt(event.currentTarget.dataset.page, 10);
+    this.trigger('page:changed', page);
+  },
+
+  changePage(page) {
+    this.currentPage = page;
+
+    this.paginationItems = this.calculatePages();
+    this.render();
   }
 
 });

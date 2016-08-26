@@ -8,15 +8,12 @@ export default Marionette.View.extend({
 
   tagName: 'div',
 
-  className: style.commentContainer
+  className: style.commentContainer,
 
-  // templateContext() {
-  //   return {
-  //     cardList: cardListStyle
-  //   };
-  // },
-
-  // initialize(collection) {
-  //   this.model = collection.model;
-  // }
+  templateContext() {
+    return {
+      style,
+      owner: this.model.get('owner').toJSON()
+    };
+  }
 });

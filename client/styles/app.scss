@@ -1,3 +1,4 @@
+@import '~styles/themes';
 @import url('https://fonts.googleapis.com/css?family=Lato:400,700&subset=latin,latin-ext');
 
 :global {
@@ -13,6 +14,7 @@
   }
 
   a {
+    @extend %theme-primary-text;
     text-decoration: none;
   }
 }
