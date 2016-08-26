@@ -49,36 +49,76 @@
         opacity: 0.87;
       }
 
+      %default-light-text {
+        color: $base-black;
+        opacity: 0.54;
+      }
+
+      %theme-primary-text {
+        color: $base-blue-grey-500;
+        opacity: 1;
+      }
+
+      %theme-primary-background {
+        background-color: $base-blue-grey-500;
+      }
+
+      %theme-secondary-background {
+        background-color: $base-red-500;
+      }
+
+      %theme-background {
+        background-color: $base-white;
+      }
+
+      %theme-light-text {
+        color: $base-white;
+        opacity: 1;
+      }
+
+      %theme-primary-border {
+        border-color: $base-blue-grey-500;
+      }
+    }
+  }
+
+  .theme-2 {
+    :local {
+      %default-text {
+        color: $base-black;
+        opacity: 0.87;
+      }
+
+      %default-light-text {
+        color: $base-black;
+        opacity: 0.54;
+      }
+
       %theme-primary-text {
         color: $base-red-500;
         opacity: 1;
       }
+
+      %theme-primary-background {
+        background-color: $base-red-500;
+      }
+
+      %theme-secondary-background {
+        background-color: $base-green-500;
+      }
+
+      %theme-background {
+        background-color: $base-white;
+      }
+
+      %theme-light-text {
+        color: $base-white;
+        opacity: 1;
+      }
+
+      %theme-primary-border {
+        border-color: $base-red-500;
+      }
     }
   }
 }
-
-// @mixin theme-style($type: 'primary') {
-//   @each $theme in $themes {
-//     $i: index($themes, $theme) - 1;
-//
-//     .theme-#{$i} & {
-//       $color: map-get($theme, $type + '-text');
-//       $background-color: map-get($theme, $type);
-//
-//       color: $color;
-//       background-color: $background-color;
-//     }
-//   }
-// }
-//
-// @mixin theme-background($type: 'primary') {
-//   @each $theme in $themes {
-//     $i: index($themes, $theme) - 1;
-//
-//     .theme-#{$i} & {
-//       $background-color: map-get($theme, $type);
-//
-//       background-color: $background-color;
-//     }
-//   }
-// }

@@ -43,10 +43,12 @@ export default class BaseForm {
   }
 
   _setupFormView() {
-    this.properties = _.mapObject(this.properties, (property) => {
-      property.options.value = this.model.get(property.name);
-      return property;
-    });
+    if (this.model) {
+      this.properties = _.mapObject(this.properties, (property) => {
+        property.options.value = this.model.get(property.name);
+        return property;
+      });
+    }
 
     this.formView = new FormView({
       formProperties: this.properties
