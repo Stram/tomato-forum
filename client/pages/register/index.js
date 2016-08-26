@@ -1,4 +1,5 @@
 import Marionette from 'backbone.marionette';
+import router from 'application/router';
 
 import template from './template.hbs';
 import style from './style.scss';
@@ -13,11 +14,13 @@ export default Marionette.View.extend({
   // className: 'page register-page',
 
   ui: {
-    nextButton: '.js-next-button'
+    nextButton: '.js-next-button',
+    backToLogin: '.js-navigate-to-login'
   },
 
   events: {
-    'click @ui.nextButton': 'nextButtonClicked'
+    'click @ui.nextButton': 'nextButtonClicked',
+    'click @ui.backToLogin': 'navigateToLogin'
   },
 
   regions: {
@@ -45,5 +48,9 @@ export default Marionette.View.extend({
       this.isRegistrationSuccessful = true;
       this.render();
     });
+  },
+
+  navigateToLogin() {
+    router.navigate('login', true);
   }
 });
