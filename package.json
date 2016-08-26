@@ -30,6 +30,7 @@
     "json-loader": "^0.5.4",
     "lodash": "^4.13.1",
     "markdown-loader": "^0.1.7",
+    "marky-markdown": "^8.1.0",
     "mongoose": "^4.5.1",
     "mongoose-deep-populate": "^3.0.0",
     "mongoose-paginate": "^5.0.0",

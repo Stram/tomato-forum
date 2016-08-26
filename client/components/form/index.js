@@ -41,7 +41,7 @@ export default Marionette.View.extend({
       view.on('submit', () => {
         self.trigger('submit');
       });
-      
+
       self.showChildView(property.id, view);
     });
   },
@@ -82,12 +82,16 @@ export default Marionette.View.extend({
 
   showErrors(errors) {
     this.clearErrors();
-    const field = errors.field;
+    const errorsList = _.isArray(errors) ? errors : [errors];
 
-    if (field && this.properties[field]) {
-      const view = this.getChildView(this.properties[field].id);
-      view.showError(errors.message);
-    }
+    errorsList.forEach((error) => {
+      const field = error.field;
+
+      if (field && this.properties[field]) {
+        const view = this.getChildView(this.properties[field].id);
+        view.showError(error.message);
+      }
+    });
   },
 
   onSubmit(event) {

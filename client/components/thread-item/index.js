@@ -12,7 +12,8 @@ export default Marionette.View.extend({
 
   templateContext() {
     return {
-      style
+      style,
+      owner: this.model.get('owner').toJSON()
     };
   }
 });

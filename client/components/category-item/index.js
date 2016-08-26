@@ -74,7 +74,8 @@ export default Marionette.View.extend({
   },
 
   createNewThread() {
-    this.newThreadFormObject.submit();
-    this.closeNewThreadModalDialog();
+    this.newThreadFormObject.submit().then(() => {
+      this.closeNewThreadModalDialog();
+    });
   }
 });

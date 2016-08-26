@@ -27,8 +27,19 @@ export default class BaseForm {
       _.pairs(this.values).forEach(([key, value]) => {
         this.model.set(key, value);
       });
-      this.model.save();
+      return new Promise((resolve, reject) => {
+        this.model.save().then(() => {
+          resolve();
+        }, (response) => {
+          if (response.responseJSON && response.responseJSON.errors) {
+            const errorList = response.responseJSON.errors;
+            this.formView.showErrors(errorList);
+          }
+          reject(response);
+        });
+      });
     }
+    return false;
   }
 
   _setupFormView() {

@@ -63,12 +63,3 @@
     @extend %theme-primary-text;
   }
 }
-
-.submit {
-  @extend %theme-primary-text;
-  text-transform: uppercase;
-  font-weight: bold;
-  padding: 8px;
-  cursor: pointer;
-  display: inline-block;
-}

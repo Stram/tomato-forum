@@ -1,3 +1,5 @@
+import marky from 'marky-markdown';
+
 import Category from '~/models/category';
 import Thread from '~/models/thread';
 import errors from '~/services/errors';
@@ -22,10 +24,12 @@ module.exports = function(req, res, next) {
       return;
     }
 
+    const content = marky(req.body.content).html();
+
     const newThread = new Thread({
       category,
       title: req.body.title,
-      content: req.body.content,
+      content,
       owner: req.user.id
     });
 
