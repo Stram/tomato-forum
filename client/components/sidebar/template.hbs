@@ -1,9 +1,7 @@
 <section class="{{style.header}}">
   <div class="{{style.user}}">
     <img class="{{style.profilePhoto}}" src="{{currentUser.profilePhoto.url}}" alt="Profile photo"/>
-    <div class="{{style.username}}">
-      {{currentUser.username}}
-    </div>
+    <a href="/user/{{currentUser.id}}" class="{{style.username}}">{{currentUser.username}}</a>
   </div>
 </section>
 

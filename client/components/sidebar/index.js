@@ -26,7 +26,8 @@ export default Marionette.View.extend({
   },
 
   events: {
-    'click @ui.logoutButton': 'logout'
+    'click @ui.logoutButton': 'logout',
+    'click a': 'navigate'
   },
 
   channelName: 'sidebar',
@@ -104,5 +105,12 @@ export default Marionette.View.extend({
 
   logout() {
     session.logout();
+  },
+
+  navigate(event) {
+    event.preventDefault();
+    const href = event.target.getAttribute('href');
+    router.navigate(href, true);
+    this.hide();
   }
 });
