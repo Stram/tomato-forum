@@ -34,11 +34,7 @@ export default Marionette.View.extend({
     const password = $form.find('.js-password').val();
 
     session.login(identification, password).then((user) => {
-      if (user.photos.length) {
-        router.navigate('dashboard', true);
-      } else {
-        router.navigate('first-steps/photo', true);
-      }
+      router.navigate('forum', true);
     }).catch((errors) => {
       _.each(errors, (error) => {
         $form.find(`.js-error-${error.field}`).text(error.message);

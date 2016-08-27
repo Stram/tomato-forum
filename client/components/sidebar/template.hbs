@@ -1,6 +1,10 @@
 <section class="{{style.header}}">
   <div class="{{style.user}}">
-    <img class="{{style.profilePhoto}}" src="{{currentUser.profilePhoto.url}}" alt="Profile photo"/>
+    {{#if owner.profilePhoto.url}}
+      <img class="{{style.profilePhoto}}" src="{{currentUser.profilePhoto.url}}" alt="Profile photo"/>
+    {{else}}
+      <img class="{{style.profilePhoto}}" src="/public/images/no-photo.svg" alt="Profile photo"/>
+    {{/if}}
     <a href="/user/{{currentUser.id}}" class="{{style.username}}">{{currentUser.username}}</a>
   </div>
 </section>

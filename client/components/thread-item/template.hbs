@@ -1,2 +1,6 @@
-<img class="{{style.profilePhoto}}" src="{{owner.profilePhoto.url}}" alt="{{owner.username}}"/>
+{{#if owner.profilePhoto.url}}
+  <img class="{{style.profilePhoto}}" src="{{owner.profilePhoto.url}}" alt="{{owner.username}}"/>
+{{else}}
+  <img class="{{style.profilePhoto}}" src="/public/images/no-photo.svg" alt="{{owner.username}}"/>
+{{/if}}
 <a class="{{style.threadTitle}}" href="/thread/{{id}}">{{title}}</a>

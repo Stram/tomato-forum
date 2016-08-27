@@ -4,7 +4,6 @@ import config from 'config';
 
 const sessionChannel = Radio.channel('session');
 
-
 const session = {
   _currentUser: null,
 

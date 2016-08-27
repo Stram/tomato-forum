@@ -4,7 +4,11 @@
   <div class="{{style.contentWrap}}">
     <div class="{{style.contentHeader}}">
       <div class="{{style.user}}">
-        <img class="{{style.profilePhoto}}" src="{{owner.profilePhoto.url}}" alt="{{owner.username}}"/>
+        {{#if owner.profilePhoto.url}}
+          <img class="{{style.profilePhoto}}" src="{{owner.profilePhoto.url}}" alt="{{owner.username}}"/>
+        {{else}}
+          <img class="{{style.profilePhoto}}" src="/public/images/no-photo.svg" alt="{{owner.username}}"/>
+        {{/if}}
         <a class="{{style.username}}" href="/user/{{id}}">{{owner.username}}</a>
       </div>
       <div class="{{style.date}}">
