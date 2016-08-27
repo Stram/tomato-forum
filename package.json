@@ -6,9 +6,9 @@
   "repository": "git@github.com:Stram/tomato-forum.git",
   "scripts": {
     "start": "DATABASE_URL=localhost:27017/express nodemon server/index.js --watch server --exec babel-node --presets es2015,stage-2",
-    "server": "babel-node server --presets es2015,stage-2",
-    "webpackDev": "webpack --progress --colors --watch",
-    "build": "node_modules/.bin/webpack --optimize-minimize --optimize-dedupe",
+    "server": "node build.js",
+    "webpackDev": "webpack --progress --colors --watch -d",
+    "build": "node_modules/.bin/webpack -p --optimize-dedupe && node_modules/.bin/webpack --config webpack.config.server.js",
     "docs": "apidoc -i server/",
     "test": "NODE_ENV=testing istanbul cover node_modules/.bin/_mocha -- --require babel-register -R spec 'server/**/test.js'"
   },
@@ -46,6 +46,7 @@
   },
   "devDependencies": {
     "babel-cli": "^6.10.1",
+    "babel-core": "^6.14.0",
     "babel-eslint": "^6.1.0",
     "babel-loader": "^6.2.4",
     "babel-preset-es2015": "^6.9.0",
@@ -65,8 +66,10 @@
     "handlebars": "^4.0.5",
     "handlebars-loader": "^1.3.0",
     "handlebars-template-loader": "^0.7.0",
+    "ignore-loader": "^0.1.1",
     "istanbul": "^1.0.0-alpha.2",
     "jquery": "^3.1.0",
+    "json-loader": "^0.5.4",
     "mocha": "^3.0.1",
     "mockgoose": "^6.0.6",
     "node-sass": "^3.8.0",
