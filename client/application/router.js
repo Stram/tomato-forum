@@ -48,7 +48,7 @@ const Router = Backbone.Router.extend({
     }
     const isAuthenticated = sessionChannel.request('user:authenticated');
     if (options.authenticated && !isAuthenticated) {
-      this.navigate('login');
+      this.navigate('login', true);
       return;
     }
 
@@ -65,7 +65,7 @@ const Router = Backbone.Router.extend({
   },
 
   landing() {
-    this.navigate('forum');
+    this.navigate('forum', true);
   },
 
   login() {
@@ -144,7 +144,7 @@ const Router = Backbone.Router.extend({
   },
 
   notFound() {
-    this.navigate('forum');
+    this.navigate('forum', true);
   }
 });
 
