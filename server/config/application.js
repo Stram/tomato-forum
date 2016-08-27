@@ -10,7 +10,7 @@ const applicationConfig = {
   mailer: {
     host: 'smtp-relay.sendinblue.com',
     port: 587,
-    secure: true, // use SSL
+    secure: false, // use SSL
     auth: mailerAuth
   },
 
