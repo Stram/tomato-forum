@@ -22,11 +22,23 @@ export default Marionette.View.extend({
     };
   },
 
-  initialize(options) {
-    this.currentPage = options.current;
-    this.totalPages = options.total;
+  initialize(collection) {
+    this.update(collection, {render: false});
+  },
 
-    this.paginationItems = this.calculatePages();
+  parseCollectionMeta() {
+    this.currentPage = this.collection.state.currentPage;
+    this.totalPages = this.collection.state.totalPages;
+  },
+
+  update(collection, options = {}) {
+    this.collection = collection;
+    this.parseCollectionMeta();
+    this.calculatePages();
+
+    if (options.render !== false) {
+      this.render();
+    }
   },
 
   calculatePages() {
@@ -59,7 +71,7 @@ export default Marionette.View.extend({
       };
     });
 
-    return numbers;
+    this.paginationItems = numbers;
   },
 
   itemClicked(event) {
@@ -67,13 +79,6 @@ export default Marionette.View.extend({
     if (page !== this.currentPage) {
       this.trigger('page:changed', page);
     }
-  },
-
-  changePage(page) {
-    this.currentPage = page;
-
-    this.paginationItems = this.calculatePages();
-    this.render();
   }
 
 });

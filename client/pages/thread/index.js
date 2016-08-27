@@ -57,10 +57,15 @@ export default Marionette.View.extend({
   },
 
   fetchCollection() {
-    return this.collection.fetch({
+    const fetchOptions = this.getFetchOptions();
+    return this.collection.fetch(fetchOptions);
+  },
+
+  getFetchOptions() {
+    return {
       data: { thread: this.threadId},
       reset: true
-    });
+    };
   },
 
   showContent() {
@@ -102,15 +107,14 @@ export default Marionette.View.extend({
   },
 
   showPagination() {
-    const paginationView = new PaginationView({
-      current: this.collection.state.currentPage,
-      total: this.collection.state.totalPages
-    });
+    const paginationView = this.paginationView = new PaginationView(this.collection);
 
     this.listenTo(paginationView, 'page:changed', (page) => {
+      const fetchOptions = this.getFetchOptions();
+
       this.applicationChannel.trigger('loading:show');
-      this.collection.getPage(page).then(() => {
-        paginationView.changePage(page);
+      this.collection.getPage(page, fetchOptions).then(() => {
+        paginationView.update(this.collection);
         this.applicationChannel.trigger('loading:hide');
       });
     });
@@ -120,9 +124,14 @@ export default Marionette.View.extend({
 
   submitNewComment() {
     const newCommentForm = this.commentForm.getForm();
+
+    this.applicationChannel.trigger('loading:show');
     this.commentForm.submit().then(() => {
       newCommentForm.clear();
-      this.fetchCollection();
+      this.fetchCollection().then(() => {
+        this.paginationView.update(this.collection);
+        this.applicationChannel.trigger('loading:hide');
+      });
     });
   }
 });
