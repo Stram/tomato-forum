@@ -8,13 +8,10 @@ const applicationConfig = {
   port: '3000',
   privateUploadDirectory: 'uploads/photos',
   mailer: {
-    auth: mailerAuth,
-    smtp: {
-      host: 'smtp.gmail.com',
-      port: 465,
-      secure: true,
-      auth: mailerAuth
-    }
+    host: 'smtp-relay.sendinblue.com',
+    port: 587,
+    secure: true, // use SSL
+    auth: mailerAuth
   },
 
   getFullHostname() {

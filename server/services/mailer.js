@@ -3,12 +3,7 @@ import applicationConfig from '../config/application';
 
 let transporter;
 if (applicationConfig.mailer.auth.user !== '') {
-  transporter = nodemailer.createTransport({
-    host: 'smtp-relay.sendinblue.com',
-    port: 587,
-    secure: true, // use SSL
-    auth: applicationConfig.mailer.auth
-  });
+  transporter = nodemailer.createTransport(applicationConfig.mailer);
 }
 
 function sendVerification(user) {
