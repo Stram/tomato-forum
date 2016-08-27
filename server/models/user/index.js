@@ -52,12 +52,12 @@ const userSchema = new Schema({
   token: String,
   createdAt: {
     type: Date,
-    default: new Date()
+    default: Date.now
   },
 
   lastActivity: {
     type: Date,
-    default: new Date()
+    default: Date.now
   },
 
   location: {

@@ -19,7 +19,7 @@ const threadSchema = new Schema({
   content: String,
   createdAt: {
     type: Date,
-    default: new Date()
+    default: Date.now
   },
   category: {
     type: ObjectId,

@@ -1,4 +1,5 @@
 import 'backbone-associations';
+import 'services/hbs-helpers';
 
 import app from 'application/app';
 

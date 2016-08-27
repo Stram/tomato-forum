@@ -11,7 +11,7 @@ const commentSchema = new Schema({
   content: String,
   createdAt: {
     type: Date,
-    default: new Date()
+    default: Date.now
   },
 
   thread: {
