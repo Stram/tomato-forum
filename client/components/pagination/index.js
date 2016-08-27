@@ -64,7 +64,9 @@ export default Marionette.View.extend({
 
   itemClicked(event) {
     const page = parseInt(event.currentTarget.dataset.page, 10);
-    this.trigger('page:changed', page);
+    if (page !== this.currentPage) {
+      this.trigger('page:changed', page);
+    }
   },
 
   changePage(page) {

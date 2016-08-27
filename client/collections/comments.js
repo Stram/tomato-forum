@@ -20,6 +20,10 @@ const Threads = PageableCollection.extend({
   queryParams: {
     currentPage: 'page',
     pageSize: 'perPage'
+  },
+
+  state: {
+    pageSize: 5
   }
 });
 

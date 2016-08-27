@@ -99,8 +99,6 @@ const Router = Backbone.Router.extend({
   thread(threadId) {
     const commentsCollection = new Comments();
 
-    commentsCollection.setPageSize(5);
-
     const thread = new Thread({
       id: threadId
     });
@@ -128,8 +126,6 @@ const Router = Backbone.Router.extend({
 
   category(categoryId) {
     const threadsCollection = new Threads();
-
-    threadsCollection.setPageSize(30);
 
     const category = new Category({
       id: categoryId

@@ -48,13 +48,18 @@ export default Marionette.View.extend({
     this.threadId = threadId;
     this.applicationChannel = Radio.channel('application');
 
-    const fetchModel = this.model.fetch();
-    const fetchCollection = this.collection.fetch({
-      data: { thread: threadId}
-    });
+    const fetchModel = this.model.fetch({reset: true});
+    const fetchCollection = this.fetchCollection();
 
     Promise.all([fetchModel, fetchCollection]).then(() => {
       this.showContent();
+    });
+  },
+
+  fetchCollection() {
+    return this.collection.fetch({
+      data: { thread: this.threadId},
+      reset: true
     });
   },
 
@@ -117,6 +122,7 @@ export default Marionette.View.extend({
     const newCommentForm = this.commentForm.getForm();
     this.commentForm.submit().then(() => {
       newCommentForm.clear();
+      this.fetchCollection();
     });
   }
 });
