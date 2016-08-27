@@ -27,3 +27,5 @@ exclude_paths:
 - server/test/
 - client/**/*.hbs
 - webpack.config.js
+- webpack.config.server.js
+- webpack-prod.config.js
