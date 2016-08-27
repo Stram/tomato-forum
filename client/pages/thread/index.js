@@ -136,7 +136,9 @@ export default Marionette.View.extend({
   },
 
   updateNewCommentForm() {
-    if (this.collection.state.currentPage === this.collection.state.totalPages) {
+    const current = this.collection.state.currentPage;
+    const total = this.collection.state.totalPages;
+    if (current === total || total === 0) {
       this.showNewCommentForm();
     } else {
       this.hideNewCommentForm();
