@@ -26,7 +26,7 @@ export default Marionette.View.extend({
     this.value = args.value;
     this.inputId = _.uniqueId();
     this.isRequired = args.required;
-    this.submit = args.submit;
+    this.theme = args.theme;
   },
 
   templateContext() {
@@ -37,7 +37,7 @@ export default Marionette.View.extend({
       type: this.type,
       inputId: this.inputId,
       isRequired: this.isRequired,
-      submit: this.submit
+      theme: this.theme
     };
   },
 
@@ -52,6 +52,10 @@ export default Marionette.View.extend({
   getValue() {
     const value = $(`#${this.inputId}`).val();
     return value;
+  },
+
+  clear() {
+    $(`#${this.inputId}`).val('');
   },
 
   submitClicked() {

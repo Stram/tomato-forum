@@ -3,6 +3,7 @@ import Radio from 'backbone.radio';
 
 import template from './template.hbs';
 import style from './style.scss';
+import buttonStyle from 'styles/partials/button.scss';
 
 import Comment from 'models/comment';
 
@@ -26,9 +27,18 @@ export default Marionette.View.extend({
     newComment: '#new-comment'
   },
 
+  ui: {
+    submitNewComment: '.js-submit-new-comment'
+  },
+
+  events: {
+    'click @ui.submitNewComment': 'submitNewComment'
+  },
+
   templateContext() {
     const owner = this.model.get('owner') ? this.model.get('owner').toJSON() : {};
     return {
+      buttonStyle,
       style,
       owner
     };
@@ -101,5 +111,12 @@ export default Marionette.View.extend({
     });
 
     this.showChildView('pagination', paginationView);
+  },
+
+  submitNewComment() {
+    const newCommentForm = this.commentForm.getForm();
+    this.commentForm.submit().then(() => {
+      newCommentForm.clear();
+    });
   }
 });

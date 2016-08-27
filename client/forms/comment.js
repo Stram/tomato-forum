@@ -1,4 +1,5 @@
 import BaseForm from 'forms/base-form';
+import textareaInputStyle from 'components/form-property/textarea/style.scss';
 
 export default class CategoryForm extends BaseForm {
   constructor() {
@@ -11,9 +12,7 @@ export default class CategoryForm extends BaseForm {
         options: {
           required: true,
           label: false,
-          submit: {
-            label: 'Submit'
-          }
+          theme: textareaInputStyle.comment
         }
       }
     };

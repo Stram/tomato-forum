@@ -1,6 +1,8 @@
 @import '~styles/colors';
+@import '~styles/themes';
 
 .button {
+  @extend %theme-primary-text;
   font-size: 14px;
   line-height: 14px;
 

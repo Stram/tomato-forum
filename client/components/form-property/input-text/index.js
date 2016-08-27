@@ -43,6 +43,10 @@ export default Marionette.View.extend({
     this.getUI('error').text('');
   },
 
+  clear() {
+    $(`#${this.inputId}`).val('');
+  },
+
   getValue() {
     const value = $(`#${this.inputId}`).val();
     return value;

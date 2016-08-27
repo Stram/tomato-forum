@@ -94,6 +94,12 @@ export default Marionette.View.extend({
     });
   },
 
+  clear() {
+    _.values(this.properties).forEach((property) => {
+      this.getChildView(property.id).clear();
+    });
+  },
+
   onSubmit(event) {
     event.preventDefault();
     this.trigger('submit');
