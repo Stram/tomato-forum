@@ -33,7 +33,9 @@ const Router = Backbone.Router.extend({
     forum: 'forum',
     'thread/:threadId': 'thread',
     'verify?*querystring': 'verify',
-    'category/:categoryId': 'category'
+    'category/:categoryId': 'category',
+
+    '*notFound': 'notFound'
   },
 
   requestBaseView() {
@@ -46,7 +48,7 @@ const Router = Backbone.Router.extend({
     }
     const isAuthenticated = sessionChannel.request('user:authenticated');
     if (options.authenticated && !isAuthenticated) {
-      this.navigate('login', true);
+      this.navigate('login');
       return;
     }
 
@@ -63,10 +65,7 @@ const Router = Backbone.Router.extend({
   },
 
   landing() {
-    const forumView = new ForumView();
-    this.changePage(forumView, {
-      authenticated: true
-    });
+    this.navigate('forum');
   },
 
   login() {
@@ -142,6 +141,10 @@ const Router = Backbone.Router.extend({
       loading: true,
       sidebar: true
     });
+  },
+
+  notFound() {
+    this.navigate('forum');
   }
 });
 
