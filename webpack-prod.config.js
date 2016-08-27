@@ -37,7 +37,7 @@ module.exports = {
       }
     }, {
       test: /\.scss|\.css$/,
-      loader: ExtractTextPlugin.extract('css?camelcase&modules&localIdentName=[name]__[local]__[hash:base64:5]!sass')
+      loader: ExtractTextPlugin.extract('css?camelcase&modules&localIdentName=[hash:base64:5]!sass')
     }]
   },
 

@@ -26,7 +26,7 @@ const applicationConfig = {
 };
 
 if (process.env.NODE_ENV === 'production') {
-  applicationConfig.host = 'https://sheltered-plateau-86472.herokuapp.com';
+  applicationConfig.host = 'https://tomato-forum.herokuapp.com';
   applicationConfig.port = process.env.PORT || '8080';
 }
 

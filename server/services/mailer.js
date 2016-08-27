@@ -4,7 +4,9 @@ import applicationConfig from '../config/application';
 let transporter;
 if (applicationConfig.mailer.auth.user !== '') {
   transporter = nodemailer.createTransport({
-    service: 'gmail',
+    host: 'smtp-relay.sendinblue.com',
+    port: 587,
+    secure: true, // use SSL
     auth: applicationConfig.mailer.auth
   });
 }
