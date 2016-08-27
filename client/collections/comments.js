@@ -23,7 +23,7 @@ const Threads = PageableCollection.extend({
   },
 
   state: {
-    pageSize: 5
+    pageSize: 10
   }
 });
 

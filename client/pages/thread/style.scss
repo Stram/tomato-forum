@@ -49,6 +49,12 @@
   margin-top: 16px;
 }
 
+.new-comment-section {
+  &.is-hidden {
+    display: none;
+  }
+}
+
 .submit-container {
   display: flex;
   justify-content: flex-end;

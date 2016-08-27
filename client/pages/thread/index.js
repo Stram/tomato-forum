@@ -28,7 +28,8 @@ export default Marionette.View.extend({
   },
 
   ui: {
-    submitNewComment: '.js-submit-new-comment'
+    submitNewComment: '.js-submit-new-comment',
+    newCommentSection: '.js-new-comment-section'
   },
 
   events: {
@@ -75,19 +76,7 @@ export default Marionette.View.extend({
     this.showHeader();
     this.showComments();
     this.showPagination();
-
-    if (this.collection.currentPage === this.collection.totalPages) {
-      const commentModel = new Comment({
-        threadId: this.threadId
-      });
-
-      this.commentForm = new CommentForm({
-        model: commentModel
-      });
-
-      const formView = this.commentForm.getForm();
-      this.showChildView('newComment', formView);
-    }
+    this.updateNewCommentForm();
   },
 
   showHeader() {
@@ -115,11 +104,43 @@ export default Marionette.View.extend({
       this.applicationChannel.trigger('loading:show');
       this.collection.getPage(page, fetchOptions).then(() => {
         paginationView.update(this.collection);
+        this.updateNewCommentForm();
         this.applicationChannel.trigger('loading:hide');
       });
     });
 
     this.showChildView('pagination', paginationView);
+  },
+
+  createNewCommentForm() {
+    const commentModel = new Comment({
+      threadId: this.threadId
+    });
+
+    this.commentForm = new CommentForm({
+      model: commentModel
+    });
+  },
+
+  showNewCommentForm() {
+    if (!this.commentForm) {
+      this.createNewCommentForm();
+      const formView = this.commentForm.getForm();
+      this.showChildView('newComment', formView);
+    }
+    this.getUI('newCommentSection').removeClass(style.isHidden);
+  },
+
+  hideNewCommentForm() {
+    this.getUI('newCommentSection').addClass(style.isHidden);
+  },
+
+  updateNewCommentForm() {
+    if (this.collection.state.currentPage === this.collection.state.totalPages) {
+      this.showNewCommentForm();
+    } else {
+      this.hideNewCommentForm();
+    }
   },
 
   submitNewComment() {
@@ -130,6 +151,7 @@ export default Marionette.View.extend({
       newCommentForm.clear();
       this.fetchCollection().then(() => {
         this.paginationView.update(this.collection);
+        this.updateNewCommentForm();
         this.applicationChannel.trigger('loading:hide');
       });
     });
