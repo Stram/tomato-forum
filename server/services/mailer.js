@@ -12,9 +12,9 @@ function sendVerification(user) {
       from: 'square.bracket.test@gmail.com',
       to: user.local.email,
       subject: '🌈 Please verify 👬',
-      html: `<b>Hello world 🐴</b>
+      html: `<b>Hello beautiful! 🐴</b>
       <span>Please click on this verification link
-      <a href="${verificationLink}">${verificationLink}</a>
+      <a href="${verificationLink}">VERIFY!</a>
       </span>`
     };
 
