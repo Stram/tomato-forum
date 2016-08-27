@@ -49,7 +49,7 @@ module.exports = {
     }
   },
 
-  devtool: '#inline-source-map',
+  // devtool: '#inline-source-map',
 
   sassLoader: {
     includePaths: [path.resolve(__dirname, 'client')]
