@@ -1,5 +1,17 @@
 {
   "parser": "babel-eslint",
+  "plugins": [
+    "react"
+  ],
+  "extends": [
+    "plugin:react/recommended"
+  ],
+  "settings": {
+    "react": {
+      "pragma": "React",
+      "version": "15.0"
+    }
+  },
   "env": {
 
     # You can change environment depending on the project you are working on
@@ -10,7 +22,7 @@
     "jquery": false
   },
   "globals": {
-      "Promise": true
+    "Promise": true
   },
 
   "parserOptions": {
@@ -32,7 +44,8 @@
       "objectLiteralShorthandProperties": true,
       "spread": true,
       "superInFunctions": true,
-      "templateStrings": true
+      "templateStrings": true,
+      "jsx": true
     }
   },
   "rules": {
@@ -276,6 +289,8 @@
     "prefer-template": 1,
     "require-yield": 0,
     "template-curly-spacing": [1, "never"],
-    "yield-star-spacing": [1, "before"]
+    "yield-star-spacing": [1, "before"],
+
+    "react/no-render-return-value": [0]
   }
 }

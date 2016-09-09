@@ -58,7 +58,7 @@ app.get('favicon.ico', (req, res) => {
 });
 
 app.get(/^(?!\/public|\/api|\/uploads|\/doc|\/favicon).*$/, function(req, res) {
-  res.sendFile(path.resolve('client/index.html'));
+  res.sendFile(path.resolve('client-react/index.html'));
 });
 
 fs.stat(path.resolve('uploads/photos'), function(err) {
