@@ -1,5 +1,6 @@
 import Marionette from 'backbone.marionette';
 import Radio from 'backbone.radio';
+import router from 'application/router';
 
 import template from './template.hbs';
 import cardListStyle from 'styles/partials/card-list.scss';
@@ -74,8 +75,10 @@ export default Marionette.View.extend({
   },
 
   createNewThread() {
-    this.newThreadFormObject.submit().then(() => {
+    this.newThreadFormObject.submit().then((thread) => {
       this.closeNewThreadModalDialog();
+      const id = thread.id;
+      router.navigate(`/thread/${id}`);
     });
   }
 });

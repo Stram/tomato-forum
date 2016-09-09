@@ -29,7 +29,7 @@ export default class BaseForm {
       });
       return new Promise((resolve, reject) => {
         this.model.save().then(() => {
-          resolve();
+          resolve(this.model);
         }, (response) => {
           if (response.responseJSON && response.responseJSON.errors) {
             const errorList = response.responseJSON.errors;
