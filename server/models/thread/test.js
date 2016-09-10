@@ -27,22 +27,6 @@ describe('Thread model', () => {
         expect(objectOfSavedDummyThread).to.have.property('title').to.be.a('string');
         expect(objectOfSavedDummyThread).to.have.property('createdAt').to.be.a('date');
         expect(objectOfSavedDummyThread).to.have.property('content').to.be.a('string');
-        expect(objectOfSavedDummyThread).to.have.property('comments').to.be.an('array');
-
-        done();
-      });
-    });
-
-    it('should have default and given values when created', (done) => {
-      const dummyThread = new Thread({
-        title: 'Thread title',
-        content: '*content*'
-      });
-
-      dummyThread.save().then((savedDummyThread) => {
-        expect(savedDummyThread.title).to.equal('Thread title');
-        expect(savedDummyThread.content).to.equal('*content*');
-        expect(savedDummyThread.comments).to.have.length(0);
 
         done();
       });

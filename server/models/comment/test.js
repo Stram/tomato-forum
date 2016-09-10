@@ -29,17 +29,5 @@ describe('Comment model', () => {
         done();
       });
     });
-
-    it('should have default and given values when created', (done) => {
-      const dummyComment = new Comment({
-        content: 'Comment content'
-      });
-
-      dummyComment.save().then((savedDummyComment) => {
-        expect(savedDummyComment.content).to.equal('Comment content');
-
-        done();
-      });
-    });
   });
 });

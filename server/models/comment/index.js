@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import mongoosePaginate from 'mongoose-paginate';
 import deepPopulate from 'mongoose-deep-populate';
 
-import objectTransformation from '../helpers/standard-transformation';
+import serializer from './serializer';
 
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
@@ -28,7 +28,7 @@ const commentSchema = new Schema({
 commentSchema.plugin(mongoosePaginate);
 
 commentSchema.options.toObject = commentSchema.options.toObject ? commentSchema.options.toObject : {};
-commentSchema.options.toObject.transform = objectTransformation;
+commentSchema.options.toObject.transform = serializer;
 
 commentSchema.plugin(deepPopulate(mongoose));
 

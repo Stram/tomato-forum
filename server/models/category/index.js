@@ -3,7 +3,7 @@ import mongoosePaginate from 'mongoose-paginate';
 import deepPopulate from 'mongoose-deep-populate';
 
 import { validateCategoryName } from '../../services/validate';
-import objectTransformation from '../helpers/standard-transformation';
+import serializer from './serializer';
 
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
@@ -35,13 +35,13 @@ const categorySchema = new Schema({
 categorySchema.plugin(mongoosePaginate);
 
 categorySchema.options.toObject = categorySchema.options.toObject || {};
-categorySchema.options.toObject.transform = objectTransformation;
+categorySchema.options.toObject.transform = serializer;
 
 categorySchema.plugin(deepPopulate(mongoose), {
   populate: {
     threads: {
       options: {
-        limit: 10
+        limit: 5
       }
     }
   }

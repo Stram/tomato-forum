@@ -31,19 +31,5 @@ describe('Category model', () => {
         done();
       });
     });
-
-    it('should have default and given values when created', (done) => {
-      const dummyCategory = new Category({
-        name: 'Category name'
-      });
-
-      dummyCategory.save().then((savedDummyCategory) => {
-        expect(savedDummyCategory.name).to.equal('Category name');
-        expect(savedDummyCategory.allowNewThreads).to.equal(true);
-        expect(savedDummyCategory.threads).to.have.length(0);
-
-        done();
-      });
-    });
   });
 });

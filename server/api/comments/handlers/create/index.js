@@ -32,9 +32,7 @@ module.exports = function(req, res, next) {
       thread
     });
 
-    thread.comments.push(newComment);
-
-    Promise.all([newComment.save(), thread.save()]).then(([savedComment]) => {
+    newComment.save().then((savedComment) => {
 
       // TODO: fix deep population
       // savedComment.deepPopulate('user.profilePhoto');

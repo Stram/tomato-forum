@@ -5,7 +5,7 @@ import deepPopulate from 'mongoose-deep-populate';
 import {validateEmail, validateUsername} from '../../services/validate';
 
 import applicationConfig from '../../config/application';
-import objectTransformation from './object-transformation';
+import serializer from './serializer';
 
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
@@ -35,22 +35,27 @@ const userSchema = new Schema({
     }
   },
 
-  facebook: {
-    id: String,
-    token: String,
-    email: String,
-    name: String
-  },
-
-  google: {
-    id: String,
-    token: String,
-    email: String,
-    name: String
-  },
+  // facebook: {
+  //   id: String,
+  //   token: String,
+  //   email: String,
+  //   name: String
+  // },
+  //
+  // google: {
+  //   id: String,
+  //   token: String,
+  //   email: String,
+  //   name: String
+  // },
 
   token: String,
   createdAt: {
+    type: Date,
+    default: Date.now
+  },
+
+  updatedAt: {
     type: Date,
     default: Date.now
   },
@@ -65,15 +70,21 @@ const userSchema = new Schema({
     default: 'Croatia'
   },
 
-  background: {
+  theme: {
     type: Number,
     default: 0
   },
 
-  membership: {
+  userLevel: {
     type: Number
     // default:
   },
+
+  karmaPoints: {
+    type: Number
+  },
+
+  // RELATIONS
 
   profilePhoto: {
     type: ObjectId,
@@ -118,7 +129,7 @@ userSchema.methods.getVerificationLink = function() {
 };
 
 userSchema.options.toObject = userSchema.options.toObject ? userSchema.options.toObject : {};
-userSchema.options.toObject.transform = objectTransformation;
+userSchema.options.toObject.transform = serializer;
 
 userSchema.plugin(deepPopulate(mongoose));
 

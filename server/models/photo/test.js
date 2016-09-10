@@ -30,19 +30,5 @@ describe('Photo model', () => {
         done();
       });
     });
-
-    it('should have default and given values when created', (done) => {
-      const dummyPhoto = new Photo({
-        name: 'Photo name',
-        url: 'photo.url'
-      });
-
-      dummyPhoto.save().then((savedDummyPhoto) => {
-        expect(savedDummyPhoto.name).to.equal('Photo name');
-        expect(savedDummyPhoto.url).to.equal('photo.url');
-
-        done();
-      });
-    });
   });
 });

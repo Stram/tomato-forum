@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
 
-import objectTransformation from '../helpers/standard-transformation';
-
 const Schema = mongoose.Schema;
 const ObjectId = Schema.ObjectId;
+
+import serializer from './serializer';
 
 const photoSchema = new Schema({
   name: String,
@@ -19,6 +19,6 @@ const photoSchema = new Schema({
 });
 
 photoSchema.options.toObject = photoSchema.options.toObject ? photoSchema.options.toObject : {};
-photoSchema.options.toObject.transform = objectTransformation;
+photoSchema.options.toObject.transform = serializer;
 
 module.exports = mongoose.model('Photo', photoSchema);
