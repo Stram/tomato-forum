@@ -1,0 +1,34 @@
+@import '~styles/colors';
+@import '~styles/themes';
+
+.button {
+  @extend %theme-primary-text;
+  font-size: 14px;
+  line-height: 14px;
+
+  display: inline-block;
+
+  padding: 10px 16px;
+
+  cursor: pointer;
+  text-align: center;
+  text-transform: uppercase;
+
+  border: 0;
+  border-radius: 2px;
+  background-color: transparent;
+
+  &.dialog {
+    min-width: 64px;
+    margin: 0 8px;
+    padding: 10px 8px;
+  }
+
+  &.raised {
+    box-shadow: 0 2px 4px 0 $color-shadow;
+  }
+
+  &.is-hidden {
+    display: none;
+  }
+}

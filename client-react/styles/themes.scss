@@ -1,0 +1,86 @@
+@import 'colors';
+
+:global {
+  body,
+  .theme-0 {
+    :local {
+      %default-text {
+        color: $base-black;
+        opacity: 0.87;
+      }
+
+      %default-light-text {
+        color: $base-black;
+        opacity: 0.54;
+      }
+
+      %theme-primary-text {
+        color: $base-blue-500;
+        opacity: 1;
+      }
+
+      %theme-primary-background {
+        background-color: $base-blue-500;
+      }
+
+      %theme-secondary-background {
+        background-color: $base-red-500;
+      }
+
+      %theme-background {
+        background-color: $base-white;
+      }
+
+      %theme-light-text {
+        color: $base-white;
+        opacity: 1;
+      }
+
+      %theme-primary-border {
+        border-color: $base-blue-500;
+      }
+    }
+  }
+
+  .theme-1 {
+    :local {
+      %theme-primary-text {
+        color: $base-blue-grey-500;
+        opacity: 1;
+      }
+
+      %theme-primary-background {
+        background-color: $base-blue-grey-500;
+      }
+
+      %theme-secondary-background {
+        background-color: $base-red-500;
+      }
+
+      %theme-primary-border {
+        border-color: $base-blue-grey-500;
+      }
+    }
+  }
+
+  .theme-2 {
+    :local {
+      %theme-primary-text {
+        color: $base-red-500;
+        opacity: 1;
+      }
+
+      %theme-primary-background {
+        background-color: $base-red-500;
+      }
+
+      %theme-secondary-background {
+        background-color: $base-green-500;
+      }
+
+      %theme-primary-border {
+        border-color: $base-red-500;
+      }
+    }
+  }
+}

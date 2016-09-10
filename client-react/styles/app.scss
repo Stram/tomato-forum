@@ -1,0 +1,37 @@
+@import '~styles/themes';
+@import url('https://fonts.googleapis.com/css?family=Lato:400,700&subset=latin,latin-ext');
+
+:global {
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    height: 100%;
+  }
+
+  a {
+    @extend %theme-primary-text;
+    text-decoration: none;
+  }
+
+  body {
+    font-family: 'Lato', sans-serif;
+
+    display: flex;
+    flex-direction: column;
+
+    height: 100%;
+    margin: 0;
+
+    color: $color-text-grey-900;
+    background-color: $color-bg-grey-50;
+
+    &.is-scrolling-disabled {
+      overflow: hidden;
+    }
+  }
+}

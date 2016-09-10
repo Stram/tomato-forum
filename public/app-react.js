@@ -61,6 +61,8 @@
 	
 	var _AppRoutes2 = _interopRequireDefault(_AppRoutes);
 	
+	__webpack_require__(/*! styles/app.scss */ 245);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	window.onload = function () {
@@ -195,25 +197,40 @@
 	var cachedSetTimeout;
 	var cachedClearTimeout;
 	
+	function defaultSetTimout() {
+	    throw new Error('setTimeout has not been defined');
+	}
+	function defaultClearTimeout () {
+	    throw new Error('clearTimeout has not been defined');
+	}
 	(function () {
 	    try {
-	        cachedSetTimeout = setTimeout;
-	    } catch (e) {
-	        cachedSetTimeout = function () {
-	            throw new Error('setTimeout is not defined');
+	        if (typeof setTimeout === 'function') {
+	            cachedSetTimeout = setTimeout;
+	        } else {
+	            cachedSetTimeout = defaultSetTimout;
 	        }
+	    } catch (e) {
+	        cachedSetTimeout = defaultSetTimout;
 	    }
 	    try {
-	        cachedClearTimeout = clearTimeout;
-	    } catch (e) {
-	        cachedClearTimeout = function () {
-	            throw new Error('clearTimeout is not defined');
+	        if (typeof clearTimeout === 'function') {
+	            cachedClearTimeout = clearTimeout;
+	        } else {
+	            cachedClearTimeout = defaultClearTimeout;
 	        }
+	    } catch (e) {
+	        cachedClearTimeout = defaultClearTimeout;
 	    }
 	} ())
 	function runTimeout(fun) {
 	    if (cachedSetTimeout === setTimeout) {
 	        //normal enviroments in sane situations
+	        return setTimeout(fun, 0);
+	    }
+	    // if setTimeout wasn't available but was latter defined
+	    if ((cachedSetTimeout === defaultSetTimout || !cachedSetTimeout) && setTimeout) {
+	        cachedSetTimeout = setTimeout;
 	        return setTimeout(fun, 0);
 	    }
 	    try {
@@ -234,6 +251,11 @@
 	function runClearTimeout(marker) {
 	    if (cachedClearTimeout === clearTimeout) {
 	        //normal enviroments in sane situations
+	        return clearTimeout(marker);
+	    }
+	    // if clearTimeout wasn't available but was latter defined
+	    if ((cachedClearTimeout === defaultClearTimeout || !cachedClearTimeout) && clearTimeout) {
+	        cachedClearTimeout = clearTimeout;
 	        return clearTimeout(marker);
 	    }
 	    try {
@@ -348,9 +370,9 @@
 
 /***/ },
 /* 4 */
-/*!******************************************!*\
-  !*** ./~/react/~/object-assign/index.js ***!
-  \******************************************/
+/*!**********************************!*\
+  !*** ./~/object-assign/index.js ***!
+  \**********************************/
 /***/ function(module, exports) {
 
 	'use strict';
@@ -24964,7 +24986,7 @@
 	          if (error) {
 	            listener(error);
 	          } else if (redirectLocation) {
-	            history.transitionTo(redirectLocation);
+	            history.replace(redirectLocation);
 	          } else if (nextState) {
 	            listener(null, nextState);
 	          } else {
@@ -26165,7 +26187,7 @@
 	  },
 	
 	  propTypes: {
-	    to: oneOfType([string, object]).isRequired,
+	    to: oneOfType([string, object]),
 	    query: object,
 	    hash: string,
 	    state: object,
@@ -26226,6 +26248,11 @@
 	
 	
 	    if (router) {
+	      // If user does not specify a `to` prop, return an empty anchor tag.
+	      if (to == null) {
+	        return _react2.default.createElement('a', props);
+	      }
+	
 	      var location = createLocationDescriptor(to, { query: query, hash: hash, state: state });
 	      props.href = router.createHref(location);
 	
@@ -26295,13 +26322,17 @@
   \******************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 	
 	exports.__esModule = true;
 	
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 	
 	exports.default = withRouter;
+	
+	var _invariant = __webpack_require__(/*! invariant */ 181);
+	
+	var _invariant2 = _interopRequireDefault(_invariant);
 	
 	var _react = __webpack_require__(/*! react */ 1);
 	
@@ -26319,13 +26350,33 @@
 	  return WrappedComponent.displayName || WrappedComponent.name || 'Component';
 	}
 	
-	function withRouter(WrappedComponent) {
+	function withRouter(WrappedComponent, options) {
+	  var withRef = options && options.withRef;
+	
 	  var WithRouter = _react2.default.createClass({
 	    displayName: 'WithRouter',
 	
 	    contextTypes: { router: _PropTypes.routerShape },
+	    propTypes: { router: _PropTypes.routerShape },
+	
+	    getWrappedInstance: function getWrappedInstance() {
+	      !withRef ? process.env.NODE_ENV !== 'production' ? (0, _invariant2.default)(false, 'To access the wrapped instance, you need to specify ' + '`{ withRef: true }` as the second argument of the withRouter() call.') : (0, _invariant2.default)(false) : void 0;
+	
+	      return this.wrappedInstance;
+	    },
 	    render: function render() {
-	      return _react2.default.createElement(WrappedComponent, _extends({}, this.props, { router: this.context.router }));
+	      var _this = this;
+	
+	      var router = this.props.router || this.context.router;
+	      var props = _extends({}, this.props, { router: router });
+	
+	      if (withRef) {
+	        props.ref = function (c) {
+	          _this.wrappedInstance = c;
+	        };
+	      }
+	
+	      return _react2.default.createElement(WrappedComponent, props);
 	    }
 	  });
 	
@@ -26335,6 +26386,7 @@
 	  return (0, _hoistNonReactStatics2.default)(WithRouter, WrappedComponent);
 	}
 	module.exports = exports['default'];
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./~/process/browser.js */ 3)))
 
 /***/ },
 /* 216 */
@@ -27479,7 +27531,7 @@
   \*****************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 	
 	exports.__esModule = true;
 	
@@ -27493,6 +27545,10 @@
 	
 	var _RouterContext2 = _interopRequireDefault(_RouterContext);
 	
+	var _routerWarning = __webpack_require__(/*! ./routerWarning */ 177);
+	
+	var _routerWarning2 = _interopRequireDefault(_routerWarning);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	exports.default = function () {
@@ -27500,16 +27556,19 @@
 	    middlewares[_key] = arguments[_key];
 	  }
 	
-	  var withContext = middlewares.map(function (m) {
-	    return m.renderRouterContext;
-	  }).filter(function (f) {
-	    return f;
-	  });
-	  var withComponent = middlewares.map(function (m) {
-	    return m.renderRouteComponent;
-	  }).filter(function (f) {
-	    return f;
-	  });
+	  if (process.env.NODE_ENV !== 'production') {
+	    middlewares.forEach(function (middleware, index) {
+	      process.env.NODE_ENV !== 'production' ? (0, _routerWarning2.default)(middleware.renderRouterContext || middleware.renderRouteComponent, 'The middleware specified at index ' + index + ' does not appear to be ' + 'a valid React Router middleware.') : void 0;
+	    });
+	  }
+	
+	  var withContext = middlewares.map(function (middleware) {
+	    return middleware.renderRouterContext;
+	  }).filter(Boolean);
+	  var withComponent = middlewares.map(function (middleware) {
+	    return middleware.renderRouteComponent;
+	  }).filter(Boolean);
+	
 	  var makeCreateElement = function makeCreateElement() {
 	    var baseCreateElement = arguments.length <= 0 || arguments[0] === undefined ? _react.createElement : arguments[0];
 	    return function (Component, props) {
@@ -27529,6 +27588,7 @@
 	};
 	
 	module.exports = exports['default'];
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(/*! ./~/process/browser.js */ 3)))
 
 /***/ },
 /* 232 */
@@ -27813,15 +27873,19 @@
 	
 	var _reactRouter = __webpack_require__(/*! react-router */ 173);
 	
-	var _Layout = __webpack_require__(/*! ./components/Layout */ 237);
+	var _BasicLayout = __webpack_require__(/*! ./components/BasicLayout */ 237);
 	
-	var _Layout2 = _interopRequireDefault(_Layout);
+	var _BasicLayout2 = _interopRequireDefault(_BasicLayout);
 	
-	var _IndexPage = __webpack_require__(/*! ./components/IndexPage */ 238);
+	var _SidebarLayout = __webpack_require__(/*! ./components/SidebarLayout */ 238);
+	
+	var _SidebarLayout2 = _interopRequireDefault(_SidebarLayout);
+	
+	var _IndexPage = __webpack_require__(/*! ./components/IndexPage */ 242);
 	
 	var _IndexPage2 = _interopRequireDefault(_IndexPage);
 	
-	var _NotFoundPage = __webpack_require__(/*! ./components/NotFoundPage */ 239);
+	var _NotFoundPage = __webpack_require__(/*! ./components/NotFoundPage */ 243);
 	
 	var _NotFoundPage2 = _interopRequireDefault(_NotFoundPage);
 	
@@ -27829,18 +27893,153 @@
 	
 	var routes = _react2.default.createElement(
 	  _reactRouter.Route,
-	  { path: '/', component: _Layout2.default },
+	  { path: '/', component: _BasicLayout2.default },
 	  _react2.default.createElement(_reactRouter.IndexRoute, { component: _IndexPage2.default }),
+	  _react2.default.createElement(
+	    _reactRouter.Route,
+	    { component: _SidebarLayout2.default },
+	    _react2.default.createElement(_reactRouter.Route, { path: '/side', component: _NotFoundPage2.default })
+	  ),
 	  _react2.default.createElement(_reactRouter.Route, { path: '*', component: _NotFoundPage2.default })
 	);
 	
 	exports.default = routes;
+	
+	//     '': 'landing',
+	//     login: 'login',
+	//     register: 'register',
+	//     dashboard: 'dashboard',
+	//     forum: 'forum',
+	//     'thread/:threadId': 'thread',
+	//     'verify?*querystring': 'verify',
+	//     'category/:categoryId': 'category',
+	//     '*notFound': 'notFound'
 
 /***/ },
 /* 237 */
-/*!*************************************************!*\
-  !*** ./client-react/components/Layout/index.js ***!
-  \*************************************************/
+/*!******************************************************!*\
+  !*** ./client-react/components/BasicLayout/index.js ***!
+  \******************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _styles = __webpack_require__(/*! ./styles.scss */ 246);
+	
+	var _styles2 = _interopRequireDefault(_styles);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var BasicLayout = function (_React$Component) {
+	  _inherits(BasicLayout, _React$Component);
+	
+	  function BasicLayout() {
+	    _classCallCheck(this, BasicLayout);
+	
+	    return _possibleConstructorReturn(this, (BasicLayout.__proto__ || Object.getPrototypeOf(BasicLayout)).apply(this, arguments));
+	  }
+	
+	  _createClass(BasicLayout, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        { className: _styles2.default.main },
+	        this.props.children
+	      );
+	    }
+	  }]);
+	
+	  return BasicLayout;
+	}(_react2.default.Component);
+	
+	BasicLayout.propTypes = {
+	  children: _react2.default.PropTypes.object.isRequired
+	};
+	exports.default = BasicLayout;
+
+/***/ },
+/* 238 */
+/*!********************************************************!*\
+  !*** ./client-react/components/SidebarLayout/index.js ***!
+  \********************************************************/
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	
+	var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+	
+	var _react = __webpack_require__(/*! react */ 1);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _Sidebar = __webpack_require__(/*! components/Sidebar */ 239);
+	
+	var _Sidebar2 = _interopRequireDefault(_Sidebar);
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+	
+	function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var SidebarLayout = function (_React$Component) {
+	  _inherits(SidebarLayout, _React$Component);
+	
+	  function SidebarLayout() {
+	    _classCallCheck(this, SidebarLayout);
+	
+	    return _possibleConstructorReturn(this, (SidebarLayout.__proto__ || Object.getPrototypeOf(SidebarLayout)).apply(this, arguments));
+	  }
+	
+	  _createClass(SidebarLayout, [{
+	    key: 'render',
+	    value: function render() {
+	      return _react2.default.createElement(
+	        'div',
+	        null,
+	        _react2.default.createElement(_Sidebar2.default, null),
+	        _react2.default.createElement(
+	          'div',
+	          null,
+	          this.props.children
+	        )
+	      );
+	    }
+	  }]);
+	
+	  return SidebarLayout;
+	}(_react2.default.Component);
+	
+	exports.default = SidebarLayout;
+
+/***/ },
+/* 239 */
+/*!**************************************************!*\
+  !*** ./client-react/components/Sidebar/index.js ***!
+  \**************************************************/
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27857,6 +28056,10 @@
 	
 	var _reactRouter = __webpack_require__(/*! react-router */ 173);
 	
+	var _styles = __webpack_require__(/*! ./styles.scss */ 244);
+	
+	var _styles2 = _interopRequireDefault(_styles);
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -27865,67 +28068,82 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var Layout = function (_React$Component) {
-	  _inherits(Layout, _React$Component);
+	var Sidebar = function (_React$Component) {
+	  _inherits(Sidebar, _React$Component);
 	
-	  function Layout() {
-	    _classCallCheck(this, Layout);
+	  function Sidebar() {
+	    _classCallCheck(this, Sidebar);
 	
-	    return _possibleConstructorReturn(this, (Layout.__proto__ || Object.getPrototypeOf(Layout)).apply(this, arguments));
+	    return _possibleConstructorReturn(this, (Sidebar.__proto__ || Object.getPrototypeOf(Sidebar)).apply(this, arguments));
 	  }
 	
-	  _createClass(Layout, [{
+	  _createClass(Sidebar, [{
 	    key: 'render',
 	    value: function render() {
 	      return _react2.default.createElement(
 	        'div',
-	        { className: 'app-container' },
+	        { className: _styles2.default.sidebar },
 	        _react2.default.createElement(
-	          'header',
-	          null,
+	          'section',
+	          { className: _styles2.default.header },
+	          _react2.default.createElement('div', { className: _styles2.default.user })
+	        ),
+	        _react2.default.createElement(
+	          'section',
+	          { className: _styles2.default.mainNavigation },
 	          _react2.default.createElement(
 	            _reactRouter.Link,
-	            { to: '/' },
-	            _react2.default.createElement('img', { className: 'logo', src: '/img/logo-judo-heroes.png' })
+	            { to: '/dashboard', className: _styles2.default.navigationLink },
+	            'Dashboard'
+	          ),
+	          _react2.default.createElement(
+	            _reactRouter.Link,
+	            { to: '/forum', className: _styles2.default.navigationLink },
+	            'Forum'
+	          ),
+	          _react2.default.createElement(
+	            _reactRouter.Link,
+	            { to: '/objave', className: _styles2.default.navigationLink },
+	            'Objave'
+	          ),
+	          _react2.default.createElement(
+	            _reactRouter.Link,
+	            { to: '/profili', className: _styles2.default.navigationLink },
+	            'Profili'
 	          )
 	        ),
 	        _react2.default.createElement(
-	          'div',
-	          { className: 'app-content' },
-	          this.props.children
-	        ),
-	        _react2.default.createElement(
-	          'footer',
-	          null,
+	          'section',
+	          { className: _styles2.default.secondaryNavigation },
 	          _react2.default.createElement(
-	            'p',
-	            null,
-	            'dering and routing with ',
-	            _react2.default.createElement(
-	              'strong',
-	              null,
-	              'React'
-	            ),
-	            ' and ',
-	            _react2.default.createElement(
-	              'strong',
-	              null,
-	              'Express'
-	            ),
-	            '.'
+	            _reactRouter.Link,
+	            { to: '/logout', className: _styles2.default.navigationLink },
+	            'Logout'
+	          ),
+	          _react2.default.createElement(
+	            _reactRouter.Link,
+	            { to: '/settings', className: _styles2.default.navigationLink },
+	            'Settings'
+	          ),
+	          _react2.default.createElement(
+	            _reactRouter.Link,
+	            { to: '/help', className: _styles2.default.navigationLink },
+	            'Help'
 	          )
 	        )
 	      );
 	    }
 	  }]);
 	
-	  return Layout;
+	  return Sidebar;
 	}(_react2.default.Component);
 	
-	exports.default = Layout;
+	exports.default = Sidebar;
 
 /***/ },
-/* 238 */
+/* 240 */,
+/* 241 */,
+/* 242 */
 /*!****************************************************!*\
   !*** ./client-react/components/IndexPage/index.js ***!
   \****************************************************/
@@ -27963,11 +28181,7 @@
 	  _createClass(IndexPage, [{
 	    key: "render",
 	    value: function render() {
-	      return _react2.default.createElement(
-	        "div",
-	        { className: "home" },
-	        _react2.default.createElement("div", { className: "athletes-selector" })
-	      );
+	      return _react2.default.createElement("div", { className: "home" });
 	    }
 	  }]);
 	
@@ -27977,7 +28191,7 @@
 	exports.default = IndexPage;
 
 /***/ },
-/* 239 */
+/* 243 */
 /*!*******************************************************!*\
   !*** ./client-react/components/NotFoundPage/index.js ***!
   \*******************************************************/
@@ -28047,6 +28261,35 @@
 	}(_react2.default.Component);
 	
 	exports.default = NotFoundPage;
+
+/***/ },
+/* 244 */
+/*!*****************************************************!*\
+  !*** ./client-react/components/Sidebar/styles.scss ***!
+  \*****************************************************/
+/***/ function(module, exports) {
+
+	// removed by extract-text-webpack-plugin
+	module.exports = {"main-navigation":"styles__main-navigation__12zCc","mainNavigation":"styles__main-navigation__12zCc","navigation-link":"styles__navigation-link__1syUn","navigationLink":"styles__navigation-link__1syUn","secondary-navigation":"styles__secondary-navigation__2eXlR","secondaryNavigation":"styles__secondary-navigation__2eXlR","is-active":"styles__is-active__ZLkcD","isActive":"styles__is-active__ZLkcD","sidebar":"styles__sidebar__byXdp","is-hidden":"styles__is-hidden__3lLkb","isHidden":"styles__is-hidden__3lLkb","header":"styles__header__2wNaQ","user":"styles__user__5G37Q","username":"styles__username__2LdTj","profile-photo":"styles__profile-photo__2H9jA","profilePhoto":"styles__profile-photo__2H9jA"};
+
+/***/ },
+/* 245 */
+/*!**************************************!*\
+  !*** ./client-react/styles/app.scss ***!
+  \**************************************/
+/***/ function(module, exports) {
+
+	// removed by extract-text-webpack-plugin
+
+/***/ },
+/* 246 */
+/*!*********************************************************!*\
+  !*** ./client-react/components/BasicLayout/styles.scss ***!
+  \*********************************************************/
+/***/ function(module, exports) {
+
+	// removed by extract-text-webpack-plugin
+	module.exports = {"main":"styles__main__3ujxT"};
 
 /***/ }
 /******/ ]);

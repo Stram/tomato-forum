@@ -1,0 +1,65 @@
+// GLOBAL
+$media-query-selectors: (
+retina: 'only screen and (min-resolution: 2dppx)',
+mobile-small: '(max-width: 550px)',
+mobile: '(max-width: 767px)',
+mobile-big: '(min-width: 551px) and (max-width: 767px)',
+tablet: '(min-width: 768px)',
+tablet-only: '(min-width: 768px) and (max-width: 991px)',
+desktop: '(min-width: 992px)',
+desktop-only: '(min-width: 992px) and (max-width: 1199px)',
+large: '(min-width: 1200px)',
+large-only: '(min-width: 1200px) and (max-width: 1449px)',
+xlarge: '(min-width: 1450px)'
+);
+
+$container-width: (
+  mobile-big: 530px,
+  tablet: 730px,
+  desktop: 950px,
+  large: 1170px,
+  xlarge: 1430px
+);
+
+$small-container-width: (
+  mobile-big: 530px,
+  tablet: 730px,
+  desktop: 650px,
+  large: 700px,
+  xlarge: 750px
+);
+
+$overlay-z-index: 100;
+
+// SIDEBAR
+$sidebar-width: 250px;
+$sidebar-z-index: 101;
+
+
+$breakpoints: (
+  small: 767px,
+  medium: 992px,
+  large: 1200px
+);
+
+
+// GLOBAL
+
+$fab-size: 50px;
+
+$z-index-overlay: 1000;
+
+
+
+// SWITCH
+
+$switch-grid-step: 4px;
+
+$switch-size: $switch-grid-step * 10;
+$switch-height: $switch-grid-step * 4;
+$switch-padding: $switch-grid-step;
+$switch-border-radius: $switch-grid-step / 2;
+$switch-label: $switch-height + ($switch-padding * 2);
+
+$switch-animation-timing: cubic-bezier(0.4, 0, 0.2, 1);
+$switch-animation: 0.28s $switch-animation-timing;

@@ -1,0 +1,38 @@
+@import 'color-definitions';
+
+$base-white: #FFFFFF;
+$base-black: #000000;
+
+$base-grey-opaque: rgba(0, 0, 0, 0.38);
+$base-grey-light-opaque: rgba(0, 0, 0, 0.12);
+
+$color-shadow: $base-grey-opaque;
+$color-light-shadow: $base-grey-light-opaque;
+
+
+$color-error: $base-red-500;
+
+// BACKGROUND
+
+$color-bg-white: $base-white;
+$color-bg-grey-50: $base-grey-50;
+$color-bg-grey-100: $base-grey-100;
+$color-bg-grey-300: $base-grey-300;
+$color-bg-grey-600: $base-grey-600;
+$color-bg-black: $base-black;
+
+
+// TEXT
+
+$color-text-grey-600: $base-grey-600;
+$color-text-grey-900: $base-grey-900;
+$color-text-white: $base-white;
+$color-text-error: $base-red-500;
+
+
+// BORDER
+
+$color-border-light-grey: $base-grey-300;
+$color-border-grey-300: $base-grey-300;
+$color-border-grey: $base-grey-800;
+$color-border-error: $base-red-500;
