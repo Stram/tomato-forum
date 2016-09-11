@@ -7,12 +7,14 @@ class TransportLayer {
   fetch(options) {
     const url = `${config.apiEndpoint}${options.urlEndpoint}`;
     const data = options.data || {};
+    const method = options.method || 'GET';
 
     return new Promise((resolve, reject) => {
       uiStore.pendingRequestCount++;
       $.ajax({
         url,
-        data
+        data,
+        method
       }).done((response) => {
         resolve(response);
         uiStore.pendingRequestCount--;

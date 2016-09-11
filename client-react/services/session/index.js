@@ -1,7 +1,7 @@
 import {observable, computed} from 'mobx';
 
 import transportLayer from 'services/transport-layer';
-import User from 'models/user';
+import User from 'models/User';
 
 class Session {
   @observable currentUser = null;
@@ -11,12 +11,22 @@ class Session {
   }
 
   constructor() {
-    this.getCurrentUser();
+    this.fetchCurrentUser();
   }
 
-  getCurrentUser() {
+  fetchCurrentUser() {
     transportLayer.fetch({
       urlEndpoint: '/users/current'
+    }).then((user) => {
+      this.currentUser = new User(user);
+    });
+  }
+
+  login(credentials) {
+    transportLayer.fetch({
+      urlEndpoint: '/users/login',
+      method: 'POST',
+      data: credentials
     }).then((user) => {
       this.currentUser = new User(user);
     });

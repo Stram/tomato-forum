@@ -1,20 +1,16 @@
 import transportLayer from 'services/transport-layer';
 
-export default class User {
-  constructor(options) {
+export default class Model {
+  constructor(options, urlEndpoint) {
+    this.urlEndpoint = urlEndpoint;
     this.updateFromJson(options);
   }
 
-  updateFromJson(json) {
-    this.id = json.id;
-    this.username = json.username;
-    this.email = json.email;
-  }
-
   fetch() {
+    const urlEndpoint = this.urlEndpoint;
     const id = this.id;
     return transportLayer.fetch({
-      urlEndpoint: `/users/${id}`
+      urlEndpoint: `${urlEndpoint}/${id}`
     }).then((user) => {
       this.updateFromJson(user);
     });

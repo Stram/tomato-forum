@@ -4,6 +4,8 @@ node_modules
 uploads
 public/app.js
 public/app.js.map
+public/app-react.js
+public/app-react.js.map
 public/styles.css
 public/styles.css.map
 dist
