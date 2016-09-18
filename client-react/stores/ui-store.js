@@ -9,5 +9,4 @@ class UiState {
     }
 }
 
-const singleton = new UiState();
-export default singleton;
+export default new UiState();
