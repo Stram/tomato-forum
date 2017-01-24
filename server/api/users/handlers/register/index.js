@@ -1,7 +1,7 @@
 import passport from 'passport';
 
-import mailer from '~/services/mailer';
-import errors from '~/services/errors';
+import mailer from 'services/mailer';
+import errors from 'services/errors';
 
 module.exports = function(req, res, next) {
   passport.authenticate('local-register', (error, user, info) => {

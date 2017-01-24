@@ -1,8 +1,8 @@
 import request from 'supertest';
 import { describe, it, before, after } from 'mocha';
 
-import app from '~/index';
-import User from '~/models/user';
+import app from 'index';
+import User from 'models/user';
 
 describe('API Users - Register', function() {
   const dummyUserEmail = 'example@example.com';

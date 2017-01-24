@@ -1,6 +1,6 @@
 import passport from 'passport';
 
-import errors from '~/services/errors';
+import errors from 'services/errors';
 
 module.exports = function(req, res, next) {
   passport.authenticate('local-login', (error, user, info) => {

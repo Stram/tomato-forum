@@ -2,8 +2,8 @@ import request from 'supertest';
 import { describe, it, before, after } from 'mocha';
 import { expect } from 'chai';
 
-import app from '~/index';
-import testHelpers from '~/test/helpers';
+import app from 'index';
+import testHelpers from 'test/helpers';
 
 describe('API Users - Current user', function() {
   let sessionRequest;

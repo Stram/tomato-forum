@@ -1,7 +1,7 @@
 import express from 'express';
 
-import permissions from '~/services/permissions';
-import paginationMiddleware from '~/middlewares/pagination';
+import permissions from 'services/permissions';
+import paginationMiddleware from 'middlewares/pagination';
 
 import create from './handlers/create';
 import getAll from './handlers/get-all';

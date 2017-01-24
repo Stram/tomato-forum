@@ -2,11 +2,11 @@ import path from 'path';
 import fs from 'fs';
 import randToken from 'rand-token';
 
-import errors from '~/services/errors';
+import errors from 'services/errors';
 
-import Photo from '~/models/photo';
+import Photo from 'models/photo';
 
-import applicationConfig from '~/config/application';
+import applicationConfig from 'config/application';
 
 module.exports = function(req, res, next) {
   if (!req.files) {

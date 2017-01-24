@@ -1,5 +1,5 @@
-import Category from '~/models/category';
-import paginateModel from '~/util/pagination/paginate-model';
+import Category from 'models/category';
+import paginateModel from 'util/pagination/paginate-model';
 
 module.exports = function(req, res) {
   const options = {

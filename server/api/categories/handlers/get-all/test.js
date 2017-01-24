@@ -2,9 +2,9 @@ import request from 'supertest';
 import { describe, it, before, beforeEach, after, afterEach } from 'mocha';
 import { expect } from 'chai';
 
-import app from '~/index';
-import Category from '~/models/category';
-import testHelpers from '~/test/helpers';
+import app from 'index';
+import Category from 'models/category';
+import testHelpers from 'test/helpers';
 
 describe('API Categories - Get all', function() {
 

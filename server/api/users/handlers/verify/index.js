@@ -1,7 +1,7 @@
-import errors from '~/services/errors';
-import { validateObjectId } from '~/services/validate';
+import errors from 'services/errors';
+import { validateObjectId } from 'services/validate';
 
-import User from '~/models/user';
+import User from 'models/user';
 
 module.exports = function(req, res, next) {
   const userId = req.body.userId;

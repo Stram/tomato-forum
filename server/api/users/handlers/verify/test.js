@@ -2,8 +2,8 @@ import request from 'supertest';
 import mongoose from 'mongoose';
 import { describe, it, beforeEach, afterEach } from 'mocha';
 
-import app from '~/index';
-import User from '~/models/user';
+import app from 'index';
+import User from 'models/user';
 
 const Schema = mongoose.Schema;
 const objectId = Schema.ObjectId;

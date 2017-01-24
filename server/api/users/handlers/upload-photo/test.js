@@ -2,8 +2,8 @@ import request from 'supertest';
 import { describe, it, beforeEach, afterEach } from 'mocha';
 import { expect } from 'chai';
 
-import app from '~/index';
-import testHelpers from '~/test/helpers';
+import app from 'index';
+import testHelpers from 'test/helpers';
 
 describe('API Users - Photo upload', function() {
   let sessionRequest;

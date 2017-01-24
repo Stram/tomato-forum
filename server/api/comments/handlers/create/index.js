@@ -1,9 +1,9 @@
-import marky from 'marky-markdown';
+// import marky from 'marky-markdown';
 
-import Comment from '~/models/comment';
-import Thread from '~/models/thread';
-import errors from '~/services/errors';
-import { validateObjectId } from '~/services/validate';
+import Comment from 'models/comment';
+import Thread from 'models/thread';
+import errors from 'services/errors';
+import { validateObjectId } from 'services/validate';
 
 module.exports = function(req, res, next) {
   const threadId = req.body.threadId;
@@ -24,7 +24,8 @@ module.exports = function(req, res, next) {
       return;
     }
 
-    const content = marky(req.body.content).html();
+    // const content = marky(req.body.content).html();
+    const content = req.body.content;
 
     const newComment = new Comment({
       content,

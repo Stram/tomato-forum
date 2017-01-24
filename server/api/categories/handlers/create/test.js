@@ -1,9 +1,9 @@
 import request from 'supertest';
 import { describe, it, before, after, afterEach } from 'mocha';
 
-import app from '~/index';
-import testHelpers from '~/test/helpers';
-import Category from '~/models/category';
+import app from 'index';
+import testHelpers from 'test/helpers';
+import Category from 'models/category';
 
 describe('API Categories - Create', function() {
   let sessionRequest;

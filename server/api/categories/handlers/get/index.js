@@ -1,6 +1,6 @@
-import Category from '~/models/category';
-import errors from '~/services/errors';
-import { validateObjectId } from '~/services/validate';
+import Category from 'models/category';
+import errors from 'services/errors';
+import { validateObjectId } from 'services/validate';
 
 module.exports = function(req, res, next) {
   const categoryId = req.params.categoryId;

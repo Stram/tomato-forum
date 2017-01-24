@@ -2,9 +2,9 @@ import request from 'supertest';
 import mongoose from 'mongoose';
 import { describe, it, before, beforeEach, after, afterEach } from 'mocha';
 
-import app from '~/index';
-import Comment from '~/models/comment';
-import testHelpers from '~/test/helpers';
+import app from 'index';
+import Comment from 'models/comment';
+import testHelpers from 'test/helpers';
 
 const Schema = mongoose.Schema;
 const objectId = Schema.ObjectId;

@@ -1,6 +1,6 @@
-import Thread from '~/models/thread';
-import errors from '~/services/errors';
-import { validateObjectId } from '~/services/validate';
+import Thread from 'models/thread';
+import errors from 'services/errors';
+import { validateObjectId } from 'services/validate';
 
 module.exports = function(req, res, next) {
   const threadId = req.params.threadId;
