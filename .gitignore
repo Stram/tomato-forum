@@ -11,3 +11,5 @@ public/styles.css.map
 dist
 coverage
 build.js
+
+npm-debug.log

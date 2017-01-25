@@ -1,18 +1,18 @@
-import mongoose from 'mongoose';
-import mongoosePaginate from 'mongoose-paginate';
+import * as mongoose from 'mongoose';
+import * as mongoosePaginate from 'mongoose-paginate';
 import deepPopulate from 'mongoose-deep-populate';
 
-import serializer from './serializer';
-
-const Schema = mongoose.Schema;
-const ObjectId = Schema.ObjectId;
+const {Schema} = mongoose;
+const {ObjectId} = Schema.Types;
 
 const threadSchema = new Schema({
   title: {
     type: String,
     required: true
   },
+
   content: String,
+
   createdAt: {
     type: Date,
     default: Date.now
@@ -27,14 +27,16 @@ const threadSchema = new Schema({
     type: ObjectId,
     ref: 'Category'
   }
+}, {
+  toObject: {
+    transform(document: any) {
+      const {id, title, content, createdAt, category} = document;
+      return {id, title, content, createdAt, category};
+    }
+  }
 });
 
 threadSchema.plugin(mongoosePaginate);
-
-threadSchema.options.toObject = threadSchema.options.toObject ? threadSchema.options.toObject : {};
-threadSchema.options.toObject.transform = serializer;
-
 threadSchema.plugin(deepPopulate(mongoose));
 
-
-module.exports = mongoose.model('Thread', threadSchema);
+export default mongoose.model('Thread', threadSchema);

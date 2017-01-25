@@ -3,7 +3,7 @@ import User from '../models/user';
 
 const LocalStrategy = passportLocal.Strategy;
 
-module.exports = function(passport) {
+export default function(passport) {
 
   passport.serializeUser(function(user, done) {
     done(null, user.id);
@@ -99,4 +99,4 @@ module.exports = function(passport) {
       });
     });
   }));
-};
+}

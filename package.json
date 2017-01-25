@@ -1,7 +1,7 @@
 {
   "name": "tomato",
   "version": "0.0.1",
-  "description": "Example of a forum made using express and backbone",
+  "description": "Example of a forum made using express with typescript, and react",
   "main": "server/index.js",
   "repository": "git@github.com:Stram/tomato-forum.git",
   "scripts": {
@@ -12,7 +12,8 @@
     "react": "webpack --progress --colors --watch -d --config webpack-react.config.js",
     "docs": "apidoc -i server/",
     "test": "NODE_ENV=test istanbul cover node_modules/.bin/_mocha -- --require babel-register -R spec 'server/**/test.js'",
-    "server:dev": "node_modules/.bin/webpack --config config/webpack.config.server.js --colors --progress -d"
+    "server:test": "NODE_ENV=test node_modules/.bin/_mocha --compilers ts:ts-node/register",
+    "server:dev": "NODE_ENV=development NODE_PATH=server ts-node --project server server/index.ts"
   },
   "author": "Stjepan Petrusa",
   "license": "ISC",
@@ -55,6 +56,21 @@
     "webpack": "^2.2.0"
   },
   "devDependencies": {
+    "@types/bcrypt-nodejs": "0.0.30",
+    "@types/body-parser": "0.0.33",
+    "@types/connect-mongo": "0.0.32",
+    "@types/cookie-parser": "^1.3.30",
+    "@types/express": "^4.0.35",
+    "@types/express-session": "0.0.32",
+    "@types/mocha": "^2.2.38",
+    "@types/mongoose": "^4.7.3",
+    "@types/mongoose-deep-populate": "^2.0.29",
+    "@types/mongoose-paginate": "^5.0.4",
+    "@types/morgan": "^1.7.32",
+    "@types/node": "^7.0.4",
+    "@types/passport": "^0.3.2",
+    "@types/passport-local": "^1.0.29",
+    "@types/validator": "^5.7.35",
     "awesome-typescript-loader": "^3.0.0-beta.18",
     "babel-eslint": "^6.1.0",
     "chai": "^3.5.0",

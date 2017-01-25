@@ -1,0 +1,31 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "declaration": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "removeComments": true,
+    "sourceMap": true,
+    "inlineSources": true,
+    "allowJs": true,
+    "lib": ["es6"],
+    "baseUrl": ".",
+    "paths": {
+      "*": [
+        "*"
+      ]
+    }
+  },
+  "exclude": [
+    "node_modules",
+    "dist"
+  ],
+  "types": [
+    "node"
+  ],
+  "compileOnSave": false,
+  "buildOnSave": false,
+  "typeroots": [
+    "../node_modules/@types"
+  ]
+}

@@ -1,5 +1,5 @@
-import { describe, it, afterEach } from 'mocha';
-import { expect } from 'chai';
+import {describe, it, afterEach} from 'mocha';
+import {expect} from 'chai';
 
 import Thread from './index';
 
