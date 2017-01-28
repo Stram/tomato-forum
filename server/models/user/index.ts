@@ -1,16 +1,37 @@
+// TODO: Add pre save to update updated at
+
 import * as mongoose from 'mongoose';
 // import mongooseDeepPopulate from 'mongoose-deep-populate';
 import {hashSync, compareSync, genSaltSync} from 'bcrypt-nodejs';
 // import randToken from 'rand-token';
 
 import {validateEmail, validateUsername} from 'services/validator';
+import IModel from 'models/model.interface';
 
 // import applicationConfig from '../../config/application';
 
-const {Schema} = mongoose;
-const {ObjectId} = Schema.Types;
+const {ObjectId} = mongoose.Schema.Types;
 
-const userSchema = new Schema({
+interface ICreateUser {
+  email: string;
+  password: string;
+}
+
+interface IUser extends mongoose.Document {
+  id: string;
+  username: string;
+  local: {
+    email: string,
+    password: string
+  };
+
+  token: string;
+  createdAt: Date;
+  updatedAt: Date;
+  lastActivity: Date;
+}
+
+const userSchema: mongoose.Schema = new mongoose.Schema({
   username: {
     type: String,
     validate: {
@@ -65,60 +86,23 @@ const userSchema = new Schema({
     default: Date.now
   },
 
-  location: {
-    type: String,
-    default: 'Croatia'
-  },
-
-  theme: {
-    type: Number,
-    default: 0
-  },
-
-  userLevel: {
-    type: Number
-    // default:
-  },
-
-  karmaPoints: {
-    type: Number
-  },
-
   // RELATIONS
 
-  profilePhoto: {
-    type: ObjectId,
-    ref: 'Photo'
-  },
-
-  photos: [{
-    type: ObjectId,
-    ref: 'Photo'
-  }],
-
-  threads: [{
-    type: ObjectId,
-    ref: 'Thread'
-  }]
-}, {
-  toObject: {
-    transform(document: any) {
-      const {id, username, createdAt, updatedAt, userLevel, theme} = document;
-      return {id, username, createdAt, updatedAt, userLevel, theme,
-        email: document.local.email,
-        karmaPoints: document.karma
-      };
-    }
-  }
+  // profilePhoto: {
+  //   type: ObjectId,
+  //   ref: 'Photo'
+  // },
+  //
+  // photos: [{
+  //   type: ObjectId,
+  //   ref: 'Photo'
+  // }],
+  //
+  // threads: [{
+  //   type: ObjectId,
+  //   ref: 'Thread'
+  // }]
 });
-
-userSchema.methods.generateHash = function(password: string) {
-  return hashSync(password, genSaltSync(8));
-};
-
-userSchema.methods.validPassword = function(password: string) {
-  return compareSync(password, this.local.password);
-};
 
 // userSchema.methods.getVerificationLink = function() {
 //   const self = this;
@@ -139,4 +123,68 @@ userSchema.methods.validPassword = function(password: string) {
 
 // userSchema.plugin(mongooseDeepPopulate(mongoose));
 
-export default mongoose.model('User', userSchema);
+var _model = mongoose.model <IUser> ('User', userSchema);
+
+class User implements IModel {
+  private _document: IUser;
+
+  constructor(document: IUser) {
+    this._document = document;
+  }
+
+  static generateHash(password: string) {
+    return hashSync(password, genSaltSync(8));
+  }
+
+  validatePassword(password: string) {
+    return compareSync(password, this._document.local.password);
+  }
+
+  serialize() {
+    const document = this._document;
+    const {id, username, createdAt, updatedAt} = document;
+    return {id, username, createdAt, updatedAt,
+      email: document.local.email
+    };
+  }
+
+  static findById(query: {}) {
+    return new Promise <User> ((resolve, reject) => {
+      _model.findById(query).exec().then((document: IUser) => {
+        resolve(new User(document));
+      });
+    });
+  }
+
+  static findOne(query: {}) {
+    return new Promise <User> ((resolve: Function, reject: Function) => {
+      _model.findOne(query).exec().then((document: IUser) => {
+        resolve(new User(document));
+      }, (error) => {
+        reject(error);
+      });
+    });
+  }
+
+  static query(query: {} | string) {
+    return new Promise <Array<User>> ((resolve, reject) => {
+      _model.find(query).exec().then((documents: Array<IUser>) => {
+        resolve(documents.map((document: IUser) => new User(document)));
+      });
+    });
+  }
+
+  static create(userOptions: ICreateUser) {
+    userOptions.password = this.generateHash(userOptions.password);
+    const newDocument = new _model(userOptions);
+    return newDocument.save().then((user: IUser) => {
+      return new User(user);
+    });
+  }
+
+  get id() {
+    return this._document.id;
+  }
+}
+
+export default User

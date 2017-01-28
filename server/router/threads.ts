@@ -4,7 +4,7 @@ import ThreadController from 'controllers/thread';
 
 const router = Router();
 
-router.get('/threads/threads', [
+router.get('/threads', [
   UtilController.authenticated,
   ThreadController.index
 ]);
@@ -14,7 +14,7 @@ router.get('/threads/:threadId', [
   ThreadController.show
 ]);
 
-router.post('/threads/threads', [
+router.post('/threads', [
   UtilController.authenticated,
   ThreadController.create
 ]);

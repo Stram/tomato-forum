@@ -6,7 +6,7 @@ import * as bodyParser from 'body-parser';
 import * as morgan from 'morgan';
 import * as connectMongo from 'connect-mongo';
 import * as session from 'express-session';
-import * as passport from 'passport';
+
 // import * as fileUpload from 'express-fileupload';
 import * as fs from 'fs';
 
@@ -42,12 +42,9 @@ app.use(session({
   store: new MongoStore({mongooseConnection: mongoose.connection})
 }));
 
-app.use(passport.initialize());
-app.use(passport.session());
-
 // app.use(fileUpload());
 
-passportConfig(passport);
+app.use(passportConfig());
 
 // app.use('/api', api);
 

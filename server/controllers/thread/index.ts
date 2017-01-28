@@ -8,7 +8,7 @@ import ResponseStatus from 'enums/response-status';
 
 export default class ThreadController extends BaseController {
 
-  static async index(req: Request, res: Response) {
+  static async index(req, res) {
     const paginationOptions = this.paginationOptions(req);
 
     // add filters
@@ -21,7 +21,7 @@ export default class ThreadController extends BaseController {
     res.send(response);
   }
 
-  static async show(req: Request, res: Response) {
+  static async show(req, res) {
     const threadId = req.params.threadId;
 
     // validate thread id
@@ -37,7 +37,7 @@ export default class ThreadController extends BaseController {
     res.json(thread.toObject());
   }
 
-  static async create(req: Request, res: Response, next: Function) {
+  static async create(req, res, next) {
     const {categoryId, content, title} = req.body;
 
     // validateCategoryId
@@ -56,6 +56,8 @@ export default class ThreadController extends BaseController {
       content,
       owner: req.user.id
     });
+
+    // Check if newThread has id
 
     category.threads.push(newThread);
     await Promise.all([newThread.save(), category.save()]);
