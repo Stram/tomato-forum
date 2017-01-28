@@ -1,56 +1,16 @@
 // TODO: Add pre save to update updated at
 
 import * as mongoose from 'mongoose';
-import * as mongoosePaginate from 'mongoose-paginate';
-import deepPopulate from 'mongoose-deep-populate';
 
 import IModel from 'models/model.interface';
-
-const {ObjectId} = mongoose.Schema.Types;
-
-interface ICreateThread {
-  title: string;
-}
-
-interface IThread extends mongoose.Document {
-  id: string;
-  title: string;
-  content: string;
-  createdAt: Date;
-}
-
-
-const threadSchema = new mongoose.Schema({
-  title: {
-    type: String,
-    required: true
-  },
-
-  content: String,
-
-  createdAt: {
-    type: Date,
-    default: Date.now
-  },
-
-  // RELATIONS
-  // owner: {
-  //   type: ObjectId,
-  //   ref: 'User'
-  // },
-  // category: {
-  //   type: ObjectId,
-  //   ref: 'Category'
-  // }
-});
-
-threadSchema.plugin(mongoosePaginate);
-threadSchema.plugin(deepPopulate(mongoose));
+import {ICreateThread, IThread} from 'models/thread/interfaces';
+import threadSchema from 'models/thread/schema';
 
 const _model = mongoose.model <IThread> ('Thread', threadSchema);
 
 class Thread implements IModel {
   private _document: IThread;
+  private static _model = _model;
 
   constructor(document: IThread) {
     this._document = document;
@@ -64,7 +24,7 @@ class Thread implements IModel {
 
   static findOne(query: Object) {
     return new Promise <Thread> ((resolve: Function, reject: Function) => {
-      _model.findOne(query).exec().then((document: IThread) => {
+      this._model.findOne(query).exec().then((document: IThread) => {
         resolve(new this(document));
       }, (error: any) => {
         reject(error);
@@ -74,7 +34,7 @@ class Thread implements IModel {
 
   static query(query: any) {
     return new Promise <Array<Thread>> ((resolve, reject) => {
-      _model.find(query).exec().then((documents: Array<IThread>) => {
+      this._model.find(query).exec().then((documents: Array<IThread>) => {
         resolve(documents.map((document: IThread) => new Thread(document)));
       });
     });
@@ -82,7 +42,7 @@ class Thread implements IModel {
 
   static findById(id: string) {
     return new Promise <Thread> ((resolve, reject) => {
-      _model.findById(id).exec().then((document: IThread) => {
+      this._model.findById(id).exec().then((document: IThread) => {
         resolve(new Thread(document));
       });
     });
@@ -100,4 +60,4 @@ class Thread implements IModel {
   }
 }
 
-// export default mongoose.model('Thread', threadSchema);
+export default Thread;
