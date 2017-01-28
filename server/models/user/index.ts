@@ -7,29 +7,11 @@ import {hashSync, compareSync, genSaltSync} from 'bcrypt-nodejs';
 
 import {validateEmail, validateUsername} from 'services/validator';
 import IModel from 'models/model.interface';
+import {ICreateUser, IUser} from 'models/user/interfaces';
 
 // import applicationConfig from '../../config/application';
 
 const {ObjectId} = mongoose.Schema.Types;
-
-interface ICreateUser {
-  email: string;
-  password: string;
-}
-
-interface IUser extends mongoose.Document {
-  id: string;
-  username: string;
-  local: {
-    email: string,
-    password: string
-  };
-
-  token: string;
-  createdAt: Date;
-  updatedAt: Date;
-  lastActivity: Date;
-}
 
 const userSchema: mongoose.Schema = new mongoose.Schema({
   username: {
