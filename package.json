@@ -12,8 +12,9 @@
     "react": "webpack --progress --colors --watch -d --config webpack-react.config.js",
     "docs": "apidoc -i server/",
     "test": "NODE_ENV=test istanbul cover node_modules/.bin/_mocha -- --require babel-register -R spec 'server/**/test.js'",
-    "server:test": "NODE_ENV=test NODE_PATH=server node_modules/.bin/_mocha --opts server/tests/mocha.opts",
-    "server:dev": "NODE_ENV=development NODE_PATH=server ts-node --project server server/index.ts"
+    "server:coverage": "nyc npm run server:test",
+    "server:test": "NODE_ENV=test NODE_PATH=server TS_NODE_PROJECT=server node_modules/.bin/_mocha --opts server/tests/mocha.opts",
+    "server:dev": "NODE_ENV=development NODE_PATH=server TS_NODE_PROJECT=server ts-node server/index.ts"
   },
   "author": "Stjepan Petrusa",
   "license": "ISC",

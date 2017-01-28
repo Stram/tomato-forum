@@ -1,0 +1,16 @@
+{
+  "extensions": [
+    ".ts"
+  ],
+  "require": [
+    "ts-node/register"
+  ],
+  "sourceMap": true,
+  "instrument": true,
+  "cache": false,
+  "reporter": [
+    "lcov",
+    "text",
+    "text-summary"
+  ]
+}

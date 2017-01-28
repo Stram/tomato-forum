@@ -1,9 +1,7 @@
 // TODO: Add pre save to update updated at
 
 import * as mongoose from 'mongoose';
-// import mongooseDeepPopulate from 'mongoose-deep-populate';
 import {hashSync, compareSync, genSaltSync} from 'bcrypt-nodejs';
-// import randToken from 'rand-token';
 
 import userSchema from 'models/user/schema';
 import IModel from 'models/model.interface';

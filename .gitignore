@@ -1,5 +1,7 @@
 node_modules
 .DS_Store
+npm-debug.log
+.nyc_output
 
 uploads
 public/app.js
@@ -11,5 +13,3 @@ public/styles.css.map
 dist
 coverage
 build.js
-
-npm-debug.log
