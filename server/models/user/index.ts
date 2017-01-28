@@ -7,10 +7,9 @@ import userSchema from 'models/user/schema';
 import IModel from 'models/model.interface';
 import {ICreateUser, IUser} from 'models/user/interfaces';
 
-const _model = mongoose.model <IUser> ('User', userSchema);
-
 class User implements IModel {
   private _document: IUser;
+  private static _model = mongoose.model <IUser> ('User', userSchema);
 
   constructor(document: IUser) {
     this._document = document;
@@ -34,7 +33,7 @@ class User implements IModel {
 
   static findById(query: {}) {
     return new Promise <User> ((resolve, reject) => {
-      _model.findById(query).exec().then((document: IUser) => {
+      this._model.findById(query).exec().then((document: IUser) => {
         resolve(new User(document));
       });
     });
@@ -42,7 +41,7 @@ class User implements IModel {
 
   static findOne(query: {}) {
     return new Promise <User> ((resolve: Function, reject: Function) => {
-      _model.findOne(query).exec().then((document: IUser) => {
+      this._model.findOne(query).exec().then((document: IUser) => {
         resolve(new User(document));
       }, (error: any) => {
         reject(error);
@@ -52,7 +51,7 @@ class User implements IModel {
 
   static query(query: {} | string) {
     return new Promise <Array<User>> ((resolve, reject) => {
-      _model.find(query).exec().then((documents: Array<IUser>) => {
+      this._model.find(query).exec().then((documents: Array<IUser>) => {
         resolve(documents.map((document: IUser) => new User(document)));
       });
     });
@@ -60,7 +59,7 @@ class User implements IModel {
 
   static create(userOptions: ICreateUser) {
     userOptions.password = this.generateHash(userOptions.password);
-    const newDocument = new _model(userOptions);
+    const newDocument = new this._model(userOptions);
     return newDocument.save().then((user: IUser) => {
       return new User(user);
     });

@@ -6,11 +6,9 @@ import IModel from 'models/model.interface';
 import {ICreateThread, IThread} from 'models/thread/interfaces';
 import threadSchema from 'models/thread/schema';
 
-const _model = mongoose.model <IThread> ('Thread', threadSchema);
-
 class Thread implements IModel {
   private _document: IThread;
-  private static _model = _model;
+  private static _model = mongoose.model <IThread> ('Thread', threadSchema);;
 
   constructor(document: IThread) {
     this._document = document;
@@ -49,7 +47,7 @@ class Thread implements IModel {
   }
 
   static create(userOptions: ICreateThread) {
-    const newDocument = new _model(userOptions);
+    const newDocument = new this._model(userOptions);
     return newDocument.save().then((user: IThread) => {
       return new Thread(user);
     });
