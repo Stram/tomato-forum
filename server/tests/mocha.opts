@@ -1,0 +1,4 @@
+--compilers server/tests/register
+--full-trace
+--check-leaks
+server/tests/**/*.ts
