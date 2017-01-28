@@ -1,6 +1,5 @@
 import * as mongoose from 'mongoose';
 
-import serializer from './serializer';
 import IModel from 'models/model.interface';
 import commentSchema from 'models/comment/schema';
 import {ICreateComment, IComment} from 'models/comment/interfaces';
@@ -19,3 +18,5 @@ class Comment implements IModel {
     return {id, content, createdAt};
   }
 }
+
+export default Comment;
