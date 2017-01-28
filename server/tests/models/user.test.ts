@@ -1,4 +1,5 @@
 // import * as mocha from 'mocha';
+import 'mocha';
 import {expect} from 'chai';
 
 import User from 'models/user';

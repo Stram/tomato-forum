@@ -13,6 +13,8 @@ import * as fs from 'fs';
 import applicationConfig from './config/application';
 import passportConfig from './config/passport';
 
+import router from 'router';
+
 // import handleError from './services/handle-error';
 
 // import api from './api';
@@ -73,6 +75,8 @@ app.use(passportConfig());
 // });
 
 // app.use(handleError);
+
+app.use(router);
 
 app.listen(applicationConfig.port, function() {
   console.log(`Example app listening on port ${applicationConfig.port}!`);

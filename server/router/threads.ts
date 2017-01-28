@@ -2,19 +2,19 @@ import {Router} from 'express';
 import UtilController from 'controllers/util';
 import ThreadController from 'controllers/thread';
 
-const router = Router();
+const router: Router = Router();
 
-router.get('/threads', [
+router.get('/', [
   UtilController.authenticated,
   ThreadController.index
 ]);
 
-router.get('/threads/:threadId', [
+router.get('//:threadId', [
   UtilController.authenticated,
   ThreadController.show
 ]);
 
-router.post('/threads', [
+router.post('/', [
   UtilController.authenticated,
   ThreadController.create
 ]);
