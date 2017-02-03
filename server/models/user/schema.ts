@@ -1,67 +1,51 @@
-import * as mongoose from 'mongoose';
-// import mongooseDeepPopulate from 'mongoose-deep-populate';
 // import randToken from 'rand-token';
 
-import {validateEmail, validateUsername} from 'services/validator';
+import {isValidEmail, isValidUsername} from 'services/validator';
 
 // import applicationConfig from '../../config/application';
 
-const {ObjectId} = mongoose.Schema.Types;
-
-export default new mongoose.Schema({
+export default {
   username: {
-    type: String,
+    type: 'varchar(20)',
     validate: {
-      validator: validateUsername,
+      validator: isValidUsername,
       message: 'Username is not valid'
     }
   },
 
-  local: {
-    email: {
-      type: String,
-      validate: {
-        validator: validateEmail,
-        message: 'Email is not valid'
-      },
-      required: [true, 'User email required'],
-      unique: [true, 'Email is already in use']
+  email: {
+    type: 'varchar(255)',
+    validate: {
+      validator: isValidEmail,
+      message: 'Email is not valid'
     },
-    password: {
-      type: String,
-      required: [true, 'User password required']
-    }
+    required: 'User email required',
+    unique: 'Email is already in use'
   },
 
-  // facebook: {
-  //   id: String,
-  //   token: String,
-  //   email: String,
-  //   name: String
-  // },
-  //
-  // google: {
-  //   id: String,
-  //   token: String,
-  //   email: String,
-  //   name: String
-  // },
+  password: {
+    type: 'varchar(255)',
+    required: 'User password required'
+  },
 
-  token: String,
+  token: {
+    type: 'varchar(20)'
+  },
+
   createdAt: {
-    type: Date,
-    default: Date.now
+    type: 'timestamp',
+    default: 'TODAY'
   },
 
   updatedAt: {
-    type: Date,
-    default: Date.now
+    type: 'timestamp',
+    default: 'TODAY'
   },
 
   lastActivity: {
-    type: Date,
-    default: Date.now
-  },
+    type: 'timestamp',
+    default: 'TODAY'
+  }
 
   // RELATIONS
 
@@ -79,7 +63,7 @@ export default new mongoose.Schema({
   //   type: ObjectId,
   //   ref: 'Thread'
   // }]
-});
+};
 
 // userSchema.methods.getVerificationLink = function() {
 //   const self = this;

@@ -1,20 +1,18 @@
-import * as mongoose from 'mongoose';
-import * as mongoosePaginate from 'mongoose-paginate';
-import deepPopulate from 'mongoose-deep-populate';
+import {Types} from 'services/orm/model';
 
-const {ObjectId} = mongoose.Schema.Types;
-
-const threadSchema = new mongoose.Schema({
+export default {
   title: {
-    type: String,
+    type: Types.string(30),
     required: true
   },
 
-  content: String,
+  content: {
+    type: Types.text()
+  },
 
   createdAt: {
-    type: Date,
-    default: Date.now
+    type: Types.timestamp(),
+    default: 'TODAY'
   },
 
   // RELATIONS
@@ -26,9 +24,4 @@ const threadSchema = new mongoose.Schema({
   //   type: ObjectId,
   //   ref: 'Category'
   // }
-});
-
-threadSchema.plugin(mongoosePaginate);
-threadSchema.plugin(deepPopulate(mongoose));
-
-export default threadSchema;
+};

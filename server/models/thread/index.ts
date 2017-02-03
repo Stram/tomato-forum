@@ -1,61 +1,48 @@
 // TODO: Add pre save to update updated at
 
-import * as mongoose from 'mongoose';
-
-import IModel from 'models/model.interface';
+import BaseModel from 'models/model.interface';
 import {ICreateThread, IThread} from 'models/thread/interfaces';
 import threadSchema from 'models/thread/schema';
+import Model from 'services/orm/model';
 
-class Thread implements IModel {
-  private _document: IThread;
-  private static _model = mongoose.model <IThread> ('Thread', threadSchema);;
-
+class Thread extends BaseModel<IThread> {
   constructor(document: IThread) {
-    this._document = document;
+    const model = new Model('Thread', threadSchema);
+    super(document);
   }
 
   serialize() {
-    const document = this._document;
+    const document = this.document;
     const {id, title, content, createdAt} = document;
     return {id, title, content, createdAt};
   }
 
-  static findOne(query: Object) {
-    return new Promise <Thread> ((resolve: Function, reject: Function) => {
-      this._model.findOne(query).exec().then((document: IThread) => {
-        resolve(new this(document));
-      }, (error: any) => {
-        reject(error);
-      });
-    });
-  }
-
   static query(query: any) {
     return new Promise <Array<Thread>> ((resolve, reject) => {
-      this._model.find(query).exec().then((documents: Array<IThread>) => {
-        resolve(documents.map((document: IThread) => new Thread(document)));
-      });
+      // this.model.find(query).exec().then((documents: Array<IThread>) => {
+      //   resolve(documents.map((document: IThread) => new Thread(document)));
+      // });
     });
   }
 
-  static findById(id: string) {
-    return new Promise <Thread> ((resolve, reject) => {
-      this._model.findById(id).exec().then((document: IThread) => {
-        resolve(new Thread(document));
-      });
+  static find(id: number) {
+    return this.findById(id).then((document: IThread) => {
+      return new Thread(document);
     });
   }
 
   static create(userOptions: ICreateThread) {
-    const newDocument = new this._model(userOptions);
-    return newDocument.save().then((user: IThread) => {
-      return new Thread(user);
-    });
+    // const newDocument = new this.model(userOptions);
+    // return newDocument.save().then((user: IThread) => {
+    //   return new Thread(user);
+    // });
   }
 
   get id() {
-    return this._document.id;
+    return this.document.id;
   }
 }
+
+Thread.find
 
 export default Thread;

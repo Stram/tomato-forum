@@ -1,31 +1,26 @@
-import {Types} from 'mongoose';
 import {isEmail, isLength} from 'validator';
 
-export function validateEmail(value: string) {
+export function isValidEmail(value: string): boolean {
   return isEmail(value);
 }
 
-export function validateUsername(value: string) {
+export function isValidUsername(value: string): boolean {
   return isLength(value, {
     min: 3,
     max: 20
   });
 }
 
-export function validatePassword(value: string) {
+export function isValidPassword(value: string): boolean {
   return isLength(value, {
     min: 3,
     max: 8
   });
 }
 
-export function validateCategoryName(value: string) {
+export function isValidCategoryName(value: string): boolean {
   return isLength(value, {
     min: 3,
     max: 20
   });
-}
-
-export function validateObjectId(id: any) {
-  return Types.ObjectId.isValid(id);
 }

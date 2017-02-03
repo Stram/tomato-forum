@@ -1,7 +1,7 @@
 import {Request} from 'express';
 
-export default class BaseController {
-  static paginationOptions(req: Request) {
+namespace BaseController {
+  export function paginationOptions(req: Request) {
     const page = parseInt(req.query.page, 10);
     const perPage = parseInt(req.query.perPage, 10);
     const limit = parseInt(req.query.limit, 10);
@@ -12,8 +12,10 @@ export default class BaseController {
     };
   }
 
-  static getMetaInfo(paginationResult) {
-    const {page, total} = paginationResult;
-    return {page, total};
-  }
+  // static getMetaInfo(paginationResult) {
+  //   const {page, total} = paginationResult;
+  //   return {page, total};
+  // }
 }
+
+export default BaseController;

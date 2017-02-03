@@ -11,10 +11,10 @@ export default function() {
     done(null, user.id);
   });
 
-  passport.deserializeUser((id: string, done: Function) => {
-    User.findById(id).then((user) => {
+  passport.deserializeUser((id: number, done: Function) => {
+    User.find(id).then((user: User) => {
       done(null, user);
-    }, (error) => {
+    }, (error: Error) => {
       done(error);
     });
   });
@@ -23,9 +23,10 @@ export default function() {
     usernameField: 'email',
     passwordField: 'password',
     passReqToCallback: true
-  }, async (req, email: string, password: string, done: (error: any, user: User | null, info?: any) => void) => {
+  }, async (req: Request, email: string, password: string, done: (error: any, user: User | null, info?: any) => void) => {
 
-    const user = await User.query({'local.email': email});
+    // add query builder
+    const user = await User.query({email});
 
     if (user) {
       done(null, null, {

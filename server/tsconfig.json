@@ -1,15 +1,17 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
     "declaration": true,
     "noImplicitAny": true,
+    "noUnusedLocals": true,
     "strictNullChecks": true,
     "removeComments": true,
     "sourceMap": true,
     "inlineSources": true,
-    "allowJs": true,
+    "allowJs": false,
     "lib": ["es6"],
     "baseUrl": ".",
+    "outFile": "dist/build.js",
     "paths": {
       "*": [
         "*"
@@ -17,8 +19,7 @@
     }
   },
   "exclude": [
-    "node_modules",
-    "dist"
+    "node_modules"
   ],
   "types": [
     "node"
