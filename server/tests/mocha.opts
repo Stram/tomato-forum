@@ -1,5 +1,4 @@
 --compilers ts-node/register
 --full-trace
 --check-leaks
--R spec
 server/**/*test.ts
