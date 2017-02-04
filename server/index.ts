@@ -1,5 +1,7 @@
+// TODO: create all tables in DB and migrations
+
 import * as express from 'express';
-import * as path from 'path';
+// import * as path from 'path';
 import * as mongoose from 'mongoose';
 import * as cookieParser from 'cookie-parser';
 import * as bodyParser from 'body-parser';
@@ -8,7 +10,7 @@ import * as connectMongo from 'connect-mongo';
 import * as session from 'express-session';
 
 // import * as fileUpload from 'express-fileupload';
-import * as fs from 'fs';
+// import * as fs from 'fs';
 
 import applicationConfig from './config/application';
 import passportConfig from './config/passport';

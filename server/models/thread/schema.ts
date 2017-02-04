@@ -1,9 +1,9 @@
-import {Types} from 'services/orm/model';
+import {Types, Defaults} from 'services/orm/model';
 
 export default {
   title: {
     type: Types.string(30),
-    required: true
+    required: 'Title is required property'
   },
 
   content: {
@@ -12,7 +12,7 @@ export default {
 
   createdAt: {
     type: Types.timestamp(),
-    default: 'TODAY'
+    default: Defaults.TODAY
   },
 
   // RELATIONS

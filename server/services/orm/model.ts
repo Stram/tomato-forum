@@ -1,3 +1,5 @@
+// TODO: add create method
+
 import * as pg from 'pg';
 import {snakeCase} from 'lodash';
 import database from 'services/orm';
@@ -10,9 +12,9 @@ export interface IModelSchema {
       validator: (value: any) => boolean
       message: string
     },
-    required?: boolean,
-    unique?: boolean,
-    default?: string
+    required?: string,
+    unique?: string,
+    default?: Defaults
   }
 }
 
@@ -26,6 +28,10 @@ export const Types = {
   timestamp() {
     return 'timestamp'
   }
+}
+
+export enum Defaults {
+  TODAY = 1
 }
 
 export default class Model <T> {
@@ -76,7 +82,7 @@ export default class Model <T> {
     const tableAtributes = Object.keys(this.modelSchema).map((attribute) => {
       const attributeDefinition = this.modelSchema[attribute];
       const attributeName = snakeCase(attribute);
-      const {type, required, unique, default: defaulValue} = attributeDefinition;
+      const {type, required, unique, default: defaultValue} = attributeDefinition;
 
       let column = `${attributeName} ${type}`;
 
@@ -88,8 +94,8 @@ export default class Model <T> {
         column = column + 'UNIQUE';
       }
 
-      if (defaulValue) {
-        column = column + `DEFAULT ${defaulValue}`;
+      if (defaultValue && Defaults[defaultValue]) {
+        column = column + `DEFAULT ${defaultValue}`;
       }
 
       return column;

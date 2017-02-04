@@ -3,17 +3,26 @@
 import {hashSync, compareSync, genSaltSync} from 'bcrypt-nodejs';
 
 import userSchema from 'models/user/schema';
-import IModel from 'models/model.interface';
-import {IUser} from 'models/user/interfaces';
 import Model from 'services/orm/model';
 import QueryBuilder from 'services/query-builder';
 
-export default class User implements IModel {
-  private _document: IUser;
-  private static model = new Model('User', userSchema);
+interface IUser {
+  id?: number;
+  username?: string;
+  email: string;
+  password: string;
+  token?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  lastActivity?: Date;
+}
+
+export default class User {
+  private document: IUser;
+  private static model = new Model<IUser>('User', userSchema);
 
   constructor(document: IUser) {
-    this._document = document;
+    this.document = document;
   }
 
   static generateHash(password: string) {
@@ -21,11 +30,11 @@ export default class User implements IModel {
   }
 
   validatePassword(password: string) {
-    return compareSync(password, this._document.password);
+    return compareSync(password, this.document.password);
   }
 
   serialize() {
-    const document = this._document;
+    const document = this.document;
     const {id, username, email, createdAt, updatedAt} = document;
     return {id, username, email, createdAt, updatedAt};
   }
@@ -37,9 +46,9 @@ export default class User implements IModel {
       .limit(1);
 
     return this.model.query(queryBuilder)
-    .then((document: IUser) => {
-      return new User(document);
-    });
+      .then((document: IUser) => {
+        return new User(document);
+      });
   }
 
   static findOne(query: {}) {
@@ -63,14 +72,14 @@ export default class User implements IModel {
   }
 
   static create(userOptions: IUser) {
-    userOptions.password = this.generateHash(userOptions.password);
-    const newDocument = this.model.create(userOptions);
-    return newDocument.save().then((user: IUser) => {
-      return new User(user);
-    });
+    // userOptions.password = this.generateHash(userOptions.password);
+    // const newDocument = this.model.create(userOptions);
+    // return newDocument.save().then((user: IUser) => {
+    //   return new User(user);
+    // });
   }
 
   get id() {
-    return this._document.id;
+    return this.document.id;
   }
 }

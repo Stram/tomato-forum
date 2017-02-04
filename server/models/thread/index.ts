@@ -1,14 +1,26 @@
 // TODO: Add pre save to update updated at
 
-import BaseModel from 'models/model.interface';
-import {ICreateThread, IThread} from 'models/thread/interfaces';
 import threadSchema from 'models/thread/schema';
 import Model from 'services/orm/model';
+import QueryBuilder from 'services/query-builder';
 
-class Thread extends BaseModel<IThread> {
+interface ICreateThread {
+  title: string;
+}
+
+interface IThread {
+  id: string;
+  title: string;
+  content: string;
+  createdAt: Date;
+}
+
+class Thread {
+  private document: IThread;
+  private static model = new Model<IThread>('Thread', threadSchema);
+
   constructor(document: IThread) {
-    const model = new Model('Thread', threadSchema);
-    super(document);
+    this.document = document;
   }
 
   serialize() {
@@ -26,9 +38,15 @@ class Thread extends BaseModel<IThread> {
   }
 
   static find(id: number) {
-    return this.findById(id).then((document: IThread) => {
-      return new Thread(document);
-    });
+    const queryBuilder = new QueryBuilder();
+    queryBuilder.select()
+      .where('id', id)
+      .limit(1);
+
+    return this.model.query(queryBuilder)
+      .then((document: IThread) => {
+        return new Thread(document);
+      });
   }
 
   static create(userOptions: ICreateThread) {

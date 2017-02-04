@@ -1,12 +1,13 @@
 // import randToken from 'rand-token';
 
 import {isValidEmail, isValidUsername} from 'services/validator';
+import {Types, Defaults} from 'services/orm/model';
 
 // import applicationConfig from '../../config/application';
 
 export default {
   username: {
-    type: 'varchar(20)',
+    type: Types.string(20),
     validate: {
       validator: isValidUsername,
       message: 'Username is not valid'
@@ -14,7 +15,7 @@ export default {
   },
 
   email: {
-    type: 'varchar(255)',
+    type: Types.string(255),
     validate: {
       validator: isValidEmail,
       message: 'Email is not valid'
@@ -24,27 +25,27 @@ export default {
   },
 
   password: {
-    type: 'varchar(255)',
+    type: Types.string(255),
     required: 'User password required'
   },
 
   token: {
-    type: 'varchar(20)'
+    type: Types.string(20)
   },
 
   createdAt: {
-    type: 'timestamp',
-    default: 'TODAY'
+    type: Types.timestamp(),
+    default: Defaults.TODAY
   },
 
   updatedAt: {
-    type: 'timestamp',
-    default: 'TODAY'
+    type: Types.timestamp(),
+    default: Defaults.TODAY
   },
 
   lastActivity: {
-    type: 'timestamp',
-    default: 'TODAY'
+    type: Types.timestamp(),
+    default: Defaults.TODAY
   }
 
   // RELATIONS
