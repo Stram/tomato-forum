@@ -1,8 +1,12 @@
-namespace Api {
-  export class UserFilter extends Api.ApplicationFilter {
-    constructor(params: any) {
-      super(params);
-    }
+import ApplicationFilter from 'filters/application';
+
+export default class UserFilter extends ApplicationFilter {
+  constructor(params: any) {
+    super(params);
+  }
+
+  results() {
+    // this.params
   }
 }
 

@@ -1,6 +1,6 @@
 import {Router} from 'express';
 import UtilController from 'controllers/util';
-import ThreadController from 'controllers/thread';
+import * as ThreadController from 'controllers/thread';
 
 const router: Router = Router();
 
@@ -9,7 +9,7 @@ router.get('/', [
   ThreadController.index
 ]);
 
-router.get('//:threadId', [
+router.get('/:threadId', [
   UtilController.authenticated,
   ThreadController.show
 ]);

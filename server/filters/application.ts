@@ -1,9 +1,11 @@
-namespace Api {
-  export class ApplicationFilter {
-    private params: any;
+abstract class ApplicationFilter {
+  private params: any;
 
-    constructor(params: any) {
-      this.params = params;
-    }
+  constructor(params: any) {
+    this.params = params;
   }
+
+  abstract results(): any
 }
+
+export default ApplicationFilter;

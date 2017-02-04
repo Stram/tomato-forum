@@ -61,6 +61,4 @@ class Thread {
   }
 }
 
-Thread.find
-
 export default Thread;
