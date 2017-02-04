@@ -13,7 +13,7 @@ describe('insert builder', function() {
       table: 'table'
     }
 
-    const expectedOutput = 'INSERT INTO table () VALUES ()';
+    const expectedOutput = 'INSERT INTO table () VALUES () RETURNING *';
     expect(buildInsert(query)).to.equal(expectedOutput);
   });
 
@@ -24,7 +24,7 @@ describe('insert builder', function() {
       values
     }
 
-    const expectedOutput = 'INSERT INTO table (id) VALUES (123)';
+    const expectedOutput = 'INSERT INTO table (id) VALUES (123) RETURNING *';
     expect(buildInsert(query)).to.equal(expectedOutput);
   });
 
@@ -35,7 +35,7 @@ describe('insert builder', function() {
       values
     }
 
-    const expectedOutput = 'INSERT INTO table (id, name, isValid) VALUES (123, "Bob", TRUE)';
+    const expectedOutput = 'INSERT INTO table (id, name, isValid) VALUES (123, "Bob", TRUE) RETURNING *';
     expect(buildInsert(query)).to.equal(expectedOutput);
   });
 });

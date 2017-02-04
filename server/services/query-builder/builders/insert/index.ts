@@ -28,6 +28,7 @@ export default function buildSelect(query: IQuery) {
   queryTexts.push(`(${properties.join(', ')})`);
   queryTexts.push('VALUES');
   queryTexts.push(`(${values.join(', ')})`);
+  queryTexts.push('RETURNING *');
 
   return queryTexts.join(' ');
 }
