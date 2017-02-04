@@ -6,7 +6,7 @@ import userSchema from 'models/user/schema';
 import Model from 'services/orm/model';
 import QueryBuilder from 'services/query-builder';
 
-interface IUser {
+export interface IUser {
   id?: number;
   username?: string;
   email: string;
@@ -71,12 +71,11 @@ export default class User {
     });
   }
 
-  static create(userOptions: IUser) {
+  static async create(userOptions: IUser) {
     userOptions.password = this.generateHash(userOptions.password);
-    const newDocument = this.model.create(userOptions);
-    return newDocument.save().then((user: IUser) => {
-      return new User(user);
-    });
+    const newUser = await this.model.create(userOptions);
+
+    return new User(newUser);
   }
 
   get id() {

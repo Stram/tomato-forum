@@ -4,11 +4,11 @@ import threadSchema from 'models/thread/schema';
 import Model from 'services/orm/model';
 import QueryBuilder from 'services/query-builder';
 
-interface ICreateThread {
+export interface ICreateThread {
   title: string;
 }
 
-interface IThread {
+export interface IThread {
   id: string;
   title: string;
   content: string;

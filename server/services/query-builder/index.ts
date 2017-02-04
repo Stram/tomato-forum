@@ -1,7 +1,7 @@
 import selectBuilder from 'services/query-builder/builders/select';
 import insertBuilder from 'services/query-builder/builders/insert';
 
-enum CommandType {
+export enum CommandType {
   SELECT = 1,
   INSERT,
   UPDATE,
@@ -31,8 +31,13 @@ export default class QueryBuilder {
     return this;
   }
 
-  insert() {
+  insert(property: string, value: any) {
     this.query.command = CommandType.INSERT;
+
+    if (!this.query.values) {
+      this.query.values = [];
+    }
+    this.query.values.push([property, value]);
     return this;
   }
 
@@ -101,13 +106,6 @@ export default class QueryBuilder {
     } else {
       this.query.sort.push(`${sortProperty}`);
     }
-  }
-
-  value(property: string, value: any) {
-    if (!this.query.values) {
-      this.query.values = [];
-    }
-    this.query.values.push([property, value]);
   }
 
   build() {

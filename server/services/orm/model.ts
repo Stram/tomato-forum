@@ -1,7 +1,7 @@
 // TODO: add create method
 
 import * as pg from 'pg';
-import {snakeCase} from 'lodash';
+import {snakeCase, toPairs} from 'lodash';
 import database from 'services/orm';
 import QueryBuilder from 'services/query-builder';
 
@@ -62,7 +62,15 @@ export default class Model <T> {
   async create(options: T) {
     await this.ensureTableExists();
 
-    const document = await database.create();
+    const builder = new QueryBuilder();
+    builder.table(this.tableName);
+
+    toPairs(options).forEach((pair) => {
+      builder.insert(pair[0], pair[1]);
+    });
+
+    const newObject = await database.insert(builder.build());
+    return <T> newObject.rows[0];
   }
 
   private deserialize(document: pg.QueryResult) {
