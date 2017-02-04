@@ -1,4 +1,5 @@
 import selectBuilder from 'services/query-builder/builders/select';
+import insertBuilder from 'services/query-builder/builders/insert';
 
 enum CommandType {
   SELECT = 1,
@@ -9,20 +10,20 @@ enum CommandType {
 
 export interface IQuery {
   command?: CommandType;
-  fields: string[];
-  values?: any[];
+  fields?: Array<string>;
+  values?: Array<[string, any]>;
   table?: string;
   limit?: number;
   offset?: number;
-  sort: string[];
-  conditions: string[];
+  sort?: Array<string>;
+  conditions?: Array<string>;
 }
 
 export default class QueryBuilder {
   private query: IQuery = {
     fields: [],
-    conditions: [],
-    sort: []
+    sort: [],
+    conditions: []
   };
 
   select() {
@@ -46,6 +47,9 @@ export default class QueryBuilder {
   }
 
   field(fieldName: string, outputName?: string) {
+    if (!this.query.fields) {
+      this.query.fields = [];
+    }
     if (outputName) {
       this.query.fields.push(`${fieldName} AS ${outputName}`);
     } else {
@@ -55,6 +59,9 @@ export default class QueryBuilder {
   }
 
   where(property: string, value?: string | number) {
+    if (!this.query.conditions) {
+      this.query.conditions = [];
+    }
     if (!value) {
       this.query.conditions.push(property);
     } else {
@@ -84,6 +91,9 @@ export default class QueryBuilder {
   }
 
   sort(sortProperty: string, sortDirection?: 'ASC' | 'DESC') {
+    if (!this.query.sort) {
+      this.query.sort = [];
+    }
     if (sortDirection === 'ASC') {
       this.query.sort.push(`${sortProperty} ASC`);
     } else if (sortDirection === 'DESC') {
@@ -91,6 +101,13 @@ export default class QueryBuilder {
     } else {
       this.query.sort.push(`${sortProperty}`);
     }
+  }
+
+  value(property: string, value: any) {
+    if (!this.query.values) {
+      this.query.values = [];
+    }
+    this.query.values.push([property, value]);
   }
 
   build() {
@@ -113,7 +130,7 @@ export default class QueryBuilder {
   }
 
   private buildInsert() {
-    return '';
+    return insertBuilder(this.query);
   }
 
   private buildUpdate() {

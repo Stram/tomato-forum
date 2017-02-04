@@ -11,7 +11,6 @@
     "allowJs": false,
     "lib": ["es6"],
     "baseUrl": ".",
-    "outFile": "dist/build.js",
     "paths": {
       "*": [
         "*"

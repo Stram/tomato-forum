@@ -2,12 +2,12 @@ import {IQuery} from 'services/query-builder';
 
 export default function buildSelect(query: IQuery) {
   const queryTexts = [];
-  const {table, limit, offset, sort, conditions} = query;
+  const {table, limit, offset, sort = [], conditions = []} = query;
   if (!query.table) {
     throw new Error(`Cannot build new select command without table property!`);
   }
 
-  const fields = query.fields.length ? query.fields : ['*'];
+  const fields = query.fields && query.fields.length ? query.fields : ['*'];
 
   queryTexts.push('SELECT', fields.join(', '));
   queryTexts.push('FROM', table);
