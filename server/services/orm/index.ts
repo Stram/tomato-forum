@@ -12,8 +12,6 @@ export class Database {
   }
 
   async connect() {
-    this.createConnection();
-    this.createMigrations();
     await this.migrations.runMigrations();
   }
 
@@ -25,10 +23,18 @@ export class Database {
     this.migrations = new Migrations(this.connection);
   }
 
-  query(query: string | Array<string>) {
-    const queryText = Array.isArray(query) ? query.join(' ') : query;
+  query(query: string) {
+    if (!query.startsWith('SELECT ')) {
+      throw new Error('Query has to start with SELECT command!');
+    }
+    return this.connection.query(query);
+  }
 
-    return this.connection.query(queryText);
+  insert(query: string) {
+    if (!query.startsWith('INSERT ')) {
+      throw new Error('Creation has to start with INSERT command!');
+    }
+    return this.connection.query(query);
   }
 }
 

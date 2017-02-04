@@ -72,12 +72,11 @@ export default class User {
   }
 
   static create(userOptions: IUser) {
-    return new User();
-    // userOptions.password = this.generateHash(userOptions.password);
-    // const newDocument = this.model.create(userOptions);
-    // return newDocument.save().then((user: IUser) => {
-    //   return new User(user);
-    // });
+    userOptions.password = this.generateHash(userOptions.password);
+    const newDocument = this.model.create(userOptions);
+    return newDocument.save().then((user: IUser) => {
+      return new User(user);
+    });
   }
 
   get id() {

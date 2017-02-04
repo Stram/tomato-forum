@@ -59,6 +59,12 @@ export default class Model <T> {
     return this.deserialize(document);
   }
 
+  async create(options: T) {
+    await this.ensureTableExists();
+
+    const document = await database.create();
+  }
+
   private deserialize(document: pg.QueryResult) {
     const rows = document.rows;
     if (rows.length === 1) {
