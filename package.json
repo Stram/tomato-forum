@@ -75,6 +75,7 @@
     "@types/passport": "^0.3.2",
     "@types/passport-local": "^1.0.29",
     "@types/pg": "^6.1.35",
+    "@types/supertest": "^2.0.0",
     "@types/validator": "^5.7.35",
     "awesome-typescript-loader": "^3.0.0-beta.18",
     "babel-eslint": "^6.1.0",
