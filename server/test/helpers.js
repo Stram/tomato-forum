@@ -1,28 +1,28 @@
 import session from 'supertest-session';
 import randToken from 'rand-token';
 
-import app from '../';
-import User from '../models/user';
-import Category from '../models/category';
-import Thread from '../models/thread';
+import app from 'server';
+// import User from '../models/user';
+// import Category from '../models/category';
+// import Thread from '../models/thread';
+//
+// const dummyUserEmail = 'session@example.com';
+// const dummyUserPassword = 'password';
+// const dummyUserUsername = 'Session';
 
-const dummyUserEmail = 'session@example.com';
-const dummyUserPassword = 'password';
-const dummyUserUsername = 'Session';
-
-let currentUserId;
+// let currentUserId;
 
 function createDummyUser() {
 
-  const dummyUser = new User();
-
-  dummyUser.local.email = dummyUserEmail;
-  dummyUser.local.password = dummyUser.generateHash(dummyUserPassword);
-  dummyUser.username = dummyUserUsername;
-
-  return dummyUser.save().then((savedUser) => {
-    return savedUser;
-  });
+  // const dummyUser = new User();
+  //
+  // dummyUser.local.email = dummyUserEmail;
+  // dummyUser.local.password = dummyUser.generateHash(dummyUserPassword);
+  // dummyUser.username = dummyUserUsername;
+  //
+  // return dummyUser.save().then((savedUser) => {
+  //   return savedUser;
+  // });
 }
 
 function createSessionRequestObject() {

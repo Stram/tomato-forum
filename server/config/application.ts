@@ -4,6 +4,11 @@ const mailerAuth = {
 };
 
 const applicationConfig = {
+  sessionSecretKey: '1hd2L2g0lrEB',
+
+
+
+
   host: 'http://localhost',
   port: '3000',
   privateUploadDirectory: 'uploads/photos',

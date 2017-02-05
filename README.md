@@ -15,3 +15,5 @@ Node.js, npm and MongoDB
 # Instalation
 
 `npm install`
+
+Create databases in Postgres

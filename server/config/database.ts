@@ -7,7 +7,7 @@ const databaseConfig: pg.PoolConfig = {};
 if (environment === 'development') {
   databaseConfig['database'] = 'tomato-forum-dev';
 } else if (environment === 'test') {
-  databaseConfig['database'] = 'tomato-forum-dev';
+  databaseConfig['database'] = 'tomato-forum-test';
 } else if (environment === 'production') {
   databaseConfig['database'] = 'tomato-forum';
 }

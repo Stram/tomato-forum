@@ -1,5 +1,3 @@
-// TODO: add create method
-
 import * as pg from 'pg';
 import {snakeCase, toPairs} from 'lodash';
 import database from 'services/orm';
@@ -88,7 +86,7 @@ export default class Model <T> {
 
     const queryText = this.buildTableQuery();
 
-    await database.query(queryText);
+    await database.create(queryText);
     this.tableExists = true;
   }
 

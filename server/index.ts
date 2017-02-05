@@ -6,16 +6,17 @@ import * as mongoose from 'mongoose';
 import * as cookieParser from 'cookie-parser';
 import * as bodyParser from 'body-parser';
 import * as morgan from 'morgan';
-import * as connectMongo from 'connect-mongo';
-import * as session from 'express-session';
 
 // import * as fileUpload from 'express-fileupload';
 // import * as fs from 'fs';
 
-import applicationConfig from './config/application';
-import passportConfig from './config/passport';
+import applicationConfig from 'config/application';
+import passportConfig from 'config/passport';
+import sessionConfig from 'config/session';
 
 import router from 'router';
+
+import 'services/orm';
 
 // import handleError from './services/handle-error';
 
@@ -29,8 +30,6 @@ if (process.env.NODE_ENV !== 'testing') {
   mongoose.connect(process.env.DATABASE_URL || 'localhost:27017');
 }
 
-const MongoStore = connectMongo(session);
-
 // app.use('/public', express.static(path.resolve('public')));
 // app.use('/doc', express.static(path.resolve('doc')));
 
@@ -38,16 +37,9 @@ app.use(cookieParser());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-app.use(session({
-  secret: 'myUserSuperSecret',
-  cookie: {
-    maxAge: 2628000000
-  },
-  store: new MongoStore({mongooseConnection: mongoose.connection})
-}));
-
 // app.use(fileUpload());
 
+app.use(sessionConfig());
 app.use(passportConfig());
 
 // app.use('/api', api);
