@@ -1,11 +1,13 @@
 import * as passport from 'passport';
 import * as passportLocal from 'passport-local';
 import {Request} from 'express';
+
 import User from 'models/user';
+import QueryBuilder from 'services/query-builder';
 
 const LocalStrategy = passportLocal.Strategy;
 
-export default function() {
+export default function(): any[] {
 
   passport.serializeUser((user: User, done: Function) => {
     done(null, user.id);
@@ -25,20 +27,29 @@ export default function() {
     passReqToCallback: true
   }, async (req: Request, email: string, password: string, done: (error: any, user: User | null, info?: any) => void) => {
 
-    // add query builder
-    const user = await User.query({email});
+    console.log('REGISTER12');
 
-    if (user) {
+    const builder = new QueryBuilder();
+    builder.select().where('email', email).limit(1);
+    const user = await User.query(builder);
+
+    console.log('REGISTER13', user);
+
+    if (user.length) {
       done(null, null, {
         message: 'Email is already taken.'
       });
       return;
     }
 
+    console.log('REGISTER14');
+
     const newUser = await User.create({
       email,
       password
     });
+
+    console.log('NEW: ', newUser)
 
     done(null, newUser);
   }));

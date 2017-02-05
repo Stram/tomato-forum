@@ -19,7 +19,7 @@ export interface IUser {
 
 export default class User {
   private document: IUser;
-  private static model = new Model<IUser>('User', userSchema);
+  private static model = new Model<IUser>('Users', userSchema);
 
   constructor(document: IUser) {
     this.document = document;
@@ -46,8 +46,8 @@ export default class User {
       .limit(1);
 
     return this.model.query(queryBuilder)
-      .then((document: IUser) => {
-        return new User(document);
+      .then((documents: IUser[]) => {
+        return new User(documents[0]);
       });
   }
 
@@ -62,13 +62,11 @@ export default class User {
     });
   }
 
-  static query(query: {} | string) {
-    return new Promise <Array<User>> ((resolve, reject) => {
-
-      // this.model.find(query).exec().then((documents: Array<IUser>) => {
-      //   resolve(documents.map((document: IUser) => new User(document)));
-      // });
-    });
+  static query(query: QueryBuilder) {
+    return this.model.query(query)
+      .then((documents: IUser[]) => {
+        return documents.map((document) => new User(document));
+      });
   }
 
   static async create(userOptions: IUser) {

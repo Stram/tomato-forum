@@ -35,17 +35,17 @@ export default {
 
   createdAt: {
     type: Types.timestamp(),
-    default: Defaults.TODAY
+    default: Defaults.CURRENT_TIMESTAMP
   },
 
   updatedAt: {
     type: Types.timestamp(),
-    default: Defaults.TODAY
+    default: Defaults.CURRENT_TIMESTAMP
   },
 
   lastActivity: {
     type: Types.timestamp(),
-    default: Defaults.TODAY
+    default: Defaults.CURRENT_TIMESTAMP
   }
 
   // RELATIONS

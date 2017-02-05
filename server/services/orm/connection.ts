@@ -1,4 +1,6 @@
 import * as pg from 'pg';
+import * as debug from 'debug';
+import * as chalk from 'chalk';
 
 export default class Connection {
   private pool: pg.Pool;
@@ -9,6 +11,7 @@ export default class Connection {
   }
 
   query(queryText: string) {
+    debug('orm:connection')(chalk.blue('Running query:'), queryText);
     return this.pool.query(queryText);
   }
 }

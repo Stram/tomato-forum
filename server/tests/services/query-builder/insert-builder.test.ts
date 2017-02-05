@@ -35,7 +35,7 @@ describe('insert builder', function() {
       values
     }
 
-    const expectedOutput = 'INSERT INTO table (id, name, isValid) VALUES (123, "Bob", TRUE) RETURNING *';
+    const expectedOutput = 'INSERT INTO table (id, name, isValid) VALUES (123, \'Bob\', TRUE) RETURNING *';
     expect(buildInsert(query)).to.equal(expectedOutput);
   });
 });

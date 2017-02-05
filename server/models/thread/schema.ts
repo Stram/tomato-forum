@@ -12,7 +12,7 @@ export default {
 
   createdAt: {
     type: Types.timestamp(),
-    default: Defaults.TODAY
+    default: Defaults.CURRENT_TIMESTAMP
   },
 
   // RELATIONS

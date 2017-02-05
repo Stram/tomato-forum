@@ -71,7 +71,7 @@ export default class QueryBuilder {
       this.query.conditions.push(property);
     } else {
       if (typeof value === 'string') {
-        this.query.conditions.push(`${property} = "${value}"`);
+        this.query.conditions.push(`${property} = '${value}'`);
       } else {
         this.query.conditions.push(`${property} = ${value}`);
       }

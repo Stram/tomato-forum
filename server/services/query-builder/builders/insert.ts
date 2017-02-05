@@ -17,7 +17,7 @@ export default function buildSelect(query: IQuery) {
     properties.push(property);
 
     if (typeof value === 'string') {
-      values.push(`"${value}"`);
+      values.push(`'${value}'`);
     } else if (typeof value === 'boolean') {
       values.push(value ? 'TRUE' : 'FALSE');
     } else {

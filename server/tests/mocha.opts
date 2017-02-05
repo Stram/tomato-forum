@@ -1,4 +1,3 @@
 --compilers ts-node/register
 --full-trace
---check-leaks
 server/**/*test.ts

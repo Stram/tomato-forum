@@ -29,7 +29,7 @@ export const Types = {
 }
 
 export enum Defaults {
-  TODAY = 1
+  CURRENT_TIMESTAMP = 1
 }
 
 export default class Model <T> {
@@ -73,10 +73,7 @@ export default class Model <T> {
 
   private deserialize(document: pg.QueryResult) {
     const rows = document.rows;
-    if (rows.length === 1) {
-      return <T> rows[0];
-    }
-    else return <Array<T>> rows;
+    return <Array<T>> rows;
   }
 
   private async ensureTableExists() {
@@ -99,21 +96,21 @@ export default class Model <T> {
       let column = `${attributeName} ${type}`;
 
       if (required) {
-        column = column + 'NOT NULL';
+        column = column + ' NOT NULL';
       }
 
       if (unique) {
-        column = column + 'UNIQUE';
+        column = column + ' UNIQUE';
       }
 
       if (defaultValue && Defaults[defaultValue]) {
-        column = column + `DEFAULT ${defaultValue}`;
+        column = column + ` DEFAULT ${Defaults[defaultValue]}`;
       }
 
       return column;
     });
 
-    const tableDefinition = tableAtributes.join(' ');
-    return `CREATE TABLE IF NOT EXISTS ${this.tableName} ( ${tableDefinition} )`;
+    const tableDefinition = tableAtributes.join(', ');
+    return `CREATE TABLE IF NOT EXISTS "${this.tableName}" (${tableDefinition})`;
   }
 }

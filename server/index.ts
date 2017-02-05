@@ -6,6 +6,8 @@ import * as mongoose from 'mongoose';
 import * as cookieParser from 'cookie-parser';
 import * as bodyParser from 'body-parser';
 import * as morgan from 'morgan';
+import * as debug from 'debug';
+import * as chalk from 'chalk';
 
 // import * as fileUpload from 'express-fileupload';
 // import * as fs from 'fs';
@@ -70,10 +72,15 @@ app.use(passportConfig());
 
 // app.use(handleError);
 
+// process.on('unhandledRejection', (reason: any, promise: any) => {
+//   console.log(`Reason: ${reason}`);
+//   console.log(Promise);
+// });
+
 app.use(router);
 
 app.listen(applicationConfig.port, function() {
-  console.log(`Example app listening on port ${applicationConfig.port}!`);
+  debug('app:init')(chalk.green(`App listening on port ${applicationConfig.port}`));
 });
 
 export default app;

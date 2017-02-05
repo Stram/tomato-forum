@@ -44,8 +44,8 @@ class Thread {
       .limit(1);
 
     return this.model.query(queryBuilder)
-      .then((document: IThread) => {
-        return new Thread(document);
+      .then((documents: IThread[]) => {
+        return new Thread(documents[0]);
       });
   }
 

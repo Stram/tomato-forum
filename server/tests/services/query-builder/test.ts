@@ -48,7 +48,7 @@ describe('query builder service', function() {
     const builder = new QueryBuilder();
     builder.select().table('table').where('id', 5).where('name', 'Bob');
 
-    const expectedOutput = 'SELECT * FROM table WHERE id = 5 AND name = "Bob"';
+    const expectedOutput = 'SELECT * FROM table WHERE id = 5 AND name = \'Bob\'';
     expect(builder.build()).to.equal(expectedOutput);
   });
 
@@ -56,7 +56,7 @@ describe('query builder service', function() {
     const builder = new QueryBuilder();
     builder.select().table('table').field('username AS name').field('email').where('id', 5).where('name', 'Bob');
 
-    const expectedOutput = 'SELECT username AS name, email FROM table WHERE id = 5 AND name = "Bob"';
+    const expectedOutput = 'SELECT username AS name, email FROM table WHERE id = 5 AND name = \'Bob\'';
     expect(builder.build()).to.equal(expectedOutput);
   });
 
@@ -64,7 +64,7 @@ describe('query builder service', function() {
     const builder = new QueryBuilder();
     builder.select().table('table').field('username', 'name').field('email').where('id', 5).where('name', 'Bob');
 
-    const expectedOutput = 'SELECT username AS name, email FROM table WHERE id = 5 AND name = "Bob"';
+    const expectedOutput = 'SELECT username AS name, email FROM table WHERE id = 5 AND name = \'Bob\'';
     expect(builder.build()).to.equal(expectedOutput);
   });
 

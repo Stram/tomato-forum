@@ -60,11 +60,11 @@ describe('select builder', function() {
     const query = {
       table: 'table',
       fields: [],
-      conditions: ['id=5', 'name="Bob"'],
+      conditions: ['id=5', 'name=\'Bob\''],
       sort: []
     }
 
-    const expectedOutput = 'SELECT * FROM table WHERE id=5 AND name="Bob"';
+    const expectedOutput = 'SELECT * FROM table WHERE id=5 AND name=\'Bob\'';
     expect(buildSelect(query)).to.equal(expectedOutput);
   });
 
@@ -72,11 +72,11 @@ describe('select builder', function() {
     const query = {
       table: 'table',
       fields: ['username AS name', 'email'],
-      conditions: ['id=5', 'name="Bob"'],
+      conditions: ['id=5', 'name=\'Bob\''],
       sort: []
     }
 
-    const expectedOutput = 'SELECT username AS name, email FROM table WHERE id=5 AND name="Bob"';
+    const expectedOutput = 'SELECT username AS name, email FROM table WHERE id=5 AND name=\'Bob\'';
     expect(buildSelect(query)).to.equal(expectedOutput);
   });
 
@@ -84,13 +84,13 @@ describe('select builder', function() {
     const query = {
       table: 'table',
       fields: [],
-      conditions: ['id=5', 'name="Bob"'],
+      conditions: ['id=5', 'name=\'Bob\''],
       sort: [],
       limit: 10,
       offset: 4
     }
 
-    const expectedOutput = 'SELECT * FROM table WHERE id=5 AND name="Bob" LIMIT 10 OFFSET 4';
+    const expectedOutput = 'SELECT * FROM table WHERE id=5 AND name=\'Bob\' LIMIT 10 OFFSET 4';
     expect(buildSelect(query)).to.equal(expectedOutput);
   });
 
@@ -98,11 +98,11 @@ describe('select builder', function() {
     const query = {
       table: 'table',
       fields: [],
-      conditions: ['id=5', 'name="Bob"'],
+      conditions: ['id=5', 'name=\'Bob\''],
       sort: ['name ASC']
     }
 
-    const expectedOutput = 'SELECT * FROM table WHERE id=5 AND name="Bob" ORDER BY name ASC';
+    const expectedOutput = 'SELECT * FROM table WHERE id=5 AND name=\'Bob\' ORDER BY name ASC';
     expect(buildSelect(query)).to.equal(expectedOutput);
   });
 });
