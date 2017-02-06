@@ -22,18 +22,18 @@ class SessionStore extends Store {
     }
 
     this.set = async function(hash: string, data: {}, cb: Function) {
-      await orm.insert(`INSERT INTO ${this.tableName} (key, data) VALUES ('${hash}', '${JSON.stringify(data)}')`);
+      await orm.query(`INSERT INTO ${this.tableName} (key, data) VALUES ('${hash}', '${JSON.stringify(data)}')`);
       cb();
     }
 
     this.destroy = async function(hash: string, cb: Function) {
-      await orm.destroy(`DELETE FROM ${this.tableName} WHERE key = '${hash}'`);
+      await orm.query(`DELETE FROM ${this.tableName} WHERE key = '${hash}'`);
       cb();
     }
   }
 
   private async createTable() {
-    await orm.create(`CREATE TABLE IF NOT EXISTS ${this.tableName} (key varchar NOT NULL PRIMARY KEY, data json NOT NULL)`);
+    await orm.query(`CREATE TABLE IF NOT EXISTS ${this.tableName} (key varchar NOT NULL PRIMARY KEY, data json NOT NULL)`);
   }
 }
 

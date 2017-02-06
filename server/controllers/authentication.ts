@@ -1,6 +1,7 @@
 import {Request, Response, NextFunction} from 'express';
 import * as passport from 'passport';
 
+import {BadRequest} from 'services/errors';
 import User from 'models/user';
 import ResponseStatus from 'enums/response-status';
 
@@ -12,8 +13,7 @@ export function login(req: Request, res: Response, next: NextFunction) {
     }
 
     if (!user) {
-      // return BadRequest
-      // next(new errors.BadRequest(info));
+      next(new BadRequest(info));
       return;
     }
 
@@ -37,7 +37,7 @@ export async function register(req: Request, res: Response, next: NextFunction) 
     }
     console.log('REGISTER2');
     if (!user) {
-      // return BadRequest
+      next(new BadRequest(info));
       return;
     }
     console.log('REGISTER3');

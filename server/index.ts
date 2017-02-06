@@ -2,7 +2,7 @@
 
 import * as express from 'express';
 // import * as path from 'path';
-import * as mongoose from 'mongoose';
+// import * as mongoose from 'mongoose';
 import * as cookieParser from 'cookie-parser';
 import * as bodyParser from 'body-parser';
 import * as morgan from 'morgan';
@@ -14,7 +14,7 @@ import * as chalk from 'chalk';
 
 import applicationConfig from 'config/application';
 import passportConfig from 'config/passport';
-import sessionConfig from 'config/session';
+import sessionConfig from 'middlewares/session';
 
 import router from 'router';
 
@@ -29,7 +29,7 @@ const app = express();
 if (process.env.NODE_ENV !== 'testing') {
   app.use(morgan('dev'));
 
-  mongoose.connect(process.env.DATABASE_URL || 'localhost:27017');
+  // mongoose.connect(process.env.DATABASE_URL || 'localhost:27017');
 }
 
 // app.use('/public', express.static(path.resolve('public')));

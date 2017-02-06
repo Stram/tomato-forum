@@ -26,30 +26,6 @@ export class Database {
   }
 
   query(query: string):Promise<QueryResult> {
-    if (!query.startsWith('SELECT ')) {
-      throw new Error('Query has to start with SELECT command!');
-    }
-    return this.connection.query(query);
-  }
-
-  insert(query: string):Promise<QueryResult> {
-    if (!query.startsWith('INSERT ')) {
-      throw new Error('Creation has to start with INSERT command!');
-    }
-    return this.connection.query(query);
-  }
-
-  destroy(query: string):Promise<QueryResult> {
-    if (!query.startsWith('DELETE ')) {
-      throw new Error('Destruction has to start with DELETE command!');
-    }
-    return this.connection.query(query);
-  }
-
-  create(query: string):Promise<QueryResult> {
-    if (!query.startsWith('CREATE ')) {
-      throw new Error('Destruction has to start with CREATE command!');
-    }
     return this.connection.query(query);
   }
 }

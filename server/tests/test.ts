@@ -5,7 +5,8 @@ before(function(done) {
   done();
 });
 
-after((done) => {
-  // TODO: drop database
+after(async function(done) {
+  // TODO: drop all tables
+
   done();
 })

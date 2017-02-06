@@ -19,7 +19,7 @@ export interface IUser {
 
 export default class User {
   private document: IUser;
-  private static model = new Model<IUser>('Users', userSchema);
+  private static model = new Model<IUser>('Person', userSchema);
 
   constructor(document: IUser) {
     this.document = document;

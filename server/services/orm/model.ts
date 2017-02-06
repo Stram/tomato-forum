@@ -67,7 +67,7 @@ export default class Model <T> {
       builder.insert(pair[0], pair[1]);
     });
 
-    const newObject = await database.insert(builder.build());
+    const newObject = await database.query(builder.build());
     return <T> newObject.rows[0];
   }
 
@@ -83,8 +83,14 @@ export default class Model <T> {
 
     const queryText = this.buildTableQuery();
 
-    await database.create(queryText);
+    await database.query(queryText);
     this.tableExists = true;
+  }
+
+  async dropTable() {
+    if (this.tableExists) {
+      await database.query(`DROP TABLE ${this.tableName}`);
+    }
   }
 
   private buildTableQuery() {
