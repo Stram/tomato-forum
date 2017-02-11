@@ -10,15 +10,11 @@ export enum ColumnType {
   TIMESTAMP
 }
 
-export enum DefaultValues {
-  TODAY
-}
-
 export interface ColumnOptions {
   required?: boolean,
   unique?: boolean,
   limit?: number,
-  default?: string | number | DefaultValues
+  default?: string | number | boolean
 }
 
 interface ColumnDescriptor extends ColumnOptions {
@@ -35,6 +31,9 @@ export default class CreateBuilder extends BaseBuilder {
   private type: CreateType;
   private name: string;
   private columns: Array<ColumnDescriptor> = [];
+  private options: {
+    ifNotExists?: boolean
+  };
 
   constructor(type?: 'table'|'index', name: string = '') {
     super();
@@ -48,6 +47,9 @@ export default class CreateBuilder extends BaseBuilder {
 
     queryText.push('CREATE');
     queryText.push(subtypeMapping[this.type]);
+    if (this.ifNotExists && this.type === CreateType.TABLE) {
+      queryText.push('IF NOT EXISTS');
+    }
 
     queryText.push(this.buildColumns());
 
@@ -61,6 +63,11 @@ export default class CreateBuilder extends BaseBuilder {
 
   index() {
     this.type = CreateType.INDEX;
+  }
+
+  ifNotExists() {
+    this.options.ifNotExists = true;
+    return this;
   }
 
   addColumn(columnName: string, columnType: ColumnType, options: ColumnOptions) {
@@ -87,30 +94,28 @@ export default class CreateBuilder extends BaseBuilder {
       }
 
       if (columnDefinition.default) {
-        column.push(`DEFAULT ${this.getDefaultValue(columnDefinition.default)}`)
+        column.push(`DEFAULT ${this.getDefaultValue(columnDefinition.default, columnDefinition.type)}`)
       }
 
       return column.join(' ');
     }).join(', ');
   }
 
-  private getColumnType(type: ColumnType, limit?: number) {
+  private getColumnType(type: ColumnType, limit: number = 255) {
     switch(type) {
       case ColumnType.STRING:
-        this.ensurePropertyExists(limit, 'limit');
-        return `varchar(${limit})`;
+        return `VARCHAR(${limit})`;
       case ColumnType.TIMESTAMP:
-        return 'timestamp';
+        return 'TIMESTAMP';
       default:
         throw new Error('Unknown column type');
     }
   }
 
-  private getDefaultValue(defaultValue: string | number | DefaultValues) {
-    if (typeof defaultValue === 'string') {
-      return defaultValue;
+  private getDefaultValue(defaultValue: string | number | boolean, type: ColumnType) {
+    if (type === ColumnType.TIMESTAMP && defaultValue) {
+      return 'CURRENT_TIMESTAMP';
     }
-
-    return '';
+    return typeof defaultValue === 'string' ? `"${defaultValue}"` : defaultValue;
   }
 }

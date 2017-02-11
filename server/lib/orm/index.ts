@@ -1,7 +1,7 @@
 import {QueryResult} from 'pg';
 
-import Connection from 'services/orm/connection';
-import Migrations from 'services/orm/migrations';
+import Connection from 'lib/orm/connection';
+import Migrations from 'lib/orm/migrations';
 import databaseConfig from 'config/database';
 
 export class Database {
@@ -14,7 +14,7 @@ export class Database {
   }
 
   async connect() {
-    await this.migrations.runMigrations();
+    await this.migrations.migrate();
   }
 
   private createConnection() {

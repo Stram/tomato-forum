@@ -3,7 +3,7 @@ import * as passportLocal from 'passport-local';
 import {Request} from 'express';
 
 import User from 'models/user';
-import QueryBuilder from 'services/query-builder';
+import QueryBuilder from 'lib/query-builder';
 
 const LocalStrategy = passportLocal.Strategy;
 

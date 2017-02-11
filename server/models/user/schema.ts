@@ -1,7 +1,7 @@
 // import randToken from 'rand-token';
 
 import {isValidEmail, isValidUsername} from 'services/validator';
-import {Types, Defaults} from 'services/orm/model';
+import {Types, Defaults} from 'lib/orm/model';
 
 // import applicationConfig from '../../config/application';
 

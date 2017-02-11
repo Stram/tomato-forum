@@ -13,7 +13,10 @@
     "baseUrl": ".",
     "paths": {
       "*": [
-        "*"
+        "*",
+        "*/index",
+        "lib/*",
+        "lib/*/index"
       ]
     }
   },

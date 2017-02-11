@@ -77,6 +77,10 @@ export default class SelectBuilder extends BaseBuilder {
     return this;
   }
 
+  from(tableName: string) {
+    return this.table(tableName);
+  }
+
   build() {
     const queryTexts = [];
     const {table, limit, offset, sort = [], conditions = []} = this.query;

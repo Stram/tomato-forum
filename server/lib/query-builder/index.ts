@@ -1,5 +1,10 @@
 import SelectBuilder from './builders/select';
-import CreateBuilder from './builders/create';
+import CreateBuilder, {ColumnType} from './builders/create';
+
+export {
+  SelectBuilder,
+  ColumnType
+};
 
 export default class QueryBuilder {
   select(fieldsDescription?: Array<string|[string, string]> | string) {

@@ -17,3 +17,22 @@ Node.js, npm and MongoDB
 `npm install`
 
 Create databases in Postgres
+
+# Todo
+
+Query builder:
+- [ ] Write tests for select builder
+- [ ] Write tests for create builder
+- [ ] Add create index builder and tests
+- [ ] Add insert builder and tests
+- [ ] Add alter builder and tests
+- [ ] Add delete builder and tests
+
+ORM:
+- [ ] Refactor model
+- [ ] Add hooks
+- [ ] Add validations
+
+Models:
+- [ ] Refactor user model
+- [ ] Refactor user schema

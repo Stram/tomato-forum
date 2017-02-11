@@ -3,8 +3,8 @@
 import {hashSync, compareSync, genSaltSync} from 'bcrypt-nodejs';
 
 import userSchema from 'models/user/schema';
-import Model from 'services/orm/model';
-import QueryBuilder from 'services/query-builder';
+import Model from 'lib/orm/model';
+import QueryBuilder from 'lib/query-builder';
 
 export interface IUser {
   id?: number;

@@ -1,7 +1,7 @@
 import * as pg from 'pg';
 import {snakeCase, toPairs} from 'lodash';
-import database from 'services/orm';
-import QueryBuilder from 'services/query-builder';
+import database from 'lib/orm';
+import QueryBuilder from 'lib/query-builder';
 
 export interface IModelSchema {
   [attribute: string]: {
