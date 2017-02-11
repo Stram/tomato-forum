@@ -1,4 +1,4 @@
-import {IQuery} from 'services/query-builder';
+import {IQuery} from '../index';
 
 export default function buildSelect(query: IQuery) {
   const queryTexts = [];

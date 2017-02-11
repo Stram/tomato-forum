@@ -25,6 +25,7 @@ export default class Migrations {
       return;
     }
 
+    // TODO: Replace with query builder;
     await this.connection.query([
       'CREATE TABLE IF NOT EXISTS schema_migrations (',
         'version TIMESTAMP NOT NULL',
