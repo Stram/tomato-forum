@@ -22,6 +22,14 @@
     "title": "Tomato api doc",
     "version": "0.1.0"
   },
+  "nyc": {
+    "extension": [
+      ".ts"
+    ],
+    "exclude": [
+      "server/tests"
+    ]
+  },
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.15.2",
