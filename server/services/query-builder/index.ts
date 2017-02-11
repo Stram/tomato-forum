@@ -9,4 +9,12 @@ export default class QueryBuilder {
   create(type?: 'table'|'index', name?: string) {
     return new CreateBuilder(type, name);
   }
+
+  createTable(tableName: string) {
+    return new CreateBuilder('table', tableName);
+  }
+
+  createIndex() {
+    return new CreateBuilder('index');
+  }
 }

@@ -79,4 +79,6 @@ export default class User {
   get id() {
     return this.document.id;
   }
+
+  // scopes
 }

@@ -81,9 +81,9 @@ export default class Model <T> {
       return;
     }
 
-    const queryText = this.buildTableQuery();
+    // const queryText = this.buildTableQuery();
 
-    await database.query(queryText);
+    // await database.query(queryText);
     this.tableExists = true;
   }
 
@@ -93,30 +93,31 @@ export default class Model <T> {
     }
   }
 
-  private buildTableQuery() {
-    const tableAtributes = Object.keys(this.modelSchema).map((attribute) => {
-      const attributeDefinition = this.modelSchema[attribute];
-      const attributeName = snakeCase(attribute);
-      const {type, required, unique, default: defaultValue} = attributeDefinition;
+  // TODO: Replace with query builder
+  // private buildTableQuery() {
+  //   const tableAtributes = Object.keys(this.modelSchema).map((attribute) => {
+  //     const attributeDefinition = this.modelSchema[attribute];
+  //     const attributeName = snakeCase(attribute);
+  //     const {type, required, unique, default: defaultValue} = attributeDefinition;
 
-      let column = `${attributeName} ${type}`;
+  //     let column = `${attributeName} ${type}`;
 
-      if (required) {
-        column = column + ' NOT NULL';
-      }
+  //     if (required) {
+  //       column = column + ' NOT NULL';
+  //     }
 
-      if (unique) {
-        column = column + ' UNIQUE';
-      }
+  //     if (unique) {
+  //       column = column + ' UNIQUE';
+  //     }
 
-      if (defaultValue && Defaults[defaultValue]) {
-        column = column + ` DEFAULT ${Defaults[defaultValue]}`;
-      }
+  //     if (defaultValue && Defaults[defaultValue]) {
+  //       column = column + ` DEFAULT ${Defaults[defaultValue]}`;
+  //     }
 
-      return column;
-    });
+  //     return column;
+  //   });
 
-    const tableDefinition = tableAtributes.join(', ');
-    return `CREATE TABLE IF NOT EXISTS "${this.tableName}" (${tableDefinition})`;
-  }
+  //   const tableDefinition = tableAtributes.join(', ');
+  //   return `CREATE TABLE IF NOT EXISTS "${this.tableName}" (${tableDefinition})`;
+  // }
 }
